@@ -1,11 +1,7 @@
 grammar toy_asm;
 
 program
-    : (comment|oneLineCode)+
-    ;
-
-comment
-    : (Comment)+
+    : (Comment|oneLineCode)+
     ;
 
 oneLineCode
@@ -13,7 +9,7 @@ oneLineCode
     ;
 
 opLabel
-    : (Label ':' '\n'? )
+    : Label ':' '\n'?
     ;
 
 oneOp
@@ -155,9 +151,9 @@ INT
     ;
 
 Label
-    : [a-z] ([a-z0-9]|'_')*
+    : ([a-z]|'_') ([a-z0-9]|'_')*
     ;
 
 WS
-    : [ \r\t]+ -> skip
+    : [ \t\r\n]+ -> skip
     ;

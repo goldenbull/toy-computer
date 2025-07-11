@@ -24,8 +24,9 @@ class MemError(Exception):
 class Op(ABC):
     addr: int = 0
     label: str = ""
+    c: Computer = None
 
-    def execute(self, c: Computer):
+    def execute(self):
         raise NotImplementedError("由子类实现")
 
     def header(self):
@@ -34,13 +35,22 @@ class Op(ABC):
         else:
             return f"<{self.addr}>"
 
-    @staticmethod
-    def get_value(p, c):
+    def get_value(self, p):
         if isinstance(p, int):
             v = p
         else:
-            v = p.value(c)
+            v = p.value(self.c)
         return v
+
+    def push_stack(self, v):
+        sp = self.c.get_reg_value("sp")
+        self.c.set_mem_value(sp, v)
+        self.c.set_reg_value("sp", sp + 1)
+
+    def pop_stack(self):
+        sp = self.c.get_reg_value("sp")
+        self.c.set_reg_value("sp", sp - 1)
+        return self.c.get_mem_value(sp - 1)
 
 
 class Reg:
@@ -78,19 +88,19 @@ class Move(Op):
     def __repr__(self):
         return f"{self.header()} mov {self.p1}, {self.p2}"
 
-    def execute(self, c: Computer):
+    def execute(self):
         try:
-            v = self.get_value(self.p2, c)
+            v = self.get_value(self.p2)
 
             if isinstance(self.p1, Reg):
-                c.set_reg_value(self.p1.reg, v)
+                self.c.set_reg_value(self.p1.reg, v)
             else:
-                c.set_mem_value(self.p1.addr(c), v)
+                self.c.set_mem_value(self.p1.addr(self.c), v)
 
-            c.ip += 1
+            self.c.ip += 1
         except IndexError as e:
-            c.state = ComputerState.Error
-            c.errmsg = f"{self} | {e}"
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | {e}"
 
 
 class Add(Op):
@@ -101,15 +111,15 @@ class Add(Op):
     def __repr__(self):
         return f"{self.header()} add {self.p1}, {self.p2}"
 
-    def execute(self, c: Computer):
+    def execute(self):
         try:
-            v1 = c.get_reg_value(self.p1.reg)
-            v2 = self.get_value(self.p2, c)
-            c.set_reg_value(self.p1.reg, v1 + v2)
-            c.ip += 1
+            v1 = self.c.get_reg_value(self.p1.reg)
+            v2 = self.get_value(self.p2)
+            self.c.set_reg_value(self.p1.reg, v1 + v2)
+            self.c.ip += 1
         except IndexError as e:
-            c.state = ComputerState.Error
-            c.errmsg = f"{self} | {e}"
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | {e}"
 
 
 class Sub(Op):
@@ -120,15 +130,15 @@ class Sub(Op):
     def __repr__(self):
         return f"{self.header()} sub {self.p1}, {self.p2}"
 
-    def execute(self, c: Computer):
+    def execute(self):
         try:
-            v1 = c.get_reg_value(self.p1.reg)
-            v2 = self.get_value(self.p2, c)
-            c.set_reg_value(self.p1.reg, v1 - v2)
-            c.ip += 1
+            v1 = self.c.get_reg_value(self.p1.reg)
+            v2 = self.get_value(self.p2)
+            self.c.set_reg_value(self.p1.reg, v1 - v2)
+            self.c.ip += 1
         except IndexError as e:
-            c.state = ComputerState.Error
-            c.errmsg = f"{self} | {e}"
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | {e}"
 
 
 class Mul(Op):
@@ -138,15 +148,15 @@ class Mul(Op):
     def __repr__(self):
         return f"{self.header()} mul {self.p1}"
 
-    def execute(self, c: Computer):
+    def execute(self):
         try:
-            v1 = c.get_reg_value("ax")
-            v2 = self.get_value(self.p1, c)
-            c.set_reg_value("ax", v1 * v2)
-            c.ip += 1
+            v1 = self.c.get_reg_value("ax")
+            v2 = self.get_value(self.p1)
+            self.c.set_reg_value("ax", v1 * v2)
+            self.c.ip += 1
         except IndexError as e:
-            c.state = ComputerState.Error
-            c.errmsg = f"{self} | {e}"
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | {e}"
 
 
 class Div(Op):
@@ -156,25 +166,25 @@ class Div(Op):
     def __repr__(self):
         return f"{self.header()} div {self.p1}"
 
-    def execute(self, c: Computer):
+    def execute(self):
         try:
             # 需要处理除0的情况
-            v1 = c.get_reg_value("ax")
-            v2 = self.get_value(self.p1, c)
+            v1 = self.c.get_reg_value("ax")
+            v2 = self.get_value(self.p1)
             if v2 == 0:
                 raise DivZeroError()
             # 特殊处理向零取整，和C一致
             r1 = int(v1 / v2)
             r2 = v1 - v2 * r1
-            c.set_reg_value("ax", r1)
-            c.set_reg_value("dx", r2)
-            c.ip += 1
+            self.c.set_reg_value("ax", r1)
+            self.c.set_reg_value("dx", r2)
+            self.c.ip += 1
         except IndexError as e:
-            c.state = ComputerState.Error
-            c.errmsg = f"{self} | {e}"
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | {e}"
         except DivZeroError:
-            c.state = ComputerState.Error
-            c.errmsg = f"{self} | div0"
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | div0"
 
 
 class Cmp(Op):
@@ -185,51 +195,87 @@ class Cmp(Op):
     def __repr__(self):
         return f"{self.header()} cmp {self.p1}, {self.p2}"
 
-    def execute(self, c: Computer):
+    def execute(self):
         try:
-            v1 = c.get_reg_value(self.p1.reg)
-            v2 = self.get_value(self.p2, c)
+            v1 = self.c.get_reg_value(self.p1.reg)
+            v2 = self.get_value(self.p2)
             if v1 > v2:
-                c.set_reg_value("flg", 1)
+                self.c.set_reg_value("flg", 1)
             elif v1 == v2:
-                c.set_reg_value("flg", 0)
+                self.c.set_reg_value("flg", 0)
             else:
-                c.set_reg_value("flg", -1)
-            c.ip += 1
+                self.c.set_reg_value("flg", -1)
+            self.c.ip += 1
         except IndexError as e:
-            c.state = ComputerState.Error
-            c.errmsg = f"{self} | {e}"
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | {e}"
 
 
 class Jump(Op):
-    def __init__(self, action: str, label: str):
+    def __init__(self, action: str, target: str):
         self.action = action
-        self.label = label
+        self.target = target
 
     def __repr__(self):
-        return f"{self.header()} {self.action} {self.label}"  # TODO: calc addr
+        try:
+            target_addr = self.c.labels_tbl[self.target]
+            return f"{self.header()} {self.action} {self.target} <{target_addr}>"
+        except KeyError as e:
+            return f"{self.header()} {self.action} {self.target} <ERROR>"
 
-    def execute(self, c: Computer):
-        c.ip += 1
+    def execute(self):
+        try:
+            target_addr = self.c.labels_tbl[self.target]
+            flg = self.c.get_reg_value("flg")
+            if (self.action == "jmp"
+                    or (self.action == "je" and flg == 0)
+                    or (self.action == "jne" and flg != 0)
+                    or (self.action == "jg" and flg > 0)
+                    or (self.action == "jge" and flg >= 0)
+                    or (self.action == "jl" and flg < 0)
+                    or (self.action == "jle" and flg <= 0)
+            ):
+                self.c.ip = target_addr
+            else:
+                self.c.ip += 1
+        except KeyError as e:
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | invalid label {e}"
 
 
 class Call(Op):
-    def __init__(self, label: str):
-        self.label = label
+    def __init__(self, target: str):
+        self.target = target
 
     def __repr__(self):
-        return f"{self.header()} call {self.label}"  # TODO: calc addr
+        try:
+            target_addr = self.c.labels_tbl[self.target]
+            return f"{self.header()} call {self.target} <{target_addr}>"
+        except KeyError as e:
+            return f"{self.header()} call {self.target} <ERROR>"
 
-    def execute(self, c: Computer):
-        c.ip += 1
+    def execute(self):
+        try:
+            # ip入栈，sp+1，jmp到函数入口
+            target_addr = self.c.labels_tbl[self.target]
+            self.push_stack(self.c.get_reg_value("ip"))
+            self.c.ip = target_addr
+        except KeyError as e:
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | invalid label {e}"
 
 
 class Ret(Op):
     def __repr__(self):
-        return f"{self.header()} ret"  # TODO: calc addr
+        return f"{self.header()} ret"  # TODO 如何显示来时的地址？执行前后sp会变化
 
-    def execute(self, c: Computer):
-        c.ip += 1
+    def execute(self):
+        try:
+            origin_addr = self.pop_stack()
+            self.c.ip = origin_addr
+        except IndexError as e:
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | {e}"
 
 
 class Push(Op):
@@ -243,30 +289,25 @@ class Push(Op):
         else:
             return f"{self.header()} {self.action} {self.p1}"
 
-    def execute(self, c: Computer):
-        def _push(v):
-            sp = c.get_reg_value("sp")
-            c.set_mem_value(sp, v)
-            c.set_reg_value("sp", sp + 1)
-
+    def execute(self):
         # 分情况处理
         try:
             if self.action == "push":
-                v = self.get_value(self.p1, c)
-                _push(v)
+                v = self.get_value(self.p1)
+                self.push_stack(v)
             elif self.action == "pushf":
-                v = c.get_reg_value("flg")
-                _push(v)
+                v = self.c.get_reg_value("flg")
+                self.push_stack(v)
             elif self.action == "pusha":
                 for r in ["ax", "bx", "cx", "dx", "flg", "bp"]:
-                    v = c.get_reg_value(r)
-                    _push(v)
+                    v = self.c.get_reg_value(r)
+                    self.push_stack(v)
             else:
                 raise ValueError()
-            c.ip += 1
+            self.c.ip += 1
         except IndexError as e:
-            c.state = ComputerState.Error
-            c.errmsg = f"{self} | {e}"
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | {e}"
 
 
 class Pop(Op):
@@ -280,30 +321,25 @@ class Pop(Op):
         else:
             return f"{self.header()} {self.action} {self.p1}"
 
-    def execute(self, c: Computer):
-        def _pop():
-            sp = c.get_reg_value("sp")
-            c.set_reg_value("sp", sp - 1)
-            return c.get_mem_value(sp - 1)
-
+    def execute(self):
         # 分情况处理
         try:
             if self.action == "pop":
-                v = _pop()
-                c.set_reg_value(self.p1.reg, v)
+                v = self.pop_stack()
+                self.c.set_reg_value(self.p1.reg, v)
             elif self.action == "popf":
-                v = _pop()
-                c.set_reg_value("flg", v)
+                v = self.pop_stack()
+                self.c.set_reg_value("flg", v)
             elif self.action == "popa":
                 for r in ["ax", "bx", "cx", "dx", "flg", "bp"]:
-                    v = _pop()
-                    c.set_reg_value(r, v)
+                    v = self.pop_stack()
+                    self.c.set_reg_value(r, v)
             else:
                 raise ValueError()
-            c.ip += 1
+            self.c.ip += 1
         except IndexError as e:
-            c.state = ComputerState.Error
-            c.errmsg = f"{self} | {e}"
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | {e}"
 
 
 class Input(Op):
@@ -313,23 +349,23 @@ class Input(Op):
     def __repr__(self):
         return f"{self.header()} input {self.p1}"
 
-    def execute(self, c: Computer):
+    def execute(self):
         try:
             s = input(f"Input a number into {self.p1}:")
             v = int(s)
             if isinstance(self.p1, Mem):
-                c.set_mem_value(self.p1.addr(c), v)
+                self.c.set_mem_value(self.p1.addr(self.c), v)
             elif isinstance(self.p1, Reg):
-                c.set_reg_value(self.p1.reg, v)
+                self.c.set_reg_value(self.p1.reg, v)
             else:
                 raise ValueError()
-            c.ip += 1
+            self.c.ip += 1
         except IndexError as e:
-            c.state = ComputerState.Error
-            c.errmsg = f"{self} | {e}"
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | {e}"
         except ValueError as e:
-            c.state = ComputerState.Error
-            c.errmsg = f"{self} | {e}"
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | {e}"
 
 
 class Print(Op):
@@ -339,14 +375,14 @@ class Print(Op):
     def __repr__(self):
         return f"{self.header()} print {self.p1}"
 
-    def execute(self, c: Computer):
+    def execute(self):
         try:
-            v = self.get_value(self.p1, c)
+            v = self.get_value(self.p1)
             print(v)
-            c.ip += 1
+            self.c.ip += 1
         except IndexError as e:
-            c.state = ComputerState.Error
-            c.errmsg = f"{self} | {e}"
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | {e}"
 
 
 class Rand(Op):
@@ -356,19 +392,19 @@ class Rand(Op):
     def __repr__(self):
         return f"{self.header()} rand {self.p1}"
 
-    def execute(self, c: Computer):
+    def execute(self):
         try:
             v = rnd.randint(0, 1000)
             if isinstance(self.p1, Mem):
-                c.set_mem_value(self.p1.addr(c), v)
+                self.c.set_mem_value(self.p1.addr(self.c), v)
             elif isinstance(self.p1, Reg):
-                c.set_reg_value(self.p1.reg, v)
+                self.c.set_reg_value(self.p1.reg, v)
             else:
                 raise ValueError()
-            c.ip += 1
+            self.c.ip += 1
         except IndexError as e:
-            c.state = ComputerState.Error
-            c.errmsg = f"{self} | {e}"
+            self.c.state = ComputerState.Error
+            self.c.errmsg = f"{self} | {e}"
 
 
 class Dump(Op):
@@ -382,21 +418,21 @@ class Dump(Op):
         else:
             return f"{self.header()} dump {self.reg}, {self.n}"
 
-    def execute(self, c: Computer):
-        print(f"======== {c.state} ========")
-        if c.state == ComputerState.Error:
-            print(c.errmsg)
+    def execute(self):
+        print(f"======== {self.c.state} ========")
+        if self.c.state == ComputerState.Error:
+            print(self.c.errmsg)
 
         # 通用寄存器
-        print(f"ax={c.ax} bx={c.bx} cx={c.cx} dx={c.dx} flg={c.flg}")
-        print(f"ip={c.ip} bp={c.bp} sp={c.sp}")
+        print(f"ax={self.c.ax} bx={self.c.bx} cx={self.c.cx} dx={self.c.dx} flg={self.c.flg}")
+        print(f"ip={self.c.ip} bp={self.c.bp} sp={self.c.sp}")
 
         # 当前指令上下文，各显示5条即可
         print("---- code context ----")
         for i in range(-5, 6):
-            idx = c.ip + i
-            if 0 <= idx < len(c.ops):
-                print(c.ops[idx], end="")
+            idx = self.c.ip + i
+            if 0 <= idx < len(self.c.ops):
+                print(self.c.ops[idx], end="")
                 if i == 0:
                     print(" <===")
                 else:
@@ -406,30 +442,30 @@ class Dump(Op):
         if self.reg is not None:
             print("---- memory ----")
             if self.n < 0:
-                c.state = ComputerState.Error
-                c.errmsg = f"{self} <== dump的参数不能小于0"
+                self.c.state = ComputerState.Error
+                self.c.errmsg = f"{self} <== dump的参数不能小于0"
                 return
 
-            idx0 = c.get_reg_value(self.reg.reg)
-            if idx0 < 0 or idx0 >= c.MEM_SIZE:
-                c.state = ComputerState.Error
-                c.errmsg = f"{self.reg}={idx0} 超出内存范围"
+            idx0 = self.c.get_reg_value(self.reg.reg)
+            if idx0 < 0 or idx0 >= self.c.MEM_SIZE:
+                self.c.state = ComputerState.Error
+                self.c.errmsg = f"{self.reg}={idx0} 超出内存范围"
                 return
 
             for i in range(0, self.n):
                 idx = idx0 + i
                 if i % 16 == 0:
                     print(f"{idx:4d}: ", end="")
-                if idx < c.MEM_SIZE:
-                    print(f"{c.mem[idx]:8d}", end="\n" if i % 16 == 15 else " ")
+                if idx < self.c.MEM_SIZE:
+                    print(f"{self.c.mem[idx]:8d}", end="\n" if i % 16 == 15 else " ")
             print()
 
-        c.ip += 1
+        self.c.ip += 1
 
 
 class Pause(Op):
     def __repr__(self):
         return f"{self.header()} pause"
 
-    def execute(self, c: Computer):
+    def execute(self):
         input("press enter to continue...")

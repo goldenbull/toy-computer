@@ -29,6 +29,10 @@ class Computer:
         self.ops = ops
         for i, op in enumerate(ops):
             op.addr = i
+            op.c = self
+
+        # 建立Label和addr的映射表
+        self.labels_tbl = {op.label: op.addr for op in ops if len(op.label) > 0}
 
         # 当前状态
         self.state = ComputerState.Running
@@ -92,11 +96,24 @@ class Computer:
         self.mem[addr] = v
 
     def run(self):
-        for op in self.ops:
-            op.execute(self)
+        while True:
+            next_ip = self.ip
+            if next_ip < 0:
+                self.state = ComputerState.Error
+                self.errmsg = f"next ip={next_ip} 异常终止"
+                break
+            if next_ip >= len(self.ops):
+                self.state = ComputerState.Finished
+                break
+
+            op = self.ops[next_ip]
+            op.execute()
             if self.state == ComputerState.Error:
                 print(f"系统错误: {self.errmsg}")
                 break
-        if self.state == ComputerState.Running:
-            self.state = ComputerState.Finished
+
+        if self.state == ComputerState.Finished:
             print("====== finished ======")
+        else:
+            print(self.errmsg)
+        # TODO: 耗时统计

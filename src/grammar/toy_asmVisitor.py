@@ -14,11 +14,6 @@ class toy_asmVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by toy_asmParser#comment.
-    def visitComment(self, ctx:toy_asmParser.CommentContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by toy_asmParser#oneLineCode.
     def visitOneLineCode(self, ctx:toy_asmParser.OneLineCodeContext):
         return self.visitChildren(ctx)

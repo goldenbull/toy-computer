@@ -17,15 +17,6 @@ class toy_asmListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by toy_asmParser#comment.
-    def enterComment(self, ctx:toy_asmParser.CommentContext):
-        pass
-
-    # Exit a parse tree produced by toy_asmParser#comment.
-    def exitComment(self, ctx:toy_asmParser.CommentContext):
-        pass
-
-
     # Enter a parse tree produced by toy_asmParser#oneLineCode.
     def enterOneLineCode(self, ctx:toy_asmParser.OneLineCodeContext):
         pass
