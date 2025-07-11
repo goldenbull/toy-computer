@@ -138,7 +138,8 @@ rand
     ;
 
 dump
-    : 'dump' reg ',' INT
+    : 'dump'
+    | 'dump' reg ',' INT
     ;
 
 pause

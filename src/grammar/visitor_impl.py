@@ -2,7 +2,7 @@
 
 from src.grammar.toy_asmParser import toy_asmParser
 from src.grammar.toy_asmVisitor import toy_asmVisitor
-from src.grammar.program import *
+from src.grammar.operations import *
 
 
 class VisitorImpl(toy_asmVisitor):
@@ -87,12 +87,19 @@ class VisitorImpl(toy_asmVisitor):
         return Print(p1)
 
     def visitDump(self, ctx: toy_asmParser.DumpContext):
-        p1 = self.visit(ctx.children[1])
-        n = int(ctx.children[3].getText())
-        return Dump(p1, n)
+        if len(ctx.children) > 1:
+            p1 = self.visit(ctx.children[1])
+            n = int(ctx.children[3].getText())
+            return Dump(p1, n)
+        else:
+            return Dump()
 
     def visitPause(self, ctx: toy_asmParser.PauseContext):
         return Pause()
+
+    def visitRand(self, ctx: toy_asmParser.RandContext):
+        p1 = self.visit(ctx.children[1])
+        return Rand(p1)
 
     def visitOneLineCode(self, ctx: toy_asmParser.OneLineCodeContext):
         if len(ctx.children) == 3:

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from antlr4 import *
+
+from grammar.computer import Computer
 from grammar.toy_asmLexer import toy_asmLexer
 from grammar.toy_asmParser import toy_asmParser
 from src.grammar.visitor_impl import VisitorImpl
@@ -16,8 +18,16 @@ if __name__ == '__main__':
 
     # 得到所有指令
     visitor.visit(parser.program())
-
-    # 为指令生成序号
-    for i, op in enumerate(visitor.ops):
-        op.addr = i
-        print(op)
+    # 启动计算机，开始逐行执行
+    computer = Computer(visitor.ops)
+    computer.run()
+    # try:
+    #     # 得到所有指令
+    #     visitor.visit(parser.program())
+    #     # 启动计算机，开始逐行执行
+    #     computer = Computer(visitor.ops)
+    #     computer.run()
+    # except Exception as ex:
+    #     print(ex)
+    #     # 语法解析错误
+    #     exit()
