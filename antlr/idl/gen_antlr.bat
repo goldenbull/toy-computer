@@ -1,0 +1,1 @@
+java -jar ..\antlr-4.13.2-complete.jar -Dlanguage=Python3 -o . -encoding UTF-8 toy-asm.g4

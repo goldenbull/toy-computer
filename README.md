@@ -13,7 +13,7 @@
    2. 指令内存也是一堆小格子，每个格子一条指令，也顺序编号，且每条指令可以有一个自定义的label
    3. 内存和寄存器的区别：内存比寄存器慢100倍，但量大便宜
 4. 数字：只处理有符号整数，且不考虑字节数
-5. 指令：指示CPU如何操作寄存器和内存中的数字
+5. 指令：指示CPU如何操作寄存器和内存中的数字，全部使用小写，指令前还可以有一个自定义的标签
 6. 状态：运行中；运行结束；出错死机，比如除以0，内存越界，出错时会汇报出错原因
 
 # lesson 1
@@ -26,33 +26,32 @@
 - mov：数据存取
   - mov r1, N       // r表示寄存器，N表示立即数
   - mov r1, r2
-  - mov r1, [r2]    // [r2]表示内存中编号为r2的格子
-  - mov [r1], N
-  - mov [r1], r2
+  - mov r1, [r2+N]  // [r2+N]表示内存中编号为r2+N的格子，N为0时可以省略不写，也可以为负数，如[ax-4]
+  - mov [r1+N], N
+  - mov [r1+N], r2
 - add：加法
   - add r1, N       // r1+N --> r1
   - add r1, r2
-  - add r1, [r2]
+  - add r1, [r2+N]
 - sub：减法
   - sub r1, N
   - sub r1, r2
-  - sub r1, [r2]
+  - sub r1, [r2+N]
 - mul：乘法
   - mul N           // `乘数必须预先放入ax中，结果是ax*N，也放在ax里，即 ax*N --> ax`
   - mul r1
-  - mul [r1]
+  - mul [r1+N]
 - div：除法
   - div N           // `整数除法，被乘数必须预先放入ax中，ax除以N，商在ax中，余数在dx中，余数始终和ax符号相同，如果N为0，系统死机`
   - div r1
-  - div [r1]
+  - div [r1+N]
 - input：用户输入一个数字，格式错误则直接死机
   - input r1
-  - input [r1]
+  - input [r1+N]
 - print：输出数字到屏幕上
   - print N
   - print r1
-  - print [N]
-  - print [r1]
+  - print [r1+N]
 
 需要完成的任务：
 1. 从1加到3，输出结果
@@ -74,7 +73,7 @@
 - cmp
   - cmp r1, N   // 比较r1和N的大小，flg=sign(r1-N)
   - cmp r1, r2
-  - cmp r1, [r2]
+  - cmp r1, [r2+N]
 - 条件跳转指令
   - je ADDR     // jump if equal
   - jne ADDR    // jump if not equal
@@ -91,6 +90,8 @@
 5. 输入一个数，判断这个数的十进制表达里面是否包含7，比如17，271，37，76
 6. 输入一个数，判断这个数是否是7的倍数或者包含7
 7. 酒桌小游戏：从1到100，轮流数数，跳过所有7的倍数或者包含7的数
+8. 输入一个数，判断是否是质数
+9. 输出100以内的所有质数
 
 # lesson 3
 
@@ -113,7 +114,7 @@
 ## ip和sp寄存器
 
 首先引入新的寄存器：
-- ip, instruction pointer，记录下一步将要执行的指令的序号，CPU下一步执行哪条指令，完全依赖这个寄存器的值
+- ip, instruction pointer，实际上这个寄存器之前已经隐形的存在了，用于记录下一步将要执行的指令的序号，CPU下一步执行哪条指令，完全依赖这个寄存器的值
   - 系统启动时设为0
   - 非跳转指令，自动+1
   - 跳转指令，设置为目标指令的序号
@@ -143,6 +144,7 @@ jmp [sp]
 需要注意几点：
 - call和ret指令会修改sp和ip的值
 - ip不能用mov指令赋值，只能用jmp/je/jne/...这些跳转指令和call/ret指令赋值
+- sp是一个通用寄存器，程序员可以随意操作，但由于call和ret会修改sp，因此需要按照规则正确使用sp
 
 ## 参数和返回值
 
@@ -155,9 +157,11 @@ jmp [sp]
 为了更方便的操作sp寄存器，我们引入新的指令：
 - push
   - push N      // 等价于先执行 mov [sp], N 再执行 add sp, 1
-  - push r1
+  - push r1     // r1只能是通用寄存器ax-dx
 - pop
   - pop r1      // 等价于先执行 sub sp, 1 再执行 mov r1, [sp]
+- pushf         // flg寄存器压入栈
+- popf
 
 需要再次强调的是，函数的调用者和函数本身，需要约定好参数和返回值如何传递，谁负责操作sp寄存器，双方必须按照一致的约定行动，否则程序就会出错
 
@@ -172,17 +176,13 @@ jmp [sp]
 为了更方便的使用栈，再引入一个新的寄存器：
 - bp, base pointer
 
-bp寄存器并不是必须的，完全是为了方便程序员，它是一个特殊的通用寄存器，可以使用mov/push/pop指令，但不能使用mul/div指令，因为它表示的是内存中的特定位置和前后关系，因此乘除法是没有意义的
+bp是一个通用寄存器，完全是为了方便程序员而提供的，和sp一样，程序员也可以随意操作。
 
 call/ret/push/pop会自动改变sp的值，但各种指令都不会自动改变bp的值，需要通过mov指令去读写bp寄存器，bp和sp协同工作，可以更方便的操作栈
 
-- bp允许的指令
-  - push bp
-  - pop bp
-  - mov bp, sp
-  - mov r1, [bp+N]
-
-后续完成任务的过程中，就会体会到为什么只允许这些指令，这些指令该如何用。
+最后为方便程序员，再引入两条指令：
+- pusha  // 将所有通用寄存器入栈，依次是ax bx cx dx flg bp
+- popa   // 和pusha相反
 
 ## 任务
 
@@ -193,9 +193,9 @@ call/ret/push/pop会自动改变sp的值，但各种指令都不会自动改变b
 到目前为止，一个抽象意义上的计算机已经功能齐全了，可以实现一些复杂的功能了，我们可以实现各种排序算法，以熟练上述内容
 
 为方便初始化数据，引入随机数指令
-- RAND
-  - RAND r1     // 将一个随机数存入r1中，随机数的范围限制在[0, 999]，足够随机，且方便显示
-  - RAND [r1]
+- rand
+  - rand r1     // 将一个随机数存入r1中，随机数的范围限制在[0, 999]，足够随机，且方便显示
+  - rand [r1+N]
 
 任务：
 - 随机生成100个数，存到内存里，将其排序，输出排序前和排序后的结果，这一步可以使用交换排序、冒泡排序等各种基于非递归的循环的排序算法
@@ -207,3 +207,75 @@ call/ret/push/pop会自动改变sp的值，但各种指令都不会自动改变b
 
 任务：
 - 将以上汇编代码逐行翻译成C，从而理解C语言的底层机制
+
+# 汇总
+
+## 寄存器
+
+- 通用寄存器：ax bx cx dx
+- 符号寄存器：flg
+  - 只能通过cmp popf popa赋值
+- 指令寄存器：ip
+  - 系统启动时，初始化为0
+- 栈寄存器：bp sp
+  - 系统启动时，sp初始化为512
+  - 某些指令会改变sp的值，sp和bp是专门用于栈操作的，需要特殊对待
+
+## 指令
+
+- mov：数据存取
+  - mov r1, N       // r表示寄存器，N表示立即数
+  - mov r1, r2
+  - mov r1, [r2+N]  // [r2+N]表示内存中编号为r2+N的格子，N为0时可以省略不写，也可以为负数，如[ax-4]
+  - mov [r1+N], N
+  - mov [r1+N], r2
+- add：加法
+  - add r1, N       // r1+N --> r1
+  - add r1, r2
+  - add r1, [r2+N]
+- sub：减法
+  - sub r1, N
+  - sub r1, r2
+  - sub r1, [r2+N]
+- mul：乘法
+  - mul N           // `乘数必须预先放入ax中，结果是ax*N，也放在ax里，即 ax*N --> ax`
+  - mul r1
+  - mul [r1+N]
+- div：除法
+  - div N           // `整数除法，被乘数必须预先放入ax中，ax除以N，商在ax中，余数在dx中，余数始终和ax符号相同，如果N为0，系统死机`
+  - div r1
+  - div [r1+N]
+- input：用户输入一个数字，格式错误则直接死机
+  - input r1
+  - input [r1+N]
+- print：输出数字到屏幕上
+  - print N
+  - print r1
+  - print [r1+N]
+- cmp
+  - cmp r1, N       // 比较r1和N的大小，flg=sign(r1-N)
+  - cmp r1, r2
+  - cmp r1, [r2+N]
+- 无条件跳转指令
+  - jmp ADDR        // ADDR就是目标指令的label，实际上可以通过当前指令和目标指令的序号，换算成一个数字
+- 条件跳转指令
+  - je ADDR         // jump if equal
+  - jne ADDR        // jump if not equal
+  - jg ADDR         // jump if greater
+  - jge ADDR        // jump if greater or equal
+  - jl ADDR         // jump if less
+  - jle ADDR        // jump if less or equal
+- call ADDR         // 三步操作：ip入栈，sp+1，jmp到函数入口
+- ret               // 两步操作：sp-1，jmp回到调用函数前的位置继续执行
+- push
+  - push N          // 等价于先执行 mov [sp], N 再执行 add sp, 1
+  - push r1         // r1只能是通用寄存器ax-dx
+- pop
+  - pop r1          // 等价于先执行 sub sp, 1 再执行 mov r1, [sp]
+- pushf             // flg寄存器压入栈
+- popf
+- pusha             // 将所有通用寄存器入栈，依次是ax bx cx dx flg bp
+- popa              // 和pusha相反
+- rand
+  - rand r1         // 将一个随机数存入r1中，随机数的范围限制在[0, 999]，足够随机，且方便显示
+  - rand [r1+N]

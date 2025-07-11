@@ -1,0 +1,11 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+verify_ssl = true
+
+[packages]
+coloredlogs = "*"
+antlr4-python3-runtime = "*"
+
+[requires]
+python_version = "3.12"
