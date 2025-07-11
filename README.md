@@ -250,61 +250,171 @@ finished:
 
 ## 指令一览
 
-- mov：数据存取
-  - mov r1, N       // r表示寄存器，N表示立即数
-  - mov r1, r2
-  - mov r1, [r2+N]  // [r2+N]表示内存中编号为r2+N的格子，N为0时可以省略不写，也可以为负数，如[ax-4]
-  - mov [r1+N], N
-  - mov [r1+N], r2
-- add：加法
-  - add r1, N       // r1+N --> r1
-  - add r1, r2
-  - add r1, [r2+N]
-- sub：减法
-  - sub r1, N
-  - sub r1, r2
-  - sub r1, [r2+N]
-- mul：乘法
-  - mul N           // `乘数必须预先放入ax中，结果是ax*N，也放在ax里，即 ax*N --> ax`
-  - mul r1
-  - mul [r1+N]
-- div：除法
-  - div N           // `整数除法，被乘数必须预先放入ax中，ax除以N，商在ax中，余数在dx中，余数始终和ax符号相同，如果N为0，系统死机`
-  - div r1
-  - div [r1+N]
-- input：用户输入一个数字，格式错误则直接死机
-  - input r1
-  - input [r1+N]
-- print：输出数字到屏幕上
-  - print N
-  - print r1
-  - print [r1+N]
-- cmp
-  - cmp r1, N       // 比较r1和N的大小，flg=sign(r1-N)
-  - cmp r1, r2
-  - cmp r1, [r2+N]
-- 无条件跳转指令
-  - jmp Label        // Label就是目标指令的label，实际上可以通过当前指令和目标指令的序号，换算成一个数字
-- 条件跳转指令
-  - je Label         // jump if equal
-  - jne Label        // jump if not equal
-  - jg Label         // jump if greater
-  - jge Label        // jump if greater or equal
-  - jl Label         // jump if less
-  - jle Label        // jump if less or equal
-- call Label         // 三步操作：ip入栈，sp+1，jmp到函数入口
-- ret               // 两步操作：sp-1，jmp回到调用函数前的位置继续执行
-- push
-  - push N          // 等价于先执行 mov [sp], N 再执行 add sp, 1
-  - push r1         // r1只能是通用寄存器ax-dx
-- pop
-  - pop r1          // 等价于先执行 sub sp, 1 再执行 mov r1, [sp]
-- pushf             // flg寄存器压入栈
-- popf
-- pusha             // 将所有通用寄存器入栈，依次是ax bx cx dx flg bp
-- popa              // 和pusha相反
-- rand
-  - rand r1         // 将一个随机数存入r1中，随机数的范围限制在[0, 999]，足够随机，且方便显示
-  - rand [r1+N]
-- dump r1, N
-- pause
+以 toy_asm.g4 中的 antlr 描述为准
+
+```
+grammar toy_asm;
+
+program
+    : (comment|oneLineCode)+
+    ;
+
+comment
+    : (Comment)+
+    ;
+
+oneLineCode
+    : opLabel? oneOp '\n'
+    ;
+
+opLabel
+    : (Label ':' '\n'? )
+    ;
+
+oneOp
+    : move
+    | add
+    | sub
+    | mul
+    | div
+    | cmp
+    | jump
+    | call
+    | ret
+    | push_op
+    | pop_op
+    | input
+    | print
+    | rand
+    | dump
+    | pause
+    ;
+
+num
+    : '+'? INT
+    | '-' INT
+    ;
+
+reg
+    : 'ax' | 'bx' | 'cx' | 'dx' | 'bp' | 'sp'
+    ;
+
+offset
+    : ('+'|'-')INT
+    ;
+
+mem
+    : '[' reg offset? ']'
+    ;
+
+move
+    : 'mov' reg ',' num
+    | 'mov' reg ',' reg
+    | 'mov' reg ',' mem
+    | 'mov' mem ',' num
+    | 'mov' mem ',' reg
+    ;
+
+add
+    : 'add' reg ',' num
+    | 'add' reg ',' reg
+    | 'add' reg ',' mem
+    ;
+
+sub
+    : 'sub' reg ',' num
+    | 'sub' reg ',' reg
+    | 'sub' reg ',' mem
+    ;
+
+mul
+    : 'mul' num
+    | 'mul' reg
+    | 'mul' mem
+    ;
+
+div
+    : 'div' num
+    | 'div' reg
+    | 'div' mem
+    ;
+
+cmp
+    : 'cmp' reg ',' num
+    | 'cmp' reg ',' reg
+    | 'cmp' reg ',' mem
+    ;
+
+jump
+    : 'jmp' Label
+    | 'je' Label
+    | 'jne' Label
+    | 'jg' Label
+    | 'jge' Label
+    | 'jl' Label
+    | 'jle' Label
+    ;
+
+call
+    : 'call' Label
+    ;
+
+ret
+    : 'ret'
+    ;
+
+push_op
+    : 'push' num
+    | 'push' reg
+    | 'pushf'
+    | 'pusha'
+    ;
+
+pop_op
+    : 'pop' reg
+    | 'popf'
+    | 'popa'
+    ;
+
+input
+    : 'input' reg
+    | 'input' mem
+    ;
+
+print
+    : 'print' num
+    | 'print' reg
+    | 'print' mem
+    ;
+
+rand
+    : 'rand' reg
+    | 'rand' mem
+    ;
+
+dump
+    : 'dump'
+    | 'dump' reg ',' INT
+    ;
+
+pause
+    : 'pause'
+    ;
+
+Comment
+    : '//' ~[\n]* '\n'
+    ;
+
+INT
+    : [0-9]+
+    ;
+
+Label
+    : [a-z] ([a-z0-9]|'_')*
+    ;
+
+WS
+    : [ \r\t]+ -> skip
+    ;
+
+```
