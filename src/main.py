@@ -3,6 +3,7 @@
 from antlr4 import *
 from grammar.toy_asmLexer import toy_asmLexer
 from grammar.toy_asmParser import toy_asmParser
+from src.grammar.visitor_impl import VisitorImpl
 
 if __name__ == '__main__':
     fname = "tests/1.asm"
@@ -11,6 +12,12 @@ if __name__ == '__main__':
     lexer = toy_asmLexer(stm)
     stream = CommonTokenStream(lexer)
     parser = toy_asmParser(stream)
-    program = parser.program()
-    for c in program.children:
-        print(c.getText())
+    visitor = VisitorImpl()
+
+    # 得到所有指令
+    visitor.visit(parser.program())
+
+    # 为指令生成序号
+    for i, op in enumerate(visitor.ops):
+        op.addr = i
+        print(op)

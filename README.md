@@ -64,7 +64,7 @@
 从1加到10，从1加到100，这两个问题，可以引入循环了
 
 引入新的指令：
-- jmp ADDR    // ADDR就是目标指令的label，实际上可以通过当前指令和目标指令的序号，换算成一个数字
+- jmp Label    // Label就是目标指令的label，实际上可以通过当前指令和目标指令的序号，换算成一个数字
 
 只有jmp的话，只能实现死循环，还需要中断循环，因此需要引入新的寄存器和指令
 - 引入寄存器flg，不能通过mov写入，只能通过cmp指令写入
@@ -75,12 +75,12 @@
   - cmp r1, r2
   - cmp r1, [r2+N]
 - 条件跳转指令
-  - je ADDR     // jump if equal
-  - jne ADDR    // jump if not equal
-  - jg ADDR     // jump if greater
-  - jge ADDR    // jump if greater or equal
-  - jl ADDR     // jump if less
-  - jle ADDR    // jump if less or equal
+  - je Label     // jump if equal
+  - jne Label    // jump if not equal
+  - jg Label     // jump if greater
+  - jge Label    // jump if greater or equal
+  - jl Label     // jump if less
+  - jle Label    // jump if less or equal
 
 需要完成的任务：
 1. 从1加到10，输出结果
@@ -120,11 +120,11 @@
   - 跳转指令，设置为目标指令的序号
 - sp，stack pointer，记录下一个空闲的可以存放指令序号的内存位置，不妨在系统初始化时设为512
 
-假设函数f的入口是ADDR，当需要调用f时，需要做的事情是：
+假设函数f的入口是Label，当需要调用f时，需要做的事情是：
 ```
 mov [sp], ip // 注意一般情况下ip是当前正在执行的指令序号+1
 add sp, 1
-jmp ADDR
+jmp Label
 ```
 
 f内部，当执行完毕，返回调用者时，需要做的是：
@@ -138,7 +138,7 @@ jmp [sp]
 但是这里出现了一个问题：jmp [sp] 这个语法是不合法的
 
 而且，既然每次函数调用和返回都需要干同样的事情，就可以引入新的指令了：
-- call ADDR   // 上述的三步操作：ip入栈，sp+1，jmp到函数入口
+- call Label   // 上述的三步操作：ip入栈，sp+1，jmp到函数入口
 - ret         // 上述的两步操作：sp-1，jmp回到调用函数前的位置继续执行
 
 需要注意几点：
@@ -180,9 +180,11 @@ bp是一个通用寄存器，完全是为了方便程序员而提供的，和sp�
 
 call/ret/push/pop会自动改变sp的值，但各种指令都不会自动改变bp的值，需要通过mov指令去读写bp寄存器，bp和sp协同工作，可以更方便的操作栈
 
-最后为方便程序员，再引入两条指令：
-- pusha  // 将所有通用寄存器入栈，依次是ax bx cx dx flg bp
-- popa   // 和pusha相反
+最后为方便程序员，再引入几条指令：
+- pusha       // 将所有通用寄存器入栈，依次是ax bx cx dx flg bp
+- popa        // 和pusha相反
+- dump r1, N  // 输出当前的计算机运行状态，用于观察、调试程序的运行过程，显示正在运行的指令上下文、所有寄存器、以及内存中[r1]到[r1+N-1]的内容，N必须大于0
+- pause       // 暂停程序，等待用户输入回车后继续 
 
 ## 任务
 
@@ -221,7 +223,16 @@ call/ret/push/pop会自动改变sp的值，但各种指令都不会自动改变b
   - 系统启动时，sp初始化为512
   - 某些指令会改变sp的值，sp和bp是专门用于栈操作的，需要特殊对待
 
-## 指令
+## 程序语法
+
+- 用//开始注释
+- 每一行一条指令，指令全部小写
+- 指令可以有标签，标签可以单独占一行，和下一行的指令是一个整体
+
+样例：
+```
+
+```
 
 - mov：数据存取
   - mov r1, N       // r表示寄存器，N表示立即数
@@ -257,15 +268,15 @@ call/ret/push/pop会自动改变sp的值，但各种指令都不会自动改变b
   - cmp r1, r2
   - cmp r1, [r2+N]
 - 无条件跳转指令
-  - jmp ADDR        // ADDR就是目标指令的label，实际上可以通过当前指令和目标指令的序号，换算成一个数字
+  - jmp Label        // Label就是目标指令的label，实际上可以通过当前指令和目标指令的序号，换算成一个数字
 - 条件跳转指令
-  - je ADDR         // jump if equal
-  - jne ADDR        // jump if not equal
-  - jg ADDR         // jump if greater
-  - jge ADDR        // jump if greater or equal
-  - jl ADDR         // jump if less
-  - jle ADDR        // jump if less or equal
-- call ADDR         // 三步操作：ip入栈，sp+1，jmp到函数入口
+  - je Label         // jump if equal
+  - jne Label        // jump if not equal
+  - jg Label         // jump if greater
+  - jge Label        // jump if greater or equal
+  - jl Label         // jump if less
+  - jle Label        // jump if less or equal
+- call Label         // 三步操作：ip入栈，sp+1，jmp到函数入口
 - ret               // 两步操作：sp-1，jmp回到调用函数前的位置继续执行
 - push
   - push N          // 等价于先执行 mov [sp], N 再执行 add sp, 1
@@ -279,3 +290,5 @@ call/ret/push/pop会自动改变sp的值，但各种指令都不会自动改变b
 - rand
   - rand r1         // 将一个随机数存入r1中，随机数的范围限制在[0, 999]，足够随机，且方便显示
   - rand [r1+N]
+- dump r1, N
+- pause

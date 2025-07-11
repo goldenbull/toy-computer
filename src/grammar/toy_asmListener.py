@@ -35,6 +35,15 @@ class toy_asmListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by toy_asmParser#opLabel.
+    def enterOpLabel(self, ctx:toy_asmParser.OpLabelContext):
+        pass
+
+    # Exit a parse tree produced by toy_asmParser#opLabel.
+    def exitOpLabel(self, ctx:toy_asmParser.OpLabelContext):
+        pass
+
+
     # Enter a parse tree produced by toy_asmParser#oneOp.
     def enterOneOp(self, ctx:toy_asmParser.OneOpContext):
         pass
@@ -44,12 +53,21 @@ class toy_asmListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by toy_asmParser#mem.
-    def enterMem(self, ctx:toy_asmParser.MemContext):
+    # Enter a parse tree produced by toy_asmParser#num.
+    def enterNum(self, ctx:toy_asmParser.NumContext):
         pass
 
-    # Exit a parse tree produced by toy_asmParser#mem.
-    def exitMem(self, ctx:toy_asmParser.MemContext):
+    # Exit a parse tree produced by toy_asmParser#num.
+    def exitNum(self, ctx:toy_asmParser.NumContext):
+        pass
+
+
+    # Enter a parse tree produced by toy_asmParser#reg.
+    def enterReg(self, ctx:toy_asmParser.RegContext):
+        pass
+
+    # Exit a parse tree produced by toy_asmParser#reg.
+    def exitReg(self, ctx:toy_asmParser.RegContext):
         pass
 
 
@@ -62,12 +80,12 @@ class toy_asmListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by toy_asmParser#num.
-    def enterNum(self, ctx:toy_asmParser.NumContext):
+    # Enter a parse tree produced by toy_asmParser#mem.
+    def enterMem(self, ctx:toy_asmParser.MemContext):
         pass
 
-    # Exit a parse tree produced by toy_asmParser#num.
-    def exitNum(self, ctx:toy_asmParser.NumContext):
+    # Exit a parse tree produced by toy_asmParser#mem.
+    def exitMem(self, ctx:toy_asmParser.MemContext):
         pass
 
 
@@ -152,57 +170,21 @@ class toy_asmListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by toy_asmParser#push.
-    def enterPush(self, ctx:toy_asmParser.PushContext):
+    # Enter a parse tree produced by toy_asmParser#push_op.
+    def enterPush_op(self, ctx:toy_asmParser.Push_opContext):
         pass
 
-    # Exit a parse tree produced by toy_asmParser#push.
-    def exitPush(self, ctx:toy_asmParser.PushContext):
-        pass
-
-
-    # Enter a parse tree produced by toy_asmParser#pop.
-    def enterPop(self, ctx:toy_asmParser.PopContext):
-        pass
-
-    # Exit a parse tree produced by toy_asmParser#pop.
-    def exitPop(self, ctx:toy_asmParser.PopContext):
+    # Exit a parse tree produced by toy_asmParser#push_op.
+    def exitPush_op(self, ctx:toy_asmParser.Push_opContext):
         pass
 
 
-    # Enter a parse tree produced by toy_asmParser#pushf.
-    def enterPushf(self, ctx:toy_asmParser.PushfContext):
+    # Enter a parse tree produced by toy_asmParser#pop_op.
+    def enterPop_op(self, ctx:toy_asmParser.Pop_opContext):
         pass
 
-    # Exit a parse tree produced by toy_asmParser#pushf.
-    def exitPushf(self, ctx:toy_asmParser.PushfContext):
-        pass
-
-
-    # Enter a parse tree produced by toy_asmParser#popf.
-    def enterPopf(self, ctx:toy_asmParser.PopfContext):
-        pass
-
-    # Exit a parse tree produced by toy_asmParser#popf.
-    def exitPopf(self, ctx:toy_asmParser.PopfContext):
-        pass
-
-
-    # Enter a parse tree produced by toy_asmParser#pusha.
-    def enterPusha(self, ctx:toy_asmParser.PushaContext):
-        pass
-
-    # Exit a parse tree produced by toy_asmParser#pusha.
-    def exitPusha(self, ctx:toy_asmParser.PushaContext):
-        pass
-
-
-    # Enter a parse tree produced by toy_asmParser#popa.
-    def enterPopa(self, ctx:toy_asmParser.PopaContext):
-        pass
-
-    # Exit a parse tree produced by toy_asmParser#popa.
-    def exitPopa(self, ctx:toy_asmParser.PopaContext):
+    # Exit a parse tree produced by toy_asmParser#pop_op.
+    def exitPop_op(self, ctx:toy_asmParser.Pop_opContext):
         pass
 
 
@@ -230,6 +212,24 @@ class toy_asmListener(ParseTreeListener):
 
     # Exit a parse tree produced by toy_asmParser#rand.
     def exitRand(self, ctx:toy_asmParser.RandContext):
+        pass
+
+
+    # Enter a parse tree produced by toy_asmParser#dump.
+    def enterDump(self, ctx:toy_asmParser.DumpContext):
+        pass
+
+    # Exit a parse tree produced by toy_asmParser#dump.
+    def exitDump(self, ctx:toy_asmParser.DumpContext):
+        pass
+
+
+    # Enter a parse tree produced by toy_asmParser#pause.
+    def enterPause(self, ctx:toy_asmParser.PauseContext):
+        pass
+
+    # Exit a parse tree produced by toy_asmParser#pause.
+    def exitPause(self, ctx:toy_asmParser.PauseContext):
         pass
 
 

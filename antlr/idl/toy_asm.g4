@@ -9,7 +9,11 @@ comment
     ;
 
 oneLineCode
-    : (Addr ':')? oneOp '\n'
+    : opLabel? oneOp '\n'
+    ;
+
+opLabel
+    : (Label ':' '\n'? )
     ;
 
 oneOp
@@ -22,24 +26,13 @@ oneOp
     | jump
     | call
     | ret
-    | push
-    | pop
-    | pushf
-    | popf
-    | pusha
-    | popa
+    | push_op
+    | pop_op
     | input
     | print
     | rand
-    ;
-
-mem
-    : '[' Reg ']'
-    | '[' Reg offset ']'
-    ;
-
-offset
-    : ('+'|'-')INT
+    | dump
+    | pause
     ;
 
 num
@@ -47,116 +40,120 @@ num
     | '-' INT
     ;
 
+reg
+    : 'ax' | 'bx' | 'cx' | 'dx' | 'bp' | 'sp'
+    ;
+
+offset
+    : ('+'|'-')INT
+    ;
+
+mem
+    : '[' reg offset? ']'
+    ;
+
 move
-    : 'mov' Reg ',' num
-    | 'mov' Reg ',' Reg
-    | 'mov' Reg ',' mem
+    : 'mov' reg ',' num
+    | 'mov' reg ',' reg
+    | 'mov' reg ',' mem
     | 'mov' mem ',' num
-    | 'mov' mem ',' Reg
+    | 'mov' mem ',' reg
     ;
 
 add
-    : 'add' Reg ',' num
-    | 'add' Reg ',' Reg
-    | 'add' Reg ',' mem
+    : 'add' reg ',' num
+    | 'add' reg ',' reg
+    | 'add' reg ',' mem
     ;
 
 sub
-    : 'sub' Reg ',' num
-    | 'sub' Reg ',' Reg
-    | 'sub' Reg ',' mem
+    : 'sub' reg ',' num
+    | 'sub' reg ',' reg
+    | 'sub' reg ',' mem
     ;
 
 mul
     : 'mul' num
-    | 'mul' Reg
+    | 'mul' reg
     | 'mul' mem
     ;
 
 div
     : 'div' num
-    | 'div' Reg
+    | 'div' reg
     | 'div' mem
     ;
 
 cmp
-    : 'cmp' Reg ',' num
-    | 'cmp' Reg ',' Reg
-    | 'cmp' Reg ',' mem
+    : 'cmp' reg ',' num
+    | 'cmp' reg ',' reg
+    | 'cmp' reg ',' mem
     ;
 
 jump
-    : 'jmp' Addr
-    | 'je' Addr
-    | 'jne' Addr
-    | 'jg' Addr
-    | 'jge' Addr
-    | 'jl' Addr
-    | 'jle' Addr
+    : 'jmp' Label
+    | 'je' Label
+    | 'jne' Label
+    | 'jg' Label
+    | 'jge' Label
+    | 'jl' Label
+    | 'jle' Label
     ;
 
 call
-    : 'call' Addr
+    : 'call' Label
     ;
 
 ret
     : 'ret'
     ;
 
-push
+push_op
     : 'push' num
-    | 'push' Reg
+    | 'push' reg
+    | 'pushf'
+    | 'pusha'
     ;
 
-pop
-    : 'pop' Reg
-    ;
-
-pushf
-    : 'pushf'
-    ;
-
-popf
-    : 'popf'
-    ;
-
-pusha
-    : 'pusha'
-    ;
-
-popa
-    : 'popa'
+pop_op
+    : 'pop' reg
+    | 'popf'
+    | 'popa'
     ;
 
 input
-    : 'input' Reg
+    : 'input' reg
     | 'input' mem
     ;
 
 print
     : 'print' num
-    | 'print' Reg
+    | 'print' reg
     | 'print' mem
     ;
 
 rand
-    : 'rand' Reg
+    : 'rand' reg
     | 'rand' mem
+    ;
+
+dump
+    : 'dump' reg ',' INT
+    ;
+
+pause
+    : 'pause'
     ;
 
 Comment
     : '//' ~[\n]* '\n'
     ;
 
-Reg
-    : 'ax' | 'bx' | 'cx' | 'dx' | 'bp' | 'sp'
-    ;
-
 INT
     : [0-9]+
     ;
 
-Addr
+Label
     : [a-z] ([a-z0-9]|'_')*
     ;
 
