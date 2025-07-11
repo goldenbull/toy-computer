@@ -5,11 +5,11 @@ program
     ;
 
 comment
-    : (Comment)*
+    : (Comment)+
     ;
 
 oneLineCode
-    : (Addr ':')? oneOp
+    : (Addr ':')? oneOp '\n'
     ;
 
 oneOp
@@ -95,9 +95,6 @@ jump
     | 'jle' Addr
     ;
 
-Addr
-    : [a-z] ([a-z0-9]|'_')*
-
 call
     : 'call' Addr
     ;
@@ -137,7 +134,7 @@ input
     ;
 
 print
-    ：'print' num
+    : 'print' num
     | 'print' Reg
     | 'print' mem
     ;
@@ -159,3 +156,10 @@ INT
     : [0-9]+
     ;
 
+Addr
+    : [a-z] ([a-z0-9]|'_')*
+    ;
+
+WS
+    : [ \r\t]+ -> skip
+    ;
