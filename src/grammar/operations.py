@@ -29,11 +29,11 @@ class Op(ABC):
     def execute(self):
         raise NotImplementedError("由子类实现")
 
-    def header(self):
+    def to_str(self):
         if self.label:
-            return f"{self.label}:\n<{self.addr}>"
+            return f"{self.label}: <{self.addr}> {self.__repr__()}"
         else:
-            return f"<{self.addr}>"
+            return f"<{self.addr}> {self.__repr__()}"
 
     def get_value(self, p):
         if isinstance(p, int):
@@ -86,7 +86,7 @@ class Move(Op):
         self.p2 = p2
 
     def __repr__(self):
-        return f"{self.header()} mov {self.p1}, {self.p2}"
+        return f"mov {self.p1}, {self.p2}"
 
     def execute(self):
         try:
@@ -109,13 +109,14 @@ class Add(Op):
         self.p2 = p2
 
     def __repr__(self):
-        return f"{self.header()} add {self.p1}, {self.p2}"
+        return f"add {self.p1}, {self.p2}"
 
     def execute(self):
         try:
             v1 = self.c.get_reg_value(self.p1.reg)
             v2 = self.get_value(self.p2)
             self.c.set_reg_value(self.p1.reg, v1 + v2)
+
             self.c.ip += 1
         except IndexError as e:
             self.c.state = ComputerState.Error
@@ -128,13 +129,14 @@ class Sub(Op):
         self.p2 = p2
 
     def __repr__(self):
-        return f"{self.header()} sub {self.p1}, {self.p2}"
+        return f"sub {self.p1}, {self.p2}"
 
     def execute(self):
         try:
             v1 = self.c.get_reg_value(self.p1.reg)
             v2 = self.get_value(self.p2)
             self.c.set_reg_value(self.p1.reg, v1 - v2)
+
             self.c.ip += 1
         except IndexError as e:
             self.c.state = ComputerState.Error
@@ -146,13 +148,14 @@ class Mul(Op):
         self.p1 = p1
 
     def __repr__(self):
-        return f"{self.header()} mul {self.p1}"
+        return f"mul {self.p1}"
 
     def execute(self):
         try:
             v1 = self.c.get_reg_value("ax")
             v2 = self.get_value(self.p1)
             self.c.set_reg_value("ax", v1 * v2)
+
             self.c.ip += 1
         except IndexError as e:
             self.c.state = ComputerState.Error
@@ -164,7 +167,7 @@ class Div(Op):
         self.p1 = p1
 
     def __repr__(self):
-        return f"{self.header()} div {self.p1}"
+        return f"div {self.p1}"
 
     def execute(self):
         try:
@@ -178,6 +181,7 @@ class Div(Op):
             r2 = v1 - v2 * r1
             self.c.set_reg_value("ax", r1)
             self.c.set_reg_value("dx", r2)
+
             self.c.ip += 1
         except IndexError as e:
             self.c.state = ComputerState.Error
@@ -193,7 +197,7 @@ class Cmp(Op):
         self.p2 = p2
 
     def __repr__(self):
-        return f"{self.header()} cmp {self.p1}, {self.p2}"
+        return f"cmp {self.p1}, {self.p2}"
 
     def execute(self):
         try:
@@ -219,9 +223,9 @@ class Jump(Op):
     def __repr__(self):
         try:
             target_addr = self.c.labels_tbl[self.target]
-            return f"{self.header()} {self.action} {self.target} <{target_addr}>"
+            return f"{self.action} {self.target} <{target_addr}>"
         except KeyError as e:
-            return f"{self.header()} {self.action} {self.target} <ERROR>"
+            return f"{self.action} {self.target} <ERROR>"
 
     def execute(self):
         try:
@@ -250,15 +254,15 @@ class Call(Op):
     def __repr__(self):
         try:
             target_addr = self.c.labels_tbl[self.target]
-            return f"{self.header()} call {self.target} <{target_addr}>"
+            return f"call {self.target} <{target_addr}>"
         except KeyError as e:
-            return f"{self.header()} call {self.target} <ERROR>"
+            return f"call {self.target} <ERROR>"
 
     def execute(self):
         try:
             # ip入栈，sp+1，jmp到函数入口
             target_addr = self.c.labels_tbl[self.target]
-            self.push_stack(self.c.get_reg_value("ip"))
+            self.push_stack(self.c.ip + 1)  # 返回的位置应该是下一条指令
             self.c.ip = target_addr
         except KeyError as e:
             self.c.state = ComputerState.Error
@@ -267,7 +271,7 @@ class Call(Op):
 
 class Ret(Op):
     def __repr__(self):
-        return f"{self.header()} ret"  # TODO 如何显示来时的地址？执行前后sp会变化
+        return f"ret"  # TODO 如何显示来时的地址？执行前后sp会变化
 
     def execute(self):
         try:
@@ -285,9 +289,9 @@ class Push(Op):
 
     def __repr__(self):
         if self.p1 is None:
-            return f"{self.header()} {self.action}"
+            return f"{self.action}"
         else:
-            return f"{self.header()} {self.action} {self.p1}"
+            return f"{self.action} {self.p1}"
 
     def execute(self):
         # 分情况处理
@@ -317,9 +321,9 @@ class Pop(Op):
 
     def __repr__(self):
         if self.p1 is None:
-            return f"{self.header()} {self.action}"
+            return f"{self.action}"
         else:
-            return f"{self.header()} {self.action} {self.p1}"
+            return f"{self.action} {self.p1}"
 
     def execute(self):
         # 分情况处理
@@ -347,7 +351,7 @@ class Input(Op):
         self.p1 = p1
 
     def __repr__(self):
-        return f"{self.header()} input {self.p1}"
+        return f"input {self.p1}"
 
     def execute(self):
         try:
@@ -373,7 +377,7 @@ class Print(Op):
         self.p1 = p1
 
     def __repr__(self):
-        return f"{self.header()} print {self.p1}"
+        return f"print {self.p1}"
 
     def execute(self):
         try:
@@ -390,7 +394,7 @@ class Rand(Op):
         self.p1 = p1
 
     def __repr__(self):
-        return f"{self.header()} rand {self.p1}"
+        return f"rand {self.p1}"
 
     def execute(self):
         try:
@@ -414,14 +418,16 @@ class Dump(Op):
 
     def __repr__(self):
         if self.reg is None:
-            return f"{self.header()} dump"
+            return f"dump"
         else:
-            return f"{self.header()} dump {self.reg}, {self.n}"
+            return f"dump {self.reg}, {self.n}"
 
     def execute(self):
         print(f"======== {self.c.state} ========")
         if self.c.state == ComputerState.Error:
             print(self.c.errmsg)
+
+        self.c.ip += 1
 
         # 通用寄存器
         print(f"ax={self.c.ax} bx={self.c.bx} cx={self.c.cx} dx={self.c.dx} flg={self.c.flg}")
@@ -432,11 +438,11 @@ class Dump(Op):
         for i in range(-5, 6):
             idx = self.c.ip + i
             if 0 <= idx < len(self.c.ops):
-                print(self.c.ops[idx], end="")
-                if i == 0:
-                    print(" <===")
-                else:
-                    print()
+                _op = self.c.ops[idx]
+                if _op.label != "":
+                    print(_op.label + ":")
+                print("==> " if i == 0 else "    ", end="")
+                print(f"<{_op.addr}> {_op}")
 
         # 显示内存，每行显示16个数
         if self.reg is not None:
@@ -460,12 +466,29 @@ class Dump(Op):
                     print(f"{self.c.mem[idx]:8d}", end="\n" if i % 16 == 15 else " ")
             print()
 
-        self.c.ip += 1
-
 
 class Pause(Op):
     def __repr__(self):
-        return f"{self.header()} pause"
+        return f"pause"
 
     def execute(self):
+        self.c.ip += 1
         input("press enter to continue...")
+        # import msvcrt
+        # msvcrt.getch()
+
+
+class Halt(Op):
+    def __repr__(self):
+        return f"halt"
+
+    def execute(self):
+        self.c.state = ComputerState.Finished
+
+
+class Nop(Op):
+    def __repr__(self):
+        return f"nop"
+
+    def execute(self):
+        self.c.ip += 1

@@ -1,18 +1,18 @@
 grammar toy_asm;
 
 program
-    : (Comment|oneLineCode)+
+    : (Comment|opWithLabel)+
     ;
 
-oneLineCode
-    : opLabel? oneOp '\n'
+opWithLabel
+    : opLabel? op
     ;
 
 opLabel
-    : Label ':' '\n'?
+    : Label ':'
     ;
 
-oneOp
+op
     : move
     | add
     | sub
@@ -29,6 +29,8 @@ oneOp
     | rand
     | dump
     | pause
+    | halt
+    | nop
     ;
 
 num
@@ -142,18 +144,15 @@ pause
     : 'pause'
     ;
 
-Comment
-    : '//' ~[\n]* '\n'
+halt
+    : 'halt'
     ;
 
-INT
-    : [0-9]+
+nop
+    : 'nop'
     ;
 
-Label
-    : ([a-z]|'_') ([a-z0-9]|'_')*
-    ;
-
-WS
-    : [ \t\r\n]+ -> skip
-    ;
+Comment : '//' ~[\n]* '\n' ;
+INT : [0-9]+ ;
+Label : ([a-z]|'_') ([a-z0-9]|'_')* ;
+WS : [ \t\r\n]+ -> skip;

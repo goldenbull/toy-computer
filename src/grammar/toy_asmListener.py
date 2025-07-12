@@ -17,12 +17,12 @@ class toy_asmListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by toy_asmParser#oneLineCode.
-    def enterOneLineCode(self, ctx:toy_asmParser.OneLineCodeContext):
+    # Enter a parse tree produced by toy_asmParser#opWithLabel.
+    def enterOpWithLabel(self, ctx:toy_asmParser.OpWithLabelContext):
         pass
 
-    # Exit a parse tree produced by toy_asmParser#oneLineCode.
-    def exitOneLineCode(self, ctx:toy_asmParser.OneLineCodeContext):
+    # Exit a parse tree produced by toy_asmParser#opWithLabel.
+    def exitOpWithLabel(self, ctx:toy_asmParser.OpWithLabelContext):
         pass
 
 
@@ -35,12 +35,12 @@ class toy_asmListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by toy_asmParser#oneOp.
-    def enterOneOp(self, ctx:toy_asmParser.OneOpContext):
+    # Enter a parse tree produced by toy_asmParser#op.
+    def enterOp(self, ctx:toy_asmParser.OpContext):
         pass
 
-    # Exit a parse tree produced by toy_asmParser#oneOp.
-    def exitOneOp(self, ctx:toy_asmParser.OneOpContext):
+    # Exit a parse tree produced by toy_asmParser#op.
+    def exitOp(self, ctx:toy_asmParser.OpContext):
         pass
 
 
@@ -221,6 +221,24 @@ class toy_asmListener(ParseTreeListener):
 
     # Exit a parse tree produced by toy_asmParser#pause.
     def exitPause(self, ctx:toy_asmParser.PauseContext):
+        pass
+
+
+    # Enter a parse tree produced by toy_asmParser#halt.
+    def enterHalt(self, ctx:toy_asmParser.HaltContext):
+        pass
+
+    # Exit a parse tree produced by toy_asmParser#halt.
+    def exitHalt(self, ctx:toy_asmParser.HaltContext):
+        pass
+
+
+    # Enter a parse tree produced by toy_asmParser#nop.
+    def enterNop(self, ctx:toy_asmParser.NopContext):
+        pass
+
+    # Exit a parse tree produced by toy_asmParser#nop.
+    def exitNop(self, ctx:toy_asmParser.NopContext):
         pass
 
 

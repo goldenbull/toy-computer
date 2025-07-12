@@ -22,8 +22,8 @@ class Computer:
         self.bp = rnd.randint(-2 ** 30, 2 ** 30)
         self.sp = self.MEM_SIZE // 2  # 内存的后一半留给栈
 
-        # 内存，填满随机值
-        self.mem = rnd.randint(-2 ** 30, 2 ** 30, self.MEM_SIZE)
+        # 内存，栈空间会被填充为0xCC，堆空间填充0xCD，向烫烫烫烫和屯屯屯屯致敬
+        self.mem = [0xcdcdcdcd] * (self.MEM_SIZE // 2) + [0xcccccccc] * (self.MEM_SIZE // 2)
 
         # 为加载的指令生成序号
         self.ops = ops
@@ -102,7 +102,7 @@ class Computer:
                 self.state = ComputerState.Error
                 self.errmsg = f"next ip={next_ip} 异常终止"
                 break
-            if next_ip >= len(self.ops):
+            if next_ip >= len(self.ops) or self.state == ComputerState.Finished:
                 self.state = ComputerState.Finished
                 break
 

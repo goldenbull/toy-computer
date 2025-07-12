@@ -14,8 +14,8 @@ class toy_asmVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by toy_asmParser#oneLineCode.
-    def visitOneLineCode(self, ctx:toy_asmParser.OneLineCodeContext):
+    # Visit a parse tree produced by toy_asmParser#opWithLabel.
+    def visitOpWithLabel(self, ctx:toy_asmParser.OpWithLabelContext):
         return self.visitChildren(ctx)
 
 
@@ -24,8 +24,8 @@ class toy_asmVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by toy_asmParser#oneOp.
-    def visitOneOp(self, ctx:toy_asmParser.OneOpContext):
+    # Visit a parse tree produced by toy_asmParser#op.
+    def visitOp(self, ctx:toy_asmParser.OpContext):
         return self.visitChildren(ctx)
 
 
@@ -126,6 +126,16 @@ class toy_asmVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by toy_asmParser#pause.
     def visitPause(self, ctx:toy_asmParser.PauseContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by toy_asmParser#halt.
+    def visitHalt(self, ctx:toy_asmParser.HaltContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by toy_asmParser#nop.
+    def visitNop(self, ctx:toy_asmParser.NopContext):
         return self.visitChildren(ctx)
 
 

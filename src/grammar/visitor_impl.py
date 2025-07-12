@@ -97,12 +97,18 @@ class VisitorImpl(toy_asmVisitor):
     def visitPause(self, ctx: toy_asmParser.PauseContext):
         return Pause()
 
+    def visitHalt(self, ctx: toy_asmParser.HaltContext):
+        return Halt()
+
+    def visitNop(self, ctx:toy_asmParser.NopContext):
+        return Nop()
+
     def visitRand(self, ctx: toy_asmParser.RandContext):
         p1 = self.visit(ctx.children[1])
         return Rand(p1)
 
-    def visitOneLineCode(self, ctx: toy_asmParser.OneLineCodeContext):
-        if len(ctx.children) == 3:
+    def visitOpWithLabel(self, ctx: toy_asmParser.OpWithLabelContext):
+        if len(ctx.children) == 2:
             label = ctx.children[0].getText().strip()[:-1]  # 去掉label的冒号
             op = self.visit(ctx.children[1])
         else:
