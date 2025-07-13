@@ -11,19 +11,19 @@ class Computer:
 
     def __init__(self, ops: list["Op"]):
         # 通用寄存器
-        self.ax = rnd.randint(-2 ** 30, 2 ** 30)
-        self.bx = rnd.randint(-2 ** 30, 2 ** 30)
-        self.cx = rnd.randint(-2 ** 30, 2 ** 30)
-        self.dx = rnd.randint(-2 ** 30, 2 ** 30)
-        self.flg = rnd.randint(-1, 1)
+        self.ax = 11111111
+        self.bx = 22222222
+        self.cx = 33333333
+        self.dx = 44444444
+        self.flg = 0
 
         # 指令寄存器和栈寄存器
         self.ip = 0
-        self.bp = rnd.randint(-2 ** 30, 2 ** 30)
+        self.bp = 55555555
         self.sp = self.MEM_SIZE // 2  # 内存的后一半留给栈
 
-        # 内存，栈空间会被填充为0xCC，堆空间填充0xCD，向烫烫烫烫和屯屯屯屯致敬
-        self.mem = [0xcdcdcdcd] * (self.MEM_SIZE // 2) + [0xcccccccc] * (self.MEM_SIZE // 2)
+        # 内存
+        self.mem = [66666666] * (self.MEM_SIZE // 2) + [88888888] * (self.MEM_SIZE // 2)
 
         # 为加载的指令生成序号
         self.ops = ops
