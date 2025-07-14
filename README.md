@@ -160,6 +160,7 @@ jmp [sp]
   - push r1     // r1只能是通用寄存器ax-dx
 - pop
   - pop r1      // 等价于先执行 sub sp, 1 再执行 mov r1, [sp]
+  - pop         // 只执行 sub sp, 1
 - pushf         // flg寄存器压入栈
 - popf
 

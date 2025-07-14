@@ -114,7 +114,8 @@ push_op
     ;
 
 pop_op
-    : 'pop' reg
+    : 'pop'
+    | 'pop' reg
     | 'popf'
     | 'popa'
     ;

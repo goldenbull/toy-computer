@@ -9,7 +9,7 @@ from src.grammar.visitor_impl import VisitorImpl
 
 if __name__ == '__main__':
     try:
-        fname = "tests/1.asm"
+        fname = "tests/prime.asm"
         txt = open(fname, "rt", encoding="utf-8").read() + '\n'  # 确保最后一行有回车
         stm = InputStream(txt)
         lexer = toy_asmLexer(stm)

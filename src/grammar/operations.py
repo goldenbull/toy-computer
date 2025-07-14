@@ -330,7 +330,8 @@ class Pop(Op):
         try:
             if self.action == "pop":
                 v = self.pop_stack()
-                self.c.set_reg_value(self.p1.reg, v)
+                if self.p1 is not None:
+                    self.c.set_reg_value(self.p1.reg, v)
             elif self.action == "popf":
                 v = self.pop_stack()
                 self.c.set_reg_value("flg", v)
