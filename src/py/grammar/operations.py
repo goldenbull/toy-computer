@@ -36,7 +36,9 @@ class Op(ABC):
             return f"<{self.addr}> {self.__repr__()}"
 
     def get_value(self, p):
-        if isinstance(p, int):
+        if p is None:
+            v = ""
+        elif isinstance(p, int) or isinstance(p, str):
             v = p
         else:
             v = p.value(self.c)
@@ -374,16 +376,17 @@ class Input(Op):
 
 
 class Print(Op):
-    def __init__(self, p1):
+    def __init__(self, act, p1):
+        self.act = act
         self.p1 = p1
 
     def __repr__(self):
-        return f"print {self.p1}"
+        return f"{self.act} {self.p1}"
 
     def execute(self):
         try:
             v = self.get_value(self.p1)
-            print(v)
+            print(v, end="" if self.act == "print" else "\n")
             self.c.ip += 1
         except IndexError as e:
             self.c.state = ComputerState.Error

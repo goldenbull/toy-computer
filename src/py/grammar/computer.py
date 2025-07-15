@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import numpy.random as rnd
-from grammar import ComputerState
-from src.grammar.operations import *
+from . import ComputerState
 
 
 class Computer:
     # 内存总的大小
     MEM_SIZE = 1024
 
-    def __init__(self, ops: list["Op"]):
+    def __init__(self, ops: list):
         # 通用寄存器
         self.ax = 11111111
         self.bx = 22222222

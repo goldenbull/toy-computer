@@ -1,3 +1,6 @@
+    dump
+    println "hello \t world\n==new line=="
+    pause
     jmp _main
 
 f1: nop

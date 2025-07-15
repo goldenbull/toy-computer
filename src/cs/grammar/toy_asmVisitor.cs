@@ -80,6 +80,12 @@ public interface Itoy_asmVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitMem([NotNull] toy_asmParser.MemContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="toy_asmParser.str"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitStr([NotNull] toy_asmParser.StrContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="toy_asmParser.move"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

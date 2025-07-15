@@ -48,10 +48,16 @@
 - input：用户输入一个数字，格式错误则直接死机
   - input r1
   - input [r1+N]
-- print：输出数字到屏幕上
+- print：输出数字到屏幕上，作为一个伪指令，为方便教学，允许使用C风格的字符串
   - print N
   - print r1
   - print [r1+N]
+  - print STR
+  - println N
+  - println r1
+  - println [r1+N]
+  - println STR
+  - println    // 等价于print "\n"
 
 需要完成的任务：
 1. 从1加到3，输出结果

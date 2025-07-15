@@ -1,4 +1,4 @@
-# Generated from toy_asm.g4 by ANTLR 4.13.1
+# Generated from toy_asm.g4 by ANTLR 4.13.2
 from antlr4 import *
 if "." in __name__:
     from .toy_asmParser import toy_asmParser
@@ -46,6 +46,11 @@ class toy_asmVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by toy_asmParser#mem.
     def visitMem(self, ctx:toy_asmParser.MemContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by toy_asmParser#str.
+    def visitStr(self, ctx:toy_asmParser.StrContext):
         return self.visitChildren(ctx)
 
 

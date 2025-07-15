@@ -48,10 +48,13 @@ _main_loop1:
     cmp bx, 1
     jne _skip
     print ax
+    print " "
 _skip:
     add ax, 1
     cmp ax, 100
     je _finish
     jmp _main_loop1
 _finish:
-    nop
+    println
+    print "bye!"
+    println
