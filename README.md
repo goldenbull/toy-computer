@@ -261,3 +261,10 @@ finished:
 ## 指令一览
 
 以 [toy_asm.g4](antlr/idl/toy_asm.g4) 中的 antlr 描述为准
+
+## release
+
+为方便使用，可以用 pyinstaller 打包
+```
+D:\src\toy-computer\src\py>pyinstaller -F main.py
+```
