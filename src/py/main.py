@@ -8,12 +8,15 @@ from grammar.toy_asmParser import toy_asmParser
 from grammar.visitor_impl import VisitorImpl
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("filename")
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("filename")
+    # args = parser.parse_args()
+    # fname = args.filename
+    fname = "src/tests/1-2.asm"
 
     try:
-        txt = open(args.filename, "rt", encoding="utf-8").read()
+        txt = open(fname, "rt", encoding="utf-8").read()
+        # txt = open(args.filename, "rt", encoding="utf-8").read()
         stm = InputStream(txt)
         lexer = toy_asmLexer(stm)
         stream = CommonTokenStream(lexer)

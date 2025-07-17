@@ -1,7 +1,7 @@
 grammar toy_asm;
 
 program
-    : (Comment|opWithLabel)+
+    : (Comment|opWithLabel)+ EOF
     ;
 
 opWithLabel

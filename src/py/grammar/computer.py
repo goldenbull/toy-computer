@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+from enum import Enum
 
-import numpy.random as rnd
-from . import ComputerState
-
+class ComputerState(Enum):
+    Running = 0
+    Finished = 1
+    Error = 2
 
 class Computer:
     # 内存总的大小
