@@ -225,7 +225,7 @@ class Jump(Op):
     def __repr__(self):
         try:
             target_addr = self.c.labels_tbl[self.target]
-            return f"{self.action} {self.target} <{target_addr}>"
+            return f"{self.action} {self.target} ({target_addr-self.addr:+d})"
         except KeyError as e:
             return f"{self.action} {self.target} <ERROR>"
 
@@ -416,15 +416,15 @@ class Rand(Op):
 
 
 class Dump(Op):
-    def __init__(self, reg: Reg = None, n: int = None):
-        self.reg = reg
+    def __init__(self, p1 = None, n: int = None):
+        self.p1 = p1
         self.n = n
 
     def __repr__(self):
-        if self.reg is None:
+        if self.p1 is None:
             return f"dump"
         else:
-            return f"dump {self.reg}, {self.n}"
+            return f"dump {self.p1}, {self.n}"
 
     def execute(self):
         print(f"======== {self.c.state} ========")
@@ -449,17 +449,17 @@ class Dump(Op):
                 print(f"<{_op.addr}> {_op}")
 
         # 显示内存，每行显示16个数
-        if self.reg is not None:
+        if self.p1 is not None:
             print("---- memory ----")
             if self.n < 0:
                 self.c.state = ComputerState.Error
                 self.c.errmsg = f"{self} <== dump的参数不能小于0"
                 return
 
-            idx0 = self.c.get_reg_value(self.reg.reg)
+            idx0 = self.get_value(self.p1)
             if idx0 < 0 or idx0 >= self.c.MEM_SIZE:
                 self.c.state = ComputerState.Error
-                self.c.errmsg = f"{self.reg}={idx0} 超出内存范围"
+                self.c.errmsg = f"{self.p1}={idx0} 超出内存范围"
                 return
 
             for i in range(0, self.n):

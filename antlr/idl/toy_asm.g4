@@ -149,6 +149,7 @@ rand
 dump
     : 'dump'
     | 'dump' reg ',' INT
+    | 'dump' num ',' INT
     ;
 
 pause
