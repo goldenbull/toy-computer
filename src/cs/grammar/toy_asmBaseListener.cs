@@ -48,18 +48,6 @@ public partial class toy_asmBaseListener : Itoy_asmListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitProgram([NotNull] toy_asmParser.ProgramContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="toy_asmParser.opWithLabel"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterOpWithLabel([NotNull] toy_asmParser.OpWithLabelContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="toy_asmParser.opWithLabel"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitOpWithLabel([NotNull] toy_asmParser.OpWithLabelContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="toy_asmParser.opLabel"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

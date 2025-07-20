@@ -41,16 +41,6 @@ public interface Itoy_asmListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitProgram([NotNull] toy_asmParser.ProgramContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="toy_asmParser.opWithLabel"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterOpWithLabel([NotNull] toy_asmParser.OpWithLabelContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="toy_asmParser.opWithLabel"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitOpWithLabel([NotNull] toy_asmParser.OpWithLabelContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="toy_asmParser.opLabel"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

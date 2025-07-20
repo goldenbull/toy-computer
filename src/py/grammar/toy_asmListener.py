@@ -17,15 +17,6 @@ class toy_asmListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by toy_asmParser#opWithLabel.
-    def enterOpWithLabel(self, ctx:toy_asmParser.OpWithLabelContext):
-        pass
-
-    # Exit a parse tree produced by toy_asmParser#opWithLabel.
-    def exitOpWithLabel(self, ctx:toy_asmParser.OpWithLabelContext):
-        pass
-
-
     # Enter a parse tree produced by toy_asmParser#opLabel.
     def enterOpLabel(self, ctx:toy_asmParser.OpLabelContext):
         pass

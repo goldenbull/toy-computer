@@ -2,7 +2,8 @@
 
 import argparse
 from antlr4 import *
-from grammar.computer import Computer
+
+from computer.computer import Computer
 from grammar.toy_asmLexer import toy_asmLexer
 from grammar.toy_asmParser import toy_asmParser
 from grammar.visitor_impl import VisitorImpl
@@ -28,7 +29,7 @@ if __name__ == '__main__':
         visitor.visit(parser.program())
 
         # 启动计算机，开始逐行执行
-        computer = Computer(visitor.ops, args.step)
+        computer = Computer(visitor.ops_and_labels, args.step)
         computer.run()
     except Exception as ex:
         print(ex)

@@ -2,11 +2,11 @@
 
 from .toy_asmParser import toy_asmParser
 from .toy_asmVisitor import toy_asmVisitor
-from .operations import *
+from computer.operations import *
 
 
 class VisitorImpl(toy_asmVisitor):
-    ops: list[Op] = []
+    ops_and_labels: list[Op | str] = []
 
     def visitNum(self, ctx: toy_asmParser.NumContext):
         return int(ctx.getText())
@@ -112,14 +112,12 @@ class VisitorImpl(toy_asmVisitor):
         p1 = self.visit(ctx.children[1])
         return Rand(p1)
 
-    def visitOpWithLabel(self, ctx: toy_asmParser.OpWithLabelContext):
-        if len(ctx.children) == 2:
-            label = ctx.children[0].getText().strip()[:-1]  # 去掉label的冒号
-            op = self.visit(ctx.children[1])
-        else:
-            label = ""
-            op = self.visit(ctx.children[0])
+    def visitOpLabel(self, ctx: toy_asmParser.OpLabelContext):
+        label = ctx.children[0].getText().strip()
+        self.ops_and_labels.append(label)
+
+    def visitOp(self, ctx: toy_asmParser.OpContext):
+        op = self.visit(ctx.children[0])
 
         assert isinstance(op, Op)
-        op.label = label
-        self.ops.append(op)
+        self.ops_and_labels.append(op)

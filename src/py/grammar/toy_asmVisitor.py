@@ -14,11 +14,6 @@ class toy_asmVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by toy_asmParser#opWithLabel.
-    def visitOpWithLabel(self, ctx:toy_asmParser.OpWithLabelContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by toy_asmParser#opLabel.
     def visitOpLabel(self, ctx:toy_asmParser.OpLabelContext):
         return self.visitChildren(ctx)

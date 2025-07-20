@@ -38,12 +38,6 @@ public interface Itoy_asmVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitProgram([NotNull] toy_asmParser.ProgramContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="toy_asmParser.opWithLabel"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitOpWithLabel([NotNull] toy_asmParser.OpWithLabelContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="toy_asmParser.opLabel"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

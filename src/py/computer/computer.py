@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
-from enum import Enum
 
-
-class ComputerState(Enum):
-    Running = 0
-    Finished = 1
-    Error = 2
+from . import ComputerState, Op
 
 
 class Computer:
     # 内存总的大小
     MEM_SIZE = 1024
 
-    def __init__(self, ops: list, step_mode: bool):
+    def __init__(self, ops_and_labels: list, step_mode: bool):
         # 通用寄存器
         self.ax = 11111111
         self.bx = 22222222
@@ -29,13 +24,30 @@ class Computer:
         self.mem = [66666666] * (self.MEM_SIZE // 2) + [88888888] * (self.MEM_SIZE // 2)
 
         # 为加载的指令生成序号
-        self.ops = ops
-        for i, op in enumerate(ops):
+        self.ops = [x for x in ops_and_labels if isinstance(x, Op)]
+        for i, op in enumerate(self.ops):
             op.addr = i
             op.c = self
 
+        # 所有label归属到下一条op
+        cur_labels = []
+        for x in ops_and_labels:
+            if isinstance(x, str):
+                cur_labels.append(x)
+            elif isinstance(x, Op):
+                # assign all above labels to this op
+                x.labels = cur_labels
+                cur_labels = []
+            else:
+                raise ValueError("impossible")
+        if len(cur_labels) > 0:
+            raise SyntaxError("最后的label没有对应指令")
+
         # 建立Label和addr的映射表
-        self.labels_tbl = {op.label: op.addr for op in ops if len(op.label) > 0}
+        self.labels_tbl = dict()
+        for op in self.ops:
+            for label in op.labels:
+                self.labels_tbl[label] = op.addr
 
         # 当前状态
         self.state = ComputerState.Running
@@ -145,8 +157,8 @@ class Computer:
             idx = self.ip + i
             if 0 <= idx < len(self.ops):
                 _op = self.ops[idx]
-                if _op.label != "":
-                    print(_op.label + ":")
+                for label in _op.labels:
+                    print(label + ":")
                 print("==> " if i == 0 else "    ", end="")
                 print(f"<{_op.addr}> {_op}")
 
