@@ -151,9 +151,9 @@ class Computer:
         print(f"ax={self.ax:8d} bx={self.bx:8d} cx={self.cx:8d} dx={self.dx:8d} flg={self.flg:8d}")
         print(f"ip={self.ip:8d} bp={self.bp:8d} sp={self.sp:8d}")
 
-        # 当前指令上下文，各显示5条即可
+        # 当前指令上下文，各显示10条即可
         print("---- code context ----")
-        for i in range(-5, 6):
+        for i in range(-10, 11):
             idx = self.ip + i
             if 0 <= idx < len(self.ops):
                 _op = self.ops[idx]

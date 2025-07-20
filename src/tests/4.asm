@@ -1,19 +1,24 @@
-addr1:
-    // comment here
-    mov ax, 0
-    push ax
     jmp main
-addr2:
-addr3:
-    dump 512, 20
+
+f1:
+    dump 512, 32
+    mov ax, [sp-2] // 参数
+    add ax, 1
+    cmp ax, 10
+    jg stop_recursive
+
+    print "working on "
+    print ax
+    print " sp="
+    println sp
+
+    push ax
+    call f1
+    pop
+stop_recursive:
     ret
 
 main:
-    // comment
-    // more comment
-main2:
-    // comment
-    call addr2
-    call addr3
-
-
+    push 0
+    call f1
+    pop

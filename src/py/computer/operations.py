@@ -379,7 +379,6 @@ class Dump(Op):
     def execute(self):
         # 检查参数合法性
         if self.p1 is not None:
-            print("---- memory ----")
             if self.n < 0:
                 self.c.state = ComputerState.Error
                 self.c.errmsg = f"{self} <== dump的参数不能小于0"
