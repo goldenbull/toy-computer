@@ -271,16 +271,6 @@ public interface Itoy_asmListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitDump([NotNull] toy_asmParser.DumpContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="toy_asmParser.pause"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterPause([NotNull] toy_asmParser.PauseContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="toy_asmParser.pause"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitPause([NotNull] toy_asmParser.PauseContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="toy_asmParser.halt"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

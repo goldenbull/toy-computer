@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
 
+
 class ComputerState(Enum):
     Running = 0
     Finished = 1
     Error = 2
 
+
 class Computer:
     # 内存总的大小
     MEM_SIZE = 1024
 
-    def __init__(self, ops: list):
+    def __init__(self, ops: list, step_mode: bool):
         # 通用寄存器
         self.ax = 11111111
         self.bx = 22222222
@@ -38,6 +40,9 @@ class Computer:
         # 当前状态
         self.state = ComputerState.Running
         self.errmsg = ""
+
+        # 逐步执行模式
+        self.step_mode = step_mode
 
     def get_reg_value(self, reg: str):
         if reg == "ax":
@@ -109,6 +114,9 @@ class Computer:
 
             op = self.ops[next_ip]
             op.execute()
+            if self.step_mode:
+                self.dump(512, 64)  # 默认输出栈的前64个位置， TODO：动态改变
+                input("step模式，按回车继续执行下一条指令")
             if self.state == ComputerState.Error:
                 print(f"系统错误: {self.errmsg}")
                 break
@@ -118,3 +126,50 @@ class Computer:
         else:
             print(self.errmsg)
         # TODO: 耗时统计
+
+    def dump(self, mem_idx0, mem_cnt):
+        """
+        显示寄存器和内存的全部状态
+        """
+        print(f"\n=========== {self.state} ============")
+        if self.state == ComputerState.Error:
+            print(self.errmsg)
+
+        # 通用寄存器
+        print(f"ax={self.ax:8d} bx={self.bx:8d} cx={self.cx:8d} dx={self.dx:8d} flg={self.flg:8d}")
+        print(f"ip={self.ip:8d} bp={self.bp:8d} sp={self.sp:8d}")
+
+        # 当前指令上下文，各显示5条即可
+        print("---- code context ----")
+        for i in range(-5, 6):
+            idx = self.ip + i
+            if 0 <= idx < len(self.ops):
+                _op = self.ops[idx]
+                if _op.label != "":
+                    print(_op.label + ":")
+                print("==> " if i == 0 else "    ", end="")
+                print(f"<{_op.addr}> {_op}")
+
+        # 显示内存，每行显示16个数
+        if mem_idx0 is not None:
+            print("---- memory ----")
+            if mem_cnt < 0:
+                self.state = ComputerState.Error
+                self.errmsg = f"{self} <== dump的参数不能小于0"
+                return
+
+            if mem_idx0 < 0 or mem_idx0 >= self.MEM_SIZE:
+                self.state = ComputerState.Error
+                self.errmsg = f"内存起始地址{mem_idx0} 超出范围"
+                return
+
+            for i in range(0, mem_cnt):
+                idx = mem_idx0 + i
+                if i % 16 == 0:
+                    print(f"{idx:4d}: ", end="")
+                if idx < self.MEM_SIZE:
+                    print(f"{self.mem[idx]:8d}", end="\n" if i % 16 == 15 else " ")
+            print(
+
+            )
+        print(f"=========== dump finished ============")

@@ -28,7 +28,6 @@ op
     | print
     | rand
     | dump
-    | pause
     | halt
     | nop
     ;
@@ -150,10 +149,6 @@ dump
     : 'dump'
     | 'dump' reg ',' INT
     | 'dump' num ',' INT
-    ;
-
-pause
-    : 'pause'
     ;
 
 halt

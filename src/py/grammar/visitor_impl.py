@@ -102,9 +102,6 @@ class VisitorImpl(toy_asmVisitor):
         else:
             return Dump()
 
-    def visitPause(self, ctx: toy_asmParser.PauseContext):
-        return Pause()
-
     def visitHalt(self, ctx: toy_asmParser.HaltContext):
         return Halt()
 

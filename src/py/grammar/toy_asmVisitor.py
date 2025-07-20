@@ -129,11 +129,6 @@ class toy_asmVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by toy_asmParser#pause.
-    def visitPause(self, ctx:toy_asmParser.PauseContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by toy_asmParser#halt.
     def visitHalt(self, ctx:toy_asmParser.HaltContext):
         return self.visitChildren(ctx)

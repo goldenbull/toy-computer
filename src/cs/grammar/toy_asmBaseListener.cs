@@ -324,18 +324,6 @@ public partial class toy_asmBaseListener : Itoy_asmListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitDump([NotNull] toy_asmParser.DumpContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="toy_asmParser.pause"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterPause([NotNull] toy_asmParser.PauseContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="toy_asmParser.pause"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitPause([NotNull] toy_asmParser.PauseContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="toy_asmParser.halt"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

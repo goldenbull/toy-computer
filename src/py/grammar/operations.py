@@ -225,7 +225,7 @@ class Jump(Op):
     def __repr__(self):
         try:
             target_addr = self.c.labels_tbl[self.target]
-            return f"{self.action} {self.target} ({target_addr-self.addr:+d})"
+            return f"{self.action} {self.target} ({target_addr - self.addr:+d})"
         except KeyError as e:
             return f"{self.action} {self.target} <ERROR>"
 
@@ -416,7 +416,7 @@ class Rand(Op):
 
 
 class Dump(Op):
-    def __init__(self, p1 = None, n: int = None):
+    def __init__(self, p1=None, n: int = None):
         self.p1 = p1
         self.n = n
 
@@ -427,28 +427,7 @@ class Dump(Op):
             return f"dump {self.p1}, {self.n}"
 
     def execute(self):
-        print(f"======== {self.c.state} ========")
-        if self.c.state == ComputerState.Error:
-            print(self.c.errmsg)
-
-        self.c.ip += 1
-
-        # 通用寄存器
-        print(f"ax={self.c.ax} bx={self.c.bx} cx={self.c.cx} dx={self.c.dx} flg={self.c.flg}")
-        print(f"ip={self.c.ip} bp={self.c.bp} sp={self.c.sp}")
-
-        # 当前指令上下文，各显示5条即可
-        print("---- code context ----")
-        for i in range(-5, 6):
-            idx = self.c.ip + i
-            if 0 <= idx < len(self.c.ops):
-                _op = self.c.ops[idx]
-                if _op.label != "":
-                    print(_op.label + ":")
-                print("==> " if i == 0 else "    ", end="")
-                print(f"<{_op.addr}> {_op}")
-
-        # 显示内存，每行显示16个数
+        # 检查参数合法性
         if self.p1 is not None:
             print("---- memory ----")
             if self.n < 0:
@@ -461,25 +440,14 @@ class Dump(Op):
                 self.c.state = ComputerState.Error
                 self.c.errmsg = f"{self.p1}={idx0} 超出内存范围"
                 return
+        else:
+            idx0 = None
 
-            for i in range(0, self.n):
-                idx = idx0 + i
-                if i % 16 == 0:
-                    print(f"{idx:4d}: ", end="")
-                if idx < self.c.MEM_SIZE:
-                    print(f"{self.c.mem[idx]:8d}", end="\n" if i % 16 == 15 else " ")
-            print()
-
-
-class Pause(Op):
-    def __repr__(self):
-        return f"pause"
-
-    def execute(self):
         self.c.ip += 1
-        input("press enter to continue...")
-        # import msvcrt
-        # msvcrt.getch()
+        self.c.dump(idx0, self.n)
+        # 避免两次回车
+        if not self.c.step_mode:
+            input("按回车继续执行后续指令")
 
 
 class Halt(Op):

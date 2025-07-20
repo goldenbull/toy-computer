@@ -176,12 +176,6 @@ public interface Itoy_asmVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitDump([NotNull] toy_asmParser.DumpContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="toy_asmParser.pause"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitPause([NotNull] toy_asmParser.PauseContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="toy_asmParser.halt"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

@@ -8,11 +8,12 @@ from grammar.toy_asmParser import toy_asmParser
 from grammar.visitor_impl import VisitorImpl
 
 if __name__ == '__main__':
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("filename")
-    # args = parser.parse_args()
-    # fname = args.filename
-    fname = "src/tests/1-2.asm"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename")
+    parser.add_argument("-s", "--step", help="step mode", default=False, action="store_true")
+    args = parser.parse_args()
+    fname = args.filename
+    # fname = "src/tests/1-2.asm"
 
     try:
         txt = open(fname, "rt", encoding="utf-8").read()
@@ -27,7 +28,7 @@ if __name__ == '__main__':
         visitor.visit(parser.program())
 
         # 启动计算机，开始逐行执行
-        computer = Computer(visitor.ops)
+        computer = Computer(visitor.ops, args.step)
         computer.run()
     except Exception as ex:
         print(ex)
