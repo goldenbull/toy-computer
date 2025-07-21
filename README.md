@@ -219,7 +219,7 @@ continue:
 | call | `call label` | 等价于<br/>`push ip+1`<br/>`jmp label` | |
 | ret | `ret` | 等价于`pop ip`<br/>ip已经是下一条要执行的指令了     ||
 
-需要注意的是程序里不能写`push ip+1`，这个写法只是表达这个含义
+需要注意的是程序里不能写`push ip+1`和`pop ip`，这个写法只是表达这个含义
 
 需要注意几点：
 
@@ -258,17 +258,17 @@ main:
     pop
 ```
 
-# lesson-7 参数，返回值，临时变量
+# lesson-7 参数，返回值，局部变量
 
 作为模块化的基本单元，函数需要满足以下要求：
 1. 需要清晰的约定参数和返回值的传递方式，即C语言中的函数接口定义
 2. 需要约定堆栈的使用方式，谁负责清理堆栈，还原sp寄存器，这就产生了`stdcall`和`cdecl`等编译层面需要关心的细节
 3. 除了以上两点，函数应当是自包含的，互不影响的，不再依赖任何外界的条件
-4. 考虑一个计算过程比较复杂的函数，4个寄存器是不够用的，必须需要在内存中存放各种中间结果，一个函数可以在内存固定的位置存放中间结果，但是会有两个问题：
+4. 考虑一个计算过程比较复杂的函数，4个寄存器是不够用的，必须需要在内存中存放各种中间结果，即局部变量，一个函数可以在内存固定的位置存放中间结果，但是会有两个问题：
    1. 这个位置其他函数不能用，避免覆盖，所以需要所有的函数都知道其他函数用了哪儿，自己能用哪儿，不能用哪儿，当函数多了之后，这显然是无法维护的
    2. 对于递归函数，自己调用自己，那么同一个位置必然要被自己覆盖掉，导致计算过程无法回退，从而整个事情就无法实现了
 
-为满足以上需求，解决递归函数的问题，实际上，参数、返回值、临时变量，都是使用栈保存的。进入函数前后，可以往栈里面继续增加内容，同一个函数，每次被调用时，sp寄存器都是指向栈的头部位置，不会产生覆盖的问题
+为满足以上需求，解决递归函数的问题，实际上，参数、返回值、局部变量，都是使用栈保存的。进入函数前后，可以往栈里面继续增加内容，同一个函数，每次被调用时，sp寄存器都是指向栈的头部位置，不会产生覆盖的问题
 
 为了更方便的使用栈，再引入一个新的寄存器：
 
@@ -284,9 +284,112 @@ main:
 
 ## 任务
 
-有了新的指令和寄存器，将之前的所有任务用函数重新实现一遍，做到：函数片段本身是自包含的，只需要约定参数和返回值的传递方式，此外无需知道调用者的任何信息
+以下是一个斐波那契数列的C语言的实现，这里同时用到了参数、返回值、局部变量，然后对应的提供了汇编实现，使用 `--step` 模式跟踪观察递归函数的调用和返回的过程
 
-# lesson 8
+```c
+#include <stdio.h>
+
+int fib(int n)
+{
+    if(n <= 2)
+        return 1;
+
+    int a = fib(n - 1);
+    int b = fib(n - 2);
+
+    printf("%d ", a+b);
+
+    return a + b;
+}
+
+int main()
+{
+    int x = fib(20);
+    printf("%d\n", x);
+    return 0;
+}
+```
+
+对应的汇编程序
+
+
+```
+    jmp main
+
+fib:
+    // enter fib(), setup stack
+    push bp
+    mov bp, sp
+    add sp, 2 // reserve space for a and b
+
+    // now the stack layout:
+    // [bp-4] n
+    // [bp-3] ret
+    // [bp-2] return ip
+    // [bp-1] original bp
+    // [bp+0] a
+    // [bp+1] b
+    // sp = bp+2
+
+    // if(n<=2)
+    mov ax, [bp-4]
+    cmp ax, 2
+	jg	fib_recursive
+
+    // return 1;
+	mov	[bp-3], 1
+	jmp	fib_return
+
+fib_recursive:
+
+    // a = fib(n-1)
+    mov ax, [bp-4]
+    sub ax, 1       // get n-1
+    push ax         // push parameter
+    add sp, 1       // reserve space for return value
+    call fib
+    pop dx          // get return value
+    sub sp, 1       // discard parameter
+    mov [bp], dx    // return value --> a
+
+    // b = fib(n-2)
+    mov ax, [bp-4]
+    sub ax, 2
+    push ax
+    add sp, 1
+    call fib
+    pop dx
+    sub sp, 1
+    mov [bp+1], dx
+
+    // return a+b
+    mov ax, [bp]
+    add ax, [bp+1]
+    mov [bp-3], ax
+
+fib_return:
+    // debug output
+    print [bp-3]
+    print " "
+
+    // restore stack pointers before exit fib()
+	mov	sp, bp
+	pop	bp
+	ret
+
+main:
+    // call fib(20)
+    push 20
+    add sp, 1
+    call fib
+    pop dx
+    sub sp, 1
+    println
+    print "result = "
+    println dx
+```
+
+# lesson-8 大实验：排序算法
 
 到目前为止，一个抽象意义上的计算机已经功能齐全了，可以实现一些复杂的功能了，我们可以实现各种排序算法，以熟练上述内容
 
@@ -295,14 +398,9 @@ main:
 - 随机生成100个数，存到内存里，将其排序，输出排序前和排序后的结果，这一步可以先使用交换排序、冒泡排序等各种基于循环的、非递归的排序算法
 - 实现递归的快速排序
 
-# lesson 9
+# lesson9 真实世界的汇编语言
 
-到目前为止，CPU和内存的核心概念已经完备了，下一步是从一行行的指令（实际上就是汇编语言）到C语言的转换
-
-## 任务
-
-- 将以上汇编代码逐行翻译成C，从而理解C语言的底层机制
-- 实际上如果有C语言的基础，从C翻译成汇编代码，可能会容易，而且更有助于加深对C的理解
+[dasm](dasm) 目录下有几个.c源代码和对应的.asm文件，.asm文件是visual studio的编译器生成的，例如fib.asm文件是通过 `cl /FAs fib.c` 生成的，可以通过.asm文件观察真实世界的编译器是如何将c语言翻译成汇编语句的。如果有C语言的基础，再观察从C翻译成的汇编代码，会更有助于加深对C的理解。
 
 # 汇总
 
