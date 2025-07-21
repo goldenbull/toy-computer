@@ -175,6 +175,12 @@ class Computer:
                 self.errmsg = f"内存起始地址{mem_idx0} 超出范围"
                 return
 
+            # header
+            print("      ", end="")
+            for i in range(16):
+                print(f"{i:8d}", end=" ")
+            print()
+
             for i in range(0, mem_cnt):
                 idx = mem_idx0 + i
                 if i % 16 == 0:
