@@ -336,38 +336,38 @@ fib:
     // [bp-1] original bp
     // [bp+0] a
     // [bp+1] b
-    // sp = bp+2
+    // [bp+2] <-- sp
 
     // if(n<=2)
     mov ax, [bp-4]
     cmp ax, 2
-	jg	fib_recursive
+    jg fib_recursive
 
     // return 1;
-	mov	[bp-3], 1
-	jmp	fib_return
+    mov [bp-3], 1
+    jmp fib_return
 
 fib_recursive:
 
     // a = fib(n-1)
-    mov ax, [bp-4]
+    mov ax, [bp-4]  // get n
     sub ax, 1       // get n-1
     push ax         // push parameter
     add sp, 1       // reserve space for return value
     call fib
     pop dx          // get return value
     sub sp, 1       // discard parameter
-    mov [bp], dx    // return value --> a
+    mov [bp], dx    // save return value into a
 
     // b = fib(n-2)
-    mov ax, [bp-4]
-    sub ax, 2
-    push ax
-    add sp, 1
+    mov ax, [bp-4]  // get n
+    sub ax, 2       // get n-2
+    push ax         // push parameter
+    add sp, 1       // reserve space for return value
     call fib
-    pop dx
-    sub sp, 1
-    mov [bp+1], dx
+    pop dx          // get return value
+    sub sp, 1       // discard parameter
+    mov [bp+1], dx  // save return value into b
 
     // return a+b
     mov ax, [bp]
@@ -380,9 +380,9 @@ fib_return:
     print " "
 
     // restore stack pointers before exit fib()
-	mov	sp, bp
-	pop	bp
-	ret
+    mov sp, bp
+    pop bp
+    ret
 
 main:
     // call fib(20)
