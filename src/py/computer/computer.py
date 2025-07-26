@@ -17,8 +17,8 @@ class Computer:
 
         # 指令寄存器和栈寄存器
         self.ip = 0
-        self.bp = 55555555
         self.sp = self.MEM_SIZE // 2  # 内存的后一半留给栈
+        self.bp = self.sp
 
         # 内存
         self.mem = [66666666] * (self.MEM_SIZE // 2) + [88888888] * (self.MEM_SIZE // 2)
