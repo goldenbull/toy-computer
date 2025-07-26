@@ -127,7 +127,7 @@ class Computer:
             op = self.ops[next_ip]
             op.execute()
             if self.step_mode:
-                self.dump(512, 64)  # 默认输出栈的前64个位置， TODO：动态改变
+                self.dump(self.MEM_SIZE / 2, 64)  # 默认输出栈的前64个位置， TODO：动态改变
                 input("step模式，按回车继续执行下一条指令")
             if self.state == ComputerState.Error:
                 print(f"系统错误: {self.errmsg}")
