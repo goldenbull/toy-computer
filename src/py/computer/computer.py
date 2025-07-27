@@ -127,7 +127,7 @@ class Computer:
             op = self.ops[next_ip]
             op.execute()
             if self.step_mode:
-                self.dump(self.MEM_SIZE / 2, 64)  # 默认输出栈的前64个位置， TODO：动态改变
+                self.dump(self.MEM_SIZE // 2, 64)  # 默认输出栈的前64个位置， TODO：动态改变
                 input("step模式，按回车继续执行下一条指令")
             if self.state == ComputerState.Error:
                 print(f"系统错误: {self.errmsg}")
@@ -151,9 +151,9 @@ class Computer:
         print(f"ax={self.ax:8d} bx={self.bx:8d} cx={self.cx:8d} dx={self.dx:8d} flg={self.flg:8d}")
         print(f"ip={self.ip:8d} bp={self.bp:8d} sp={self.sp:8d}")
 
-        # 当前指令上下文，各显示10条即可
+        # 当前指令上下文，各显示N条
         print("---- code context ----")
-        for i in range(-10, 11):
+        for i in range(-14, 15):
             idx = self.ip + i
             if 0 <= idx < len(self.ops):
                 _op = self.ops[idx]
