@@ -1,0 +1,53 @@
+
+    mov ax, 13
+    call function_7
+    print ax
+
+    mov ax, 27
+    call function_7
+    print ax
+
+    halt
+
+
+function_7:
+    push bp
+    mov bp, sp
+
+    add sp,4
+    div 10
+    mov [bp], 987654
+    mov [bp+1], ax
+    mov [bp+2], dx
+    mov ax, dx
+    call function_print
+    
+    mov dx, [bp+2]
+    cmp dx, 7
+    je _end_with_7
+    jne _not_end_with_7
+
+_end_with_7:
+    mov ax,1
+    jmp _end_func
+
+_not_end_with_7:
+    mov ax,0
+    jmp _end_func
+
+_end_func:
+    mov	sp, bp
+	pop	bp
+    ret
+
+function_print:
+    push bp
+    mov bp, sp
+    
+    add sp,2
+    mov [bp+1],1234
+    print ax
+    
+    mov	sp, bp
+	pop	bp    
+    ret

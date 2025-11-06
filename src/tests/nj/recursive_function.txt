@@ -1,0 +1,22 @@
+    mov ax, 10
+    call f1
+    halt
+
+f1:
+    push bp
+    mov bp,sp
+
+    add sp, 1
+    mov [bp],ax
+
+    println ax
+    sub ax,1
+    cmp ax,0
+    je exit_f
+
+    call f1
+
+exit_f:
+    mov sp,bp
+    pop bp
+    ret

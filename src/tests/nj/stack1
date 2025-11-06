@@ -1,0 +1,12 @@
+mov ax, 1
+push ax
+add ax,1
+push ax
+add ax,1
+push ax
+add ax,1
+push ax
+add ax,1
+push ax
+pop bx
+push 123
