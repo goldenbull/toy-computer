@@ -1,9 +1,28 @@
-    jmp _main
+_main:
+    mov ax, -10
+_main_loop1:
+    push ax
+    call _f_is_prime
+    mov bx, ax
+    pop ax
+    cmp bx, 1
+    jne _next
+    print ax
+    print " "
+_next:
+    add ax, 1
+    cmp ax, 100000
+    je _finish
+    jmp _main_loop1
+_finish:
+    println
+    print "bye!"
+    println
+    halt
 
 _f_is_prime:
     push bp
     mov bp, sp
-    pusha
 
     // check if ax is prime
     mov ax, [bp-3]
@@ -28,33 +47,10 @@ _f_is_prime_loop1:
     add cx, 1
     jmp _f_is_prime_loop1
 _not_prime:
-    popa
     pop bp
     mov ax, 0
     ret
 _is_prime:
-    popa
     pop bp
     mov ax, 1
     ret
-
-_main:
-    mov ax, -10
-_main_loop1:
-    push ax
-    call _f_is_prime
-    mov bx, ax
-    pop ax
-    cmp bx, 1
-    jne _skip
-    print ax
-    print " "
-_skip:
-    add ax, 1
-    cmp ax, 100
-    je _finish
-    jmp _main_loop1
-_finish:
-    println
-    print "bye!"
-    println

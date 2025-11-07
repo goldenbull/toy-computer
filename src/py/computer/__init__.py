@@ -53,9 +53,9 @@ class Op(ABC):
     def push_stack(self, v):
         sp = self.c.get_reg_value("sp")
         self.c.set_mem_value(sp, v)
-        self.c.set_reg_value("sp", sp + 1)
+        self.c.set_reg_value("sp", sp - 1)
 
     def pop_stack(self):
         sp = self.c.get_reg_value("sp")
-        self.c.set_reg_value("sp", sp - 1)
-        return self.c.get_mem_value(sp - 1)
+        self.c.set_reg_value("sp", sp + 1)
+        return self.c.get_mem_value(sp + 1)

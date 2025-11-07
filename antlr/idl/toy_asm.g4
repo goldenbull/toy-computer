@@ -18,12 +18,13 @@ op
     | jump
     | call
     | ret
-    | push_op
-    | pop_op
+    | push
+    | pop
     | input
     | print
     | rand
     | dump
+    | pause
     | halt
     | nop
     ;
@@ -38,15 +39,11 @@ reg
     ;
 
 offset
-    : ('+'|'-')INT
+    : ('+'|'-') INT
     ;
 
 mem
     : '[' reg offset? ']'
-    ;
-
-str
-    : STR
     ;
 
 move
@@ -105,23 +102,25 @@ ret
     : 'ret'
     ;
 
-push_op
+push
     : 'push' num
     | 'push' reg
     | 'pushf'
-    | 'pusha'
     ;
 
-pop_op
+pop
     : 'pop'
     | 'pop' reg
     | 'popf'
-    | 'popa'
     ;
 
 input
     : 'input' reg
     | 'input' mem
+    ;
+
+str
+    : STR
     ;
 
 print
@@ -147,6 +146,10 @@ dump
     | 'dump' num ',' INT
     ;
 
+pause
+    : 'pause'
+    ;
+
 halt
     : 'halt'
     ;
@@ -155,7 +158,7 @@ nop
     : 'nop'
     ;
 
-Comment : '//' ~[\n]* '\n' ;
+Comment : ';' ~[\n]* '\n' ;
 INT : [0-9]+ ;
 Label : ([a-z]|'_') ([a-z0-9]|'_')* ;
 STR : '"' ( EscapeSequence | ~('\\'|'"') )* '"' ;

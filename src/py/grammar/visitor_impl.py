@@ -66,7 +66,7 @@ class VisitorImpl(toy_asmVisitor):
     def visitRet(self, ctx: toy_asmParser.RetContext):
         return Ret()
 
-    def visitPush_op(self, ctx: toy_asmParser.Push_opContext):
+    def visitPush(self, ctx: toy_asmParser.PushContext):
         act = ctx.children[0].getText()
         if len(ctx.children) == 2:
             p1 = self.visit(ctx.children[1])
@@ -74,7 +74,7 @@ class VisitorImpl(toy_asmVisitor):
             p1 = None
         return Push(act, p1)
 
-    def visitPop_op(self, ctx: toy_asmParser.Pop_opContext):
+    def visitPop(self, ctx: toy_asmParser.PopContext):
         act = ctx.children[0].getText()
         if len(ctx.children) == 2:
             p1 = self.visit(ctx.children[1])
@@ -101,6 +101,9 @@ class VisitorImpl(toy_asmVisitor):
             return Dump(p1, n)
         else:
             return Dump()
+
+    def visitPause(self, ctx: toy_asmParser.PauseContext):
+        return Pause()
 
     def visitHalt(self, ctx: toy_asmParser.HaltContext):
         return Halt()

@@ -212,7 +212,7 @@ class Call(Op):
 
     def execute(self):
         try:
-            # ip入栈，sp+1，jmp到函数入口
+            # ip入栈，jmp到函数入口
             target_addr = self.c.labels_tbl[self.target]
             self.push_stack(self.c.ip + 1)  # 返回的位置应该是下一条指令
             self.c.ip = target_addr
@@ -336,7 +336,7 @@ class Print(Op):
     def execute(self):
         try:
             v = self.get_value(self.p1)
-            print(v, end="" if self.act == "print" else "\n")
+            print(v, end="" if self.act == "print" else "\n", flush=True)
             self.c.ip += 1
         except IndexError as e:
             self.c.state = ComputerState.Error
@@ -397,6 +397,17 @@ class Dump(Op):
         # 避免两次回车
         if not self.c.step_mode:
             input("按回车继续执行后续指令")
+
+
+class Pause(Op):
+    def __repr__(self):
+        return f"pause"
+
+    def execute(self):
+        self.c.ip += 1
+        input("...PAUSE...")
+        # import msvcrt
+        # msvcrt.getch()
 
 
 class Halt(Op):

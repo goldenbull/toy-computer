@@ -4,8 +4,8 @@
     jmp _main
 
 f1: nop
-    //dump dx, 10
-    //pause
+    ;dump dx, 10
+    ;pause
     push bp
     mov bp, sp
 
@@ -27,12 +27,12 @@ loop1:
     cmp ax, 10
     jg _finish
 
-    // do work here
-    //dump dx, 10
-    //pause
+    ; do work here
+    ;dump dx, 10
+    ;pause
     push ax
-    //dump dx, 10
-    //pause
+    ;dump dx, 10
+    ;pause
     call f1
     pop ax
 

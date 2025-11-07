@@ -44,11 +44,6 @@ class toy_asmVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by toy_asmParser#str.
-    def visitStr(self, ctx:toy_asmParser.StrContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by toy_asmParser#move.
     def visitMove(self, ctx:toy_asmParser.MoveContext):
         return self.visitChildren(ctx)
@@ -94,18 +89,23 @@ class toy_asmVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by toy_asmParser#push_op.
-    def visitPush_op(self, ctx:toy_asmParser.Push_opContext):
+    # Visit a parse tree produced by toy_asmParser#push.
+    def visitPush(self, ctx:toy_asmParser.PushContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by toy_asmParser#pop_op.
-    def visitPop_op(self, ctx:toy_asmParser.Pop_opContext):
+    # Visit a parse tree produced by toy_asmParser#pop.
+    def visitPop(self, ctx:toy_asmParser.PopContext):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by toy_asmParser#input.
     def visitInput(self, ctx:toy_asmParser.InputContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by toy_asmParser#str.
+    def visitStr(self, ctx:toy_asmParser.StrContext):
         return self.visitChildren(ctx)
 
 
@@ -121,6 +121,11 @@ class toy_asmVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by toy_asmParser#dump.
     def visitDump(self, ctx:toy_asmParser.DumpContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by toy_asmParser#pause.
+    def visitPause(self, ctx:toy_asmParser.PauseContext):
         return self.visitChildren(ctx)
 
 

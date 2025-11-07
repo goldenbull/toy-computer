@@ -8,20 +8,20 @@ class Computer:
     MEM_SIZE = 1024
 
     def __init__(self, ops_and_labels: list, step_mode: bool):
-        # 通用寄存器
+        # 初始化通用寄存器
         self.ax = 11111111
         self.bx = 22222222
         self.cx = 33333333
         self.dx = 44444444
         self.flg = 0
 
-        # 指令寄存器和栈寄存器
+        # 初始化指令寄存器和栈寄存器
         self.ip = 0
-        self.sp = self.MEM_SIZE // 2  # 内存的后一半留给栈
+        self.sp = self.MEM_SIZE - 1  # 栈向下生长
         self.bp = self.sp
 
-        # 内存
-        self.mem = [66666666] * (self.MEM_SIZE // 2) + [88888888] * (self.MEM_SIZE // 2)
+        # 初始化内存
+        self.mem = [-99] * self.MEM_SIZE
 
         # 为加载的指令生成序号
         self.ops = [x for x in ops_and_labels if isinstance(x, Op)]
@@ -127,7 +127,7 @@ class Computer:
             op = self.ops[next_ip]
             op.execute()
             if self.step_mode:
-                self.dump(self.MEM_SIZE // 2, 64)  # 默认输出栈的前64个位置， TODO：动态改变
+                self.dump(self.sp // 64 * 64, 64)  # 默认输出栈的前64个位置
                 input("step模式，按回车继续执行下一条指令")
             if self.state == ComputerState.Error:
                 print(f"系统错误: {self.errmsg}")
