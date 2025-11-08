@@ -2,7 +2,7 @@
 
 from .toy_asmParser import toy_asmParser
 from .toy_asmVisitor import toy_asmVisitor
-from computer.operations import *
+from ..computer.operations import *
 
 
 class VisitorImpl(toy_asmVisitor):

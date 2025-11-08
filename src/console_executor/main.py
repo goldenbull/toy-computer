@@ -3,18 +3,20 @@
 import argparse
 from antlr4 import *
 
-from computer.computer import Computer
-from grammar.toy_asmLexer import toy_asmLexer
-from grammar.toy_asmParser import toy_asmParser
-from grammar.visitor_impl import VisitorImpl
+from internal.computer.computer import Computer
+from internal.grammar.toy_asmLexer import toy_asmLexer
+from internal.grammar.toy_asmParser import toy_asmParser
+from internal.grammar.visitor_impl import VisitorImpl
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("filename")
     parser.add_argument("-s", "--step", help="step mode", default=False, action="store_true")
     args = parser.parse_args()
+    step_mode = args.step
     fname = args.filename
-    # fname = "src/tests/1-2.asm"
+    # fname = "../tests/fib.asm"
+    # step_mode = False
 
     try:
         txt = open(fname, "rt", encoding="utf-8").read()
@@ -29,7 +31,7 @@ if __name__ == '__main__':
         visitor.visit(parser.program())
 
         # 启动计算机，开始逐行执行
-        computer = Computer(visitor.ops_and_labels, args.step)
+        computer = Computer(visitor.ops_and_labels, step_mode)
         computer.run()
     except Exception as ex:
         print(ex)
