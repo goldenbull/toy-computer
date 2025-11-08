@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy.random as rnd
-from . import ComputerState, Op, DivZeroError
+from . import ComputerState, Op, DivZeroError, MemType
 from .computer import Computer
 
 
@@ -214,7 +214,7 @@ class Call(Op):
         try:
             # ip入栈，jmp到函数入口
             target_addr = self.c.labels_tbl[self.target]
-            self.push_stack(self.c.ip + 1)  # 返回的位置应该是下一条指令
+            self.push_stack(self.c.ip + 1, MemType.IP)  # 返回的位置应该是下一条指令
             self.c.ip = target_addr
         except KeyError as e:
             self.c.state = ComputerState.Error
@@ -250,14 +250,15 @@ class Push(Op):
         try:
             if self.action == "push":
                 v = self.get_value(self.p1)
-                self.push_stack(v)
+                # special type for bp
+                if isinstance(self.p1, Reg) and self.p1.reg == "bp":
+                    tp = MemType.BP
+                else:
+                    tp = MemType.Data
+                self.push_stack(v, tp)
             elif self.action == "pushf":
                 v = self.c.get_reg_value("flg")
                 self.push_stack(v)
-            elif self.action == "pusha":
-                for r in ["ax", "bx", "cx", "dx", "flg", "bp"]:
-                    v = self.c.get_reg_value(r)
-                    self.push_stack(v)
             else:
                 raise ValueError()
             self.c.ip += 1
@@ -287,10 +288,6 @@ class Pop(Op):
             elif self.action == "popf":
                 v = self.pop_stack()
                 self.c.set_reg_value("flg", v)
-            elif self.action == "popa":
-                for r in ["ax", "bx", "cx", "dx", "flg", "bp"]:
-                    v = self.pop_stack()
-                    self.c.set_reg_value(r, v)
             else:
                 raise ValueError()
             self.c.ip += 1

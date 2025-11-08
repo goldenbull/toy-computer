@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from . import ComputerState, Op
+from . import ComputerState, Op, MemType
 
 
 class Computer:
@@ -21,7 +21,7 @@ class Computer:
         self.bp = self.sp
 
         # 初始化内存
-        self.mem = [-99] * self.MEM_SIZE
+        self.mem = [(-99, MemType.Data)] * self.MEM_SIZE
 
         # 为加载的指令生成序号
         self.ops = [x for x in ops_and_labels if isinstance(x, Op)]
@@ -99,19 +99,19 @@ class Computer:
     def get_mem_value(self, addr: int):
         if addr < 0 or addr >= self.MEM_SIZE:
             raise IndexError(f"addr={addr}, 内存越界")
-        return self.mem[addr]
+        return self.mem[addr][0]
 
     def get_reg_mem_value(self, reg: str, offset: int):
         v = self.get_reg_value(reg)
         addr = v + offset
         if addr < 0 or addr >= self.MEM_SIZE:
             raise IndexError(f"{reg}={v}, offset={offset}, addr={addr}, 内存越界")
-        return self.mem[addr]
+        return self.mem[addr][0]
 
-    def set_mem_value(self, addr: int, v: int):
+    def set_mem_value(self, addr: int, v: int, tp: MemType = MemType.Data):
         if addr < 0 or addr >= self.MEM_SIZE:
             raise IndexError(f"addr={addr}, 内存越界")
-        self.mem[addr] = v
+        self.mem[addr] = (v, tp)
 
     def run(self):
         while True:
@@ -186,7 +186,7 @@ class Computer:
                 if i % 16 == 0:
                     print(f"{idx:4d}: ", end="")
                 if idx < self.MEM_SIZE:
-                    print(f"{self.mem[idx]:8d}", end="\n" if i % 16 == 15 else " ")
+                    print(f"{self.mem[idx][0]:8d}", end="\n" if i % 16 == 15 else " ")
             print(
 
             )

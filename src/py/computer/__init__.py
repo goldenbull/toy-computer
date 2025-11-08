@@ -26,6 +26,12 @@ class MemError(Exception):
         self.addr = addr
 
 
+class MemType(Enum):
+    Data = 0
+    IP = 1
+    BP = 2
+
+
 class Op(ABC):
     addr: int = 0
     labels: list[str] = []
@@ -50,9 +56,9 @@ class Op(ABC):
             v = p.value(self.c)
         return v
 
-    def push_stack(self, v):
+    def push_stack(self, v, tp: MemType = MemType.Data):
         sp = self.c.get_reg_value("sp")
-        self.c.set_mem_value(sp, v)
+        self.c.set_mem_value(sp, v, tp)
         self.c.set_reg_value("sp", sp - 1)
 
     def pop_stack(self):
