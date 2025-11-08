@@ -1,4 +1,6 @@
 <script>
+    import CodeMirror from "svelte-codemirror-editor";
+
     let {status, runCode} = $props();
 
     const loadSourceCode = () => {
@@ -8,12 +10,16 @@
 
 <div class="flex flex-col h-[500px] md:h-[600px] lg:h-[700px] flex-grow">
     <div class="flex-grow border border-gray-300 rounded-lg overflow-hidden relative">
-        <textarea
-                bind:value={status.sourceCode}
-                class="w-full h-full p-4 font-mono text-sm resize-none focus:outline-none absolute inset-0"
-                placeholder="Enter your assembly code here..."
-                spellcheck="false"
-        ></textarea>
+        <!--        <textarea-->
+        <!--                bind:value={status.sourceCode}-->
+        <!--                class="w-full h-full p-4 font-mono text-sm resize-none focus:outline-none absolute inset-0"-->
+        <!--                placeholder="Enter your assembly code here..."-->
+        <!--                spellcheck="false"-->
+        <!--        ></textarea>-->
+        <CodeMirror bind:value={status.sourceCode}
+                    class="w-full h-full p-4 font-mono text-sm resize-none focus:outline-none absolute inset-0"
+                    placeholder="Enter your assembly code here..."
+        />
     </div>
 
     <div class="mt-4 flex space-x-2">
