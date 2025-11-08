@@ -3,7 +3,7 @@
 import argparse
 from antlr4 import *
 
-from internal.computer.computer import Computer
+from console.console_executor import ConsoleExecutor
 from internal.grammar.toy_asmLexer import toy_asmLexer
 from internal.grammar.toy_asmParser import toy_asmParser
 from internal.grammar.visitor_impl import VisitorImpl
@@ -31,8 +31,8 @@ if __name__ == '__main__':
         visitor.visit(parser.program())
 
         # 启动计算机，开始逐行执行
-        computer = Computer(visitor.ops_and_labels, step_mode)
-        computer.run()
+        executor = ConsoleExecutor(visitor.ops_and_labels, step_mode)
+        executor.run()
     except Exception as ex:
         print(ex)
         # 语法解析错误

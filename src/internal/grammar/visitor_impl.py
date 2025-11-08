@@ -3,18 +3,22 @@
 from .toy_asmParser import toy_asmParser
 from .toy_asmVisitor import toy_asmVisitor
 from ..computer.operations import *
+from ..computer.operand import Imm, Str
 
 
 class VisitorImpl(toy_asmVisitor):
     ops_and_labels: list[Op | str] = []
 
     def visitNum(self, ctx: toy_asmParser.NumContext):
-        return int(ctx.getText())
+        """Visit a number and return an Imm operand."""
+        return Imm(int(ctx.getText()))
 
     def visitReg(self, ctx: toy_asmParser.RegContext):
+        """Visit a register and return a Reg operand."""
         return Reg(ctx.getText())
 
     def visitMem(self, ctx: toy_asmParser.MemContext):
+        """Visit a memory reference and return a Mem operand."""
         reg = ctx.children[1].getText()
         if len(ctx.children) == 3:
             offset = 0
@@ -23,8 +27,10 @@ class VisitorImpl(toy_asmVisitor):
         return Mem(reg, offset)
 
     def visitStr(self, ctx: toy_asmParser.StrContext):
+        """Visit a string literal and return a Str operand."""
         s = ctx.getText()
-        return s.encode('utf-8').decode('unicode_escape')[1:-1]
+        text = s.encode('utf-8').decode('unicode_escape')[1:-1]
+        return Str(text)
 
     def visitMove(self, ctx: toy_asmParser.MoveContext):
         p1 = self.visit(ctx.children[1])

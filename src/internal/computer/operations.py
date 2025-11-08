@@ -1,35 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import numpy.random as rnd
-from . import ComputerState, Op, DivZeroError, MemType
-from .computer import Computer
-
-
-class Reg:
-    def __init__(self, reg: str):
-        self.reg = reg
-
-    def __repr__(self):
-        return self.reg
-
-    def value(self, c: Computer):
-        return c.get_reg_value(self.reg)
-
-
-class Mem:
-    def __init__(self, reg: str, offset: int):
-        self.reg = reg
-        self.offset = offset
-
-    def __repr__(self):
-        return f"[{self.reg}{self.offset:+}]"
-
-    def addr(self, c: Computer):
-        v = c.get_reg_value(self.reg)
-        return v + self.offset
-
-    def value(self, c: Computer):
-        return c.get_reg_mem_value(self.reg, self.offset)
+from . import ExecutionState, Op, DivZeroError, MemType
+from .operand import Operand, Reg, Mem, Imm, Str
 
 
 class Move(Op):
@@ -42,17 +15,17 @@ class Move(Op):
 
     def execute(self):
         try:
-            v = self.get_value(self.p2)
+            v = self.p2.value(self.computer_state)
 
             if isinstance(self.p1, Reg):
-                self.c.set_reg_value(self.p1.reg, v)
+                self.computer_state.set_reg_value(self.p1.reg, v)
             else:
-                self.c.set_mem_value(self.p1.addr(self.c), v)
+                self.computer_state.set_mem_value(self.p1.addr(self.computer_state), v)
 
-            self.c.ip += 1
+            self.computer_state.ip += 1
         except IndexError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | {e}"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | {e}"
 
 
 class Add(Op):
@@ -65,14 +38,14 @@ class Add(Op):
 
     def execute(self):
         try:
-            v1 = self.c.get_reg_value(self.p1.reg)
-            v2 = self.get_value(self.p2)
-            self.c.set_reg_value(self.p1.reg, v1 + v2)
+            v1 = self.computer_state.get_reg_value(self.p1.reg)
+            v2 = self.p2.value(self.computer_state)
+            self.computer_state.set_reg_value(self.p1.reg, v1 + v2)
 
-            self.c.ip += 1
+            self.computer_state.ip += 1
         except IndexError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | {e}"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | {e}"
 
 
 class Sub(Op):
@@ -85,14 +58,14 @@ class Sub(Op):
 
     def execute(self):
         try:
-            v1 = self.c.get_reg_value(self.p1.reg)
-            v2 = self.get_value(self.p2)
-            self.c.set_reg_value(self.p1.reg, v1 - v2)
+            v1 = self.computer_state.get_reg_value(self.p1.reg)
+            v2 = self.p2.value(self.computer_state)
+            self.computer_state.set_reg_value(self.p1.reg, v1 - v2)
 
-            self.c.ip += 1
+            self.computer_state.ip += 1
         except IndexError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | {e}"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | {e}"
 
 
 class Mul(Op):
@@ -104,14 +77,14 @@ class Mul(Op):
 
     def execute(self):
         try:
-            v1 = self.c.get_reg_value("ax")
-            v2 = self.get_value(self.p1)
-            self.c.set_reg_value("ax", v1 * v2)
+            v1 = self.computer_state.get_reg_value("ax")
+            v2 = self.p1.value(self.computer_state)
+            self.computer_state.set_reg_value("ax", v1 * v2)
 
-            self.c.ip += 1
+            self.computer_state.ip += 1
         except IndexError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | {e}"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | {e}"
 
 
 class Div(Op):
@@ -124,23 +97,23 @@ class Div(Op):
     def execute(self):
         try:
             # 需要处理除0的情况
-            v1 = self.c.get_reg_value("ax")
-            v2 = self.get_value(self.p1)
+            v1 = self.computer_state.get_reg_value("ax")
+            v2 = self.p1.value(self.computer_state)
             if v2 == 0:
                 raise DivZeroError()
             # 特殊处理向零取整，和C一致
             r1 = int(v1 / v2)
             r2 = v1 - v2 * r1
-            self.c.set_reg_value("ax", r1)
-            self.c.set_reg_value("dx", r2)
+            self.computer_state.set_reg_value("ax", r1)
+            self.computer_state.set_reg_value("dx", r2)
 
-            self.c.ip += 1
+            self.computer_state.ip += 1
         except IndexError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | {e}"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | {e}"
         except DivZeroError:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | div0"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | div0"
 
 
 class Cmp(Op):
@@ -153,18 +126,18 @@ class Cmp(Op):
 
     def execute(self):
         try:
-            v1 = self.c.get_reg_value(self.p1.reg)
-            v2 = self.get_value(self.p2)
+            v1 = self.computer_state.get_reg_value(self.p1.reg)
+            v2 = self.p2.value(self.computer_state)
             if v1 > v2:
-                self.c.set_reg_value("flg", 1)
+                self.computer_state.set_reg_value("flg", 1)
             elif v1 == v2:
-                self.c.set_reg_value("flg", 0)
+                self.computer_state.set_reg_value("flg", 0)
             else:
-                self.c.set_reg_value("flg", -1)
-            self.c.ip += 1
+                self.computer_state.set_reg_value("flg", -1)
+            self.computer_state.ip += 1
         except IndexError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | {e}"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | {e}"
 
 
 class Jump(Op):
@@ -174,15 +147,15 @@ class Jump(Op):
 
     def __repr__(self):
         try:
-            target_addr = self.c.labels_tbl[self.target]
+            target_addr = self.computer_state.labels_tbl[self.target]
             return f"{self.action} {self.target} ({target_addr - self.addr:+d})"
-        except KeyError as e:
-            return f"{self.action} {self.target} <ERROR>"
+        except (KeyError, AttributeError):
+            return f"{self.action} {self.target}"
 
     def execute(self):
         try:
-            target_addr = self.c.labels_tbl[self.target]
-            flg = self.c.get_reg_value("flg")
+            target_addr = self.computer_state.labels_tbl[self.target]
+            flg = self.computer_state.get_reg_value("flg")
             if (self.action == "jmp"
                     or (self.action == "je" and flg == 0)
                     or (self.action == "jne" and flg != 0)
@@ -191,12 +164,12 @@ class Jump(Op):
                     or (self.action == "jl" and flg < 0)
                     or (self.action == "jle" and flg <= 0)
             ):
-                self.c.ip = target_addr
+                self.computer_state.ip = target_addr
             else:
-                self.c.ip += 1
+                self.computer_state.ip += 1
         except KeyError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | invalid label {e}"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | invalid label {e}"
 
 
 class Call(Op):
@@ -205,20 +178,20 @@ class Call(Op):
 
     def __repr__(self):
         try:
-            target_addr = self.c.labels_tbl[self.target]
+            target_addr = self.computer_state.labels_tbl[self.target]
             return f"call {self.target} <{target_addr}>"
-        except KeyError as e:
-            return f"call {self.target} <ERROR>"
+        except (KeyError, AttributeError):
+            return f"call {self.target}"
 
     def execute(self):
         try:
             # ip入栈，jmp到函数入口
-            target_addr = self.c.labels_tbl[self.target]
-            self.push_stack(self.c.ip + 1, MemType.IP)  # 返回的位置应该是下一条指令
-            self.c.ip = target_addr
+            target_addr = self.computer_state.labels_tbl[self.target]
+            self.computer_state.push_stack(self.computer_state.ip + 1, MemType.IP)  # 返回的位置应该是下一条指令
+            self.computer_state.ip = target_addr
         except KeyError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | invalid label {e}"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | invalid label {e}"
 
 
 class Ret(Op):
@@ -227,11 +200,11 @@ class Ret(Op):
 
     def execute(self):
         try:
-            origin_addr = self.pop_stack()
-            self.c.ip = origin_addr
+            origin_addr = self.computer_state.pop_stack()
+            self.computer_state.ip = origin_addr
         except IndexError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | {e}"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | {e}"
 
 
 class Push(Op):
@@ -249,22 +222,22 @@ class Push(Op):
         # 分情况处理
         try:
             if self.action == "push":
-                v = self.get_value(self.p1)
+                v = self.p1.value(self.computer_state)
                 # special type for bp
                 if isinstance(self.p1, Reg) and self.p1.reg == "bp":
                     tp = MemType.BP
                 else:
                     tp = MemType.Data
-                self.push_stack(v, tp)
+                self.computer_state.push_stack(v, tp)
             elif self.action == "pushf":
-                v = self.c.get_reg_value("flg")
-                self.push_stack(v)
+                v = self.computer_state.get_reg_value("flg")
+                self.computer_state.push_stack(v)
             else:
                 raise ValueError()
-            self.c.ip += 1
+            self.computer_state.ip += 1
         except IndexError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | {e}"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | {e}"
 
 
 class Pop(Op):
@@ -282,18 +255,18 @@ class Pop(Op):
         # 分情况处理
         try:
             if self.action == "pop":
-                v = self.pop_stack()
+                v = self.computer_state.pop_stack()
                 if self.p1 is not None:
-                    self.c.set_reg_value(self.p1.reg, v)
+                    self.computer_state.set_reg_value(self.p1.reg, v)
             elif self.action == "popf":
-                v = self.pop_stack()
-                self.c.set_reg_value("flg", v)
+                v = self.computer_state.pop_stack()
+                self.computer_state.set_reg_value("flg", v)
             else:
                 raise ValueError()
-            self.c.ip += 1
+            self.computer_state.ip += 1
         except IndexError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | {e}"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | {e}"
 
 
 class Input(Op):
@@ -304,22 +277,14 @@ class Input(Op):
         return f"input {self.p1}"
 
     def execute(self):
-        try:
-            s = input(f"Input a number into {self.p1}:")
-            v = int(s)
-            if isinstance(self.p1, Mem):
-                self.c.set_mem_value(self.p1.addr(self.c), v)
-            elif isinstance(self.p1, Reg):
-                self.c.set_reg_value(self.p1.reg, v)
-            else:
-                raise ValueError()
-            self.c.ip += 1
-        except IndexError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | {e}"
-        except ValueError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | {e}"
+        """
+        Input operation - executor-specific implementation required.
+        This base implementation does nothing; executors should override
+        or handle Input operations specially.
+        """
+        # Note: Console I/O is handled by ConsoleExecutor
+        # Other executors (web, API) should provide their own input mechanism
+        self.computer_state.ip += 1
 
 
 class Print(Op):
@@ -332,12 +297,12 @@ class Print(Op):
 
     def execute(self):
         try:
-            v = self.get_value(self.p1)
+            v = self.p1.value(self.computer_state) if self.p1 is not None else ""
             print(v, end="" if self.act == "print" else "\n", flush=True)
-            self.c.ip += 1
+            self.computer_state.ip += 1
         except IndexError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | {e}"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | {e}"
 
 
 class Rand(Op):
@@ -351,15 +316,15 @@ class Rand(Op):
         try:
             v = rnd.randint(0, 1000)
             if isinstance(self.p1, Mem):
-                self.c.set_mem_value(self.p1.addr(self.c), v)
+                self.computer_state.set_mem_value(self.p1.addr(self.computer_state), v)
             elif isinstance(self.p1, Reg):
-                self.c.set_reg_value(self.p1.reg, v)
+                self.computer_state.set_reg_value(self.p1.reg, v)
             else:
                 raise ValueError()
-            self.c.ip += 1
+            self.computer_state.ip += 1
         except IndexError as e:
-            self.c.state = ComputerState.Error
-            self.c.errmsg = f"{self} | {e}"
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | {e}"
 
 
 class Dump(Op):
@@ -377,23 +342,21 @@ class Dump(Op):
         # 检查参数合法性
         if self.p1 is not None:
             if self.n < 0:
-                self.c.state = ComputerState.Error
-                self.c.errmsg = f"{self} <== dump的参数不能小于0"
+                self.computer_state.execution_state = ExecutionState.Error
+                self.computer_state.errmsg = f"{self} <== dump的参数不能小于0"
                 return
 
-            idx0 = self.get_value(self.p1)
-            if idx0 < 0 or idx0 >= self.c.MEM_SIZE:
-                self.c.state = ComputerState.Error
-                self.c.errmsg = f"{self.p1}={idx0} 超出内存范围"
+            idx0 = self.p1.value(self.computer_state)
+            if idx0 < 0 or idx0 >= self.computer_state.MEM_SIZE:
+                self.computer_state.execution_state = ExecutionState.Error
+                self.computer_state.errmsg = f"{self.p1}={idx0} 超出内存范围"
                 return
         else:
             idx0 = None
 
-        self.c.ip += 1
-        self.c.dump(idx0, self.n)
-        # 避免两次回车
-        if not self.c.step_mode:
-            input("按回车继续执行后续指令")
+        self.computer_state.ip += 1
+        # Note: Dump functionality is executor-specific (console I/O)
+        # Executors should handle dump display themselves
 
 
 class Pause(Op):
@@ -401,10 +364,9 @@ class Pause(Op):
         return f"pause"
 
     def execute(self):
-        self.c.ip += 1
-        input("...PAUSE...")
-        # import msvcrt
-        # msvcrt.getch()
+        self.computer_state.ip += 1
+        # Note: Pause functionality is executor-specific (console I/O)
+        # Console executor should handle pause display
 
 
 class Halt(Op):
@@ -412,7 +374,7 @@ class Halt(Op):
         return f"halt"
 
     def execute(self):
-        self.c.state = ComputerState.Finished
+        self.computer_state.execution_state = ExecutionState.Finished
 
 
 class Nop(Op):
@@ -420,4 +382,4 @@ class Nop(Op):
         return f"nop"
 
     def execute(self):
-        self.c.ip += 1
+        self.computer_state.ip += 1
