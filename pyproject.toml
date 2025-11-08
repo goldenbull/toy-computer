@@ -1,0 +1,25 @@
+[project]
+name = "toy-computer"
+version = "0.1.0"
+description = "A toy computer implementation"
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    "antlr4-python3-runtime",
+    "arrow",
+    "coloredlogs",
+    "fastapi",
+    "numpy",
+    "pandas",
+    "pyinstaller",
+    "uvicorn",
+]
+
+[project.optional-dependencies]
+dev = [
+]
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
