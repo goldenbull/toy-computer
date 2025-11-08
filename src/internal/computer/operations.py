@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import numpy.random as rnd
-from . import ExecutionState, Op, DivZeroError, MemType
+from . import ExecutionState, OpBase, DivZeroError, MemType
 from .operand import Operand, Reg, Mem, Imm, Str
 
 
-class Move(Op):
+class Move(OpBase):
     def __init__(self, p1, p2):
         self.p1 = p1
         self.p2 = p2
@@ -28,7 +28,7 @@ class Move(Op):
             self.computer_state.errmsg = f"{self} | {e}"
 
 
-class Add(Op):
+class Add(OpBase):
     def __init__(self, p1: Reg, p2):
         self.p1 = p1
         self.p2 = p2
@@ -48,7 +48,7 @@ class Add(Op):
             self.computer_state.errmsg = f"{self} | {e}"
 
 
-class Sub(Op):
+class Sub(OpBase):
     def __init__(self, p1, p2):
         self.p1 = p1
         self.p2 = p2
@@ -68,7 +68,7 @@ class Sub(Op):
             self.computer_state.errmsg = f"{self} | {e}"
 
 
-class Mul(Op):
+class Mul(OpBase):
     def __init__(self, p1):
         self.p1 = p1
 
@@ -87,7 +87,7 @@ class Mul(Op):
             self.computer_state.errmsg = f"{self} | {e}"
 
 
-class Div(Op):
+class Div(OpBase):
     def __init__(self, p1):
         self.p1 = p1
 
@@ -116,7 +116,7 @@ class Div(Op):
             self.computer_state.errmsg = f"{self} | div0"
 
 
-class Cmp(Op):
+class Cmp(OpBase):
     def __init__(self, p1: Reg, p2):
         self.p1 = p1
         self.p2 = p2
@@ -140,7 +140,7 @@ class Cmp(Op):
             self.computer_state.errmsg = f"{self} | {e}"
 
 
-class Jump(Op):
+class Jump(OpBase):
     def __init__(self, action: str, target: str):
         self.action = action
         self.target = target
@@ -172,7 +172,7 @@ class Jump(Op):
             self.computer_state.errmsg = f"{self} | invalid label {e}"
 
 
-class Call(Op):
+class Call(OpBase):
     def __init__(self, target: str):
         self.target = target
 
@@ -194,7 +194,7 @@ class Call(Op):
             self.computer_state.errmsg = f"{self} | invalid label {e}"
 
 
-class Ret(Op):
+class Ret(OpBase):
     def __repr__(self):
         return f"ret"  # TODO 如何显示来时的地址？执行前后sp会变化
 
@@ -207,7 +207,7 @@ class Ret(Op):
             self.computer_state.errmsg = f"{self} | {e}"
 
 
-class Push(Op):
+class Push(OpBase):
     def __init__(self, action: str, p1=None):
         self.action = action
         self.p1 = p1
@@ -240,7 +240,7 @@ class Push(Op):
             self.computer_state.errmsg = f"{self} | {e}"
 
 
-class Pop(Op):
+class Pop(OpBase):
     def __init__(self, action: str, p1: Reg = None):
         self.action = action
         self.p1 = p1
@@ -269,7 +269,7 @@ class Pop(Op):
             self.computer_state.errmsg = f"{self} | {e}"
 
 
-class Input(Op):
+class Input(OpBase):
     def __init__(self, p1):
         self.p1 = p1
 
@@ -277,17 +277,16 @@ class Input(Op):
         return f"input {self.p1}"
 
     def execute(self):
-        """
-        Input operation - executor-specific implementation required.
-        This base implementation does nothing; executors should override
-        or handle Input operations specially.
-        """
-        # Note: Console I/O is handled by ConsoleExecutor
-        # Other executors (web, API) should provide their own input mechanism
-        self.computer_state.ip += 1
+        """Input operation - delegates to executor."""
+        try:
+            self.executor.handle_input(self.p1)
+            self.computer_state.ip += 1
+        except (IndexError, ValueError) as e:
+            self.computer_state.execution_state = ExecutionState.Error
+            self.computer_state.errmsg = f"{self} | {e}"
 
 
-class Print(Op):
+class Print(OpBase):
     def __init__(self, act, p1):
         self.act = act
         self.p1 = p1
@@ -296,16 +295,18 @@ class Print(Op):
         return f"{self.act} {self.p1}"
 
     def execute(self):
+        """Print operation - delegates to executor."""
         try:
             v = self.p1.value(self.computer_state) if self.p1 is not None else ""
-            print(v, end="" if self.act == "print" else "\n", flush=True)
+            newline = (self.act == "println")
+            self.executor.handle_print(str(v), newline)
             self.computer_state.ip += 1
         except IndexError as e:
             self.computer_state.execution_state = ExecutionState.Error
             self.computer_state.errmsg = f"{self} | {e}"
 
 
-class Rand(Op):
+class Rand(OpBase):
     def __init__(self, p1):
         self.p1 = p1
 
@@ -327,7 +328,7 @@ class Rand(Op):
             self.computer_state.errmsg = f"{self} | {e}"
 
 
-class Dump(Op):
+class Dump(OpBase):
     def __init__(self, p1=None, n: int = None):
         self.p1 = p1
         self.n = n
@@ -339,6 +340,7 @@ class Dump(Op):
             return f"dump {self.p1}, {self.n}"
 
     def execute(self):
+        """Dump operation - delegates to executor."""
         # 检查参数合法性
         if self.p1 is not None:
             if self.n < 0:
@@ -354,22 +356,21 @@ class Dump(Op):
         else:
             idx0 = None
 
+        self.executor.handle_dump(idx0, self.n if self.p1 is not None else 0)
         self.computer_state.ip += 1
-        # Note: Dump functionality is executor-specific (console I/O)
-        # Executors should handle dump display themselves
 
 
-class Pause(Op):
+class Pause(OpBase):
     def __repr__(self):
         return f"pause"
 
     def execute(self):
+        """Pause operation - delegates to executor."""
+        self.executor.handle_pause()
         self.computer_state.ip += 1
-        # Note: Pause functionality is executor-specific (console I/O)
-        # Console executor should handle pause display
 
 
-class Halt(Op):
+class Halt(OpBase):
     def __repr__(self):
         return f"halt"
 
@@ -377,7 +378,7 @@ class Halt(Op):
         self.computer_state.execution_state = ExecutionState.Finished
 
 
-class Nop(Op):
+class Nop(OpBase):
     def __repr__(self):
         return f"nop"
 

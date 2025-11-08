@@ -23,21 +23,11 @@ class ConsoleExecutor(ExecutorBase):
                 break
 
             op = self.state.ops[next_ip]
-
-            # Handle console-specific operations before execution
-            if isinstance(op, Dump):
-                self._handle_dump(op)
-            elif isinstance(op, Pause):
-                self._handle_pause(op)
-            elif isinstance(op, Input):
-                self._handle_input(op)
-            else:
-                # Execute normal operation
-                op.execute()
+            op.execute()
 
             # Step mode: dump after each instruction
             if self.step_mode:
-                self.dump(self.state.sp // 64 * 64, 64)
+                self._dump_internal(self.state.sp // 64 * 64, 64)
                 input("step模式，按回车继续执行下一条指令")
 
             if self.state.execution_state == ExecutionState.Error:
@@ -49,57 +39,36 @@ class ConsoleExecutor(ExecutorBase):
         else:
             print(self.state.errmsg)
 
-    def _handle_dump(self, op: Dump):
-        """Handle dump operation with console output."""
-        # Check parameters
-        if op.p1 is not None:
-            if op.n < 0:
-                self.state.execution_state = ExecutionState.Error
-                self.state.errmsg = f"{op} <== dump的参数不能小于0"
-                return
-
-            idx0 = op.p1.value(self.state)
-            if idx0 < 0 or idx0 >= self.state.MEM_SIZE:
-                self.state.execution_state = ExecutionState.Error
-                self.state.errmsg = f"{op.p1}={idx0} 超出内存范围"
-                return
+    # Implement abstract methods from ExecutorBase
+    def handle_input(self, target_operand):
+        """Handle input operation with console input."""
+        s = input(f"Input a number into {target_operand}: ")
+        v = int(s)
+        if isinstance(target_operand, Mem):
+            self.state.set_mem_value(target_operand.addr(self.state), v)
+        elif isinstance(target_operand, Reg):
+            self.state.set_reg_value(target_operand.reg, v)
         else:
-            idx0 = None
+            raise ValueError(f"Invalid target operand type: {type(target_operand)}")
 
-        self.state.ip += 1
-        self.dump(idx0, op.n)
+    def handle_print(self, value: str, newline: bool):
+        """Handle print operation with console output."""
+        print(value, end="\n" if newline else "", flush=True)
 
+    def handle_dump(self, mem_start_idx, mem_count: int):
+        """Handle dump operation with console output."""
+        self._dump_internal(mem_start_idx, mem_count)
         # Avoid double enter in step mode
         if not self.step_mode:
             input("按回车继续执行后续指令")
 
-    def _handle_pause(self, op: Pause):
+    def handle_pause(self):
         """Handle pause operation with console input."""
-        self.state.ip += 1
         input("...PAUSE...")
 
-    def _handle_input(self, op: Input):
-        """Handle input operation with console input."""
-        try:
-            s = input(f"Input a number into {op.p1}: ")
-            v = int(s)
-            if isinstance(op.p1, Mem):
-                self.state.set_mem_value(op.p1.addr(self.state), v)
-            elif isinstance(op.p1, Reg):
-                self.state.set_reg_value(op.p1.reg, v)
-            else:
-                raise ValueError()
-            self.state.ip += 1
-        except IndexError as e:
-            self.state.execution_state = ExecutionState.Error
-            self.state.errmsg = f"{op} | {e}"
-        except ValueError as e:
-            self.state.execution_state = ExecutionState.Error
-            self.state.errmsg = f"{op} | {e}"
-
-    def dump(self, mem_idx0, mem_cnt):
+    def _dump_internal(self, mem_idx0, mem_cnt):
         """
-        Display registers and memory state to console.
+        Internal method to display registers and memory state to console.
 
         Args:
             mem_idx0: Starting memory address to display (None to skip memory dump)

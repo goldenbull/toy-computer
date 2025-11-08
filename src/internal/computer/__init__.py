@@ -13,13 +13,13 @@ class ExecutionState(Enum):
 
 # Import core classes from their respective modules
 from .state import MemType, ComputerState
-from .op import Op
+from .op_base import OpBase
 from .operand import Operand, Reg, Mem, Imm, Str, OperandType
 
 
 # Exception classes
 class OpError(Exception):
-    def __init__(self, op: Op, message: str):
+    def __init__(self, op: OpBase, message: str):
         self.op = op
         self.message = message
 
@@ -29,7 +29,7 @@ class DivZeroError(Exception):
 
 
 class MemError(Exception):
-    def __init__(self, op: Op, addr: int):
+    def __init__(self, op: OpBase, addr: int):
         self.op = op
         self.addr = addr
 
@@ -40,7 +40,7 @@ __all__ = [
     'ExecutionState',
     'MemType',
     'ComputerState',
-    'Op',
+    'OpBase',
     'Operand',
     'Reg',
     'Mem',

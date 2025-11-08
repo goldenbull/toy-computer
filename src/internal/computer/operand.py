@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .state import ComputerState
@@ -19,7 +19,7 @@ class Operand(ABC):
     """
 
     @abstractmethod
-    def value(self, state: 'ComputerState') -> Union[int, str]:
+    def value(self, state: 'ComputerState') -> int | str:
         """
         Get the value of this operand.
 
@@ -99,4 +99,4 @@ class Str(Operand):
 
 
 # Type alias for any operand type
-OperandType = Union[Reg, Mem, Imm, Str]
+OperandType = Reg | Mem | Imm | Str

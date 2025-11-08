@@ -6,9 +6,10 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .state import ComputerState
     from .operand import Operand
+    from .executor_base import ExecutorBase
 
 
-class Op(ABC):
+class OpBase(ABC):
     """
     Base class for all assembly operations.
     Each operation can execute itself and modify the computer state.
@@ -16,6 +17,7 @@ class Op(ABC):
     addr: int = 0  # Address (line number) of this operation
     labels: list[str] = []  # Labels pointing to this operation
     computer_state: 'ComputerState' = None  # Reference to state
+    executor: 'ExecutorBase' = None  # Reference to executor for I/O operations
 
     def execute(self):
         """
