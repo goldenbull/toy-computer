@@ -1,7 +1,26 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABC, abstractmethod
+from antlr4 import *
+from antlr4.error.ErrorListener import ErrorListener
+from internal.grammar.toy_asmLexer import toy_asmLexer
+from internal.grammar.toy_asmParser import toy_asmParser
+from internal.grammar.visitor_impl import VisitorImpl
 from . import ComputerState, ExecutionState, OpBase
+
+
+class MyErrorListener(ErrorListener):
+    """
+    raise exception on parse error immediately.
+    TODO: show more informations
+    """
+    def __init__(self):
+        super().__init__()
+        self.errors = []
+
+    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
+        error_message = f"[{line}:{column}] {e.startToken.text} syntax error"
+        raise Exception(error_message)
 
 
 class ExecutorBase(ABC):
@@ -10,11 +29,20 @@ class ExecutorBase(ABC):
     Separated from ComputerState to decouple execution logic from state management.
     """
 
-    def __init__(self, ops_and_labels: list, step_mode: bool):
-        # 为加载的指令生成序号
-        ops = [x for x in ops_and_labels if isinstance(x, OpBase)]
+    def __init__(self, content: str, step_mode: bool):
+        # parse ASM source code
+        err_listener = MyErrorListener()
+        stm = InputStream(content)
+        lexer = toy_asmLexer(stm)
+        lexer.addErrorListener(err_listener)
+        stream = CommonTokenStream(lexer)
+        parser = toy_asmParser(stream)
+        parser.addErrorListener(err_listener)
+        visitor = VisitorImpl()
+        visitor.visit(parser.program())
 
         # Create the computer state
+        ops = [x for x in visitor.ops_and_labels if isinstance(x, OpBase)]
         self.state = ComputerState(ops)
 
         # Set up instruction addresses, state reference, and executor reference
@@ -25,7 +53,7 @@ class ExecutorBase(ABC):
 
         # 所有label归属到下一条op
         cur_labels = []
-        for x in ops_and_labels:
+        for x in visitor.ops_and_labels:
             if isinstance(x, str):
                 cur_labels.append(x)
             elif isinstance(x, OpBase):
