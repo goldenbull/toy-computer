@@ -1,26 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABC, abstractmethod
-from antlr4 import *
-from antlr4.error.ErrorListener import ErrorListener
-from internal.grammar.toy_asmLexer import toy_asmLexer
-from internal.grammar.toy_asmParser import toy_asmParser
-from internal.grammar.visitor_impl import VisitorImpl
-from . import ComputerState, ExecutionState, OpBase
-
-
-class MyErrorListener(ErrorListener):
-    """
-    raise exception on parse error immediately.
-    TODO: show more informations
-    """
-    def __init__(self):
-        super().__init__()
-        self.errors = []
-
-    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
-        error_message = f"[{line}:{column}] {e.startToken.text} syntax error"
-        raise Exception(error_message)
+from . import ComputerState, ExecutionState
+from ..grammar.compiler import Compiler
 
 
 class ExecutorBase(ABC):
@@ -30,45 +12,17 @@ class ExecutorBase(ABC):
     """
 
     def __init__(self, content: str, step_mode: bool):
-        # parse ASM source code
-        err_listener = MyErrorListener()
-        stm = InputStream(content)
-        lexer = toy_asmLexer(stm)
-        lexer.addErrorListener(err_listener)
-        stream = CommonTokenStream(lexer)
-        parser = toy_asmParser(stream)
-        parser.addErrorListener(err_listener)
-        visitor = VisitorImpl()
-        visitor.visit(parser.program())
+        # Compile the source code
+        compiled = Compiler.compile(content)
 
         # Create the computer state
-        ops = [x for x in visitor.ops_and_labels if isinstance(x, OpBase)]
-        self.state = ComputerState(ops)
+        self.state = ComputerState(compiled.ops)
+        self.state.labels_tbl = compiled.labels_tbl
 
-        # Set up instruction addresses, state reference, and executor reference
-        for i, op in enumerate(self.state.ops):
-            op.addr = i
+        # Set up state reference and executor reference for each operation
+        for op in self.state.ops:
             op.computer_state = self.state
             op.executor = self
-
-        # 所有label归属到下一条op
-        cur_labels = []
-        for x in visitor.ops_and_labels:
-            if isinstance(x, str):
-                cur_labels.append(x)
-            elif isinstance(x, OpBase):
-                # assign all above labels to this op
-                x.labels = cur_labels
-                cur_labels = []
-            else:
-                raise ValueError("impossible")
-        if len(cur_labels) > 0:
-            raise SyntaxError("最后的label没有对应指令")
-
-        # 建立Label和addr的映射表
-        for op in self.state.ops:
-            for label in op.labels:
-                self.state.labels_tbl[label] = op.addr
 
         # 逐步执行模式
         self.step_mode = step_mode

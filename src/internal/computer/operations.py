@@ -287,18 +287,18 @@ class Input(OpBase):
 
 
 class Print(OpBase):
-    def __init__(self, act, p1):
-        self.act = act
+    def __init__(self, action, p1):
+        self.action = action
         self.p1 = p1
 
     def __repr__(self):
-        return f"{self.act} {self.p1}"
+        return f"{self.action} {self.p1}"
 
     def execute(self):
         """Print operation - delegates to executor."""
         try:
             v = self.p1.value(self.computer_state) if self.p1 is not None else ""
-            newline = (self.act == "println")
+            newline = (self.action == "println")
             self.executor.handle_print(str(v), newline)
             self.computer_state.ip += 1
         except IndexError as e:
