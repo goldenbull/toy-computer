@@ -2,11 +2,11 @@
 
 import numpy.random as rnd
 from . import ExecutionState, OpBase, DivZeroError, MemType
-from .operand import Operand, Reg, Mem, Imm, Str
+from .operand import OperandType, Operand
 
 
 class Move(OpBase):
-    def __init__(self, p1, p2):
+    def __init__(self, p1: Operand, p2: Operand):
         self.p1 = p1
         self.p2 = p2
 
@@ -17,10 +17,13 @@ class Move(OpBase):
         try:
             v = self.p2.value(self.computer_state)
 
-            if isinstance(self.p1, Reg):
+            if self.p1.tp == OperandType.Reg:
                 self.computer_state.set_reg_value(self.p1.reg, v)
+            elif self.p1.tp == OperandType.Mem:
+                addr = self.p1.mem_addr(self.computer_state)
+                self.computer_state.set_mem_value(addr, v)
             else:
-                self.computer_state.set_mem_value(self.p1.addr(self.computer_state), v)
+                raise TypeError("unexpected error")
 
             self.computer_state.ip += 1
         except IndexError as e:
@@ -29,7 +32,7 @@ class Move(OpBase):
 
 
 class Add(OpBase):
-    def __init__(self, p1: Reg, p2):
+    def __init__(self, p1: Operand, p2: Operand):
         self.p1 = p1
         self.p2 = p2
 
@@ -49,7 +52,7 @@ class Add(OpBase):
 
 
 class Sub(OpBase):
-    def __init__(self, p1, p2):
+    def __init__(self, p1: Operand, p2: Operand):
         self.p1 = p1
         self.p2 = p2
 
@@ -69,7 +72,7 @@ class Sub(OpBase):
 
 
 class Mul(OpBase):
-    def __init__(self, p1):
+    def __init__(self, p1: Operand):
         self.p1 = p1
 
     def __repr__(self):
@@ -88,7 +91,7 @@ class Mul(OpBase):
 
 
 class Div(OpBase):
-    def __init__(self, p1):
+    def __init__(self, p1: Operand):
         self.p1 = p1
 
     def __repr__(self):
@@ -117,7 +120,7 @@ class Div(OpBase):
 
 
 class Cmp(OpBase):
-    def __init__(self, p1: Reg, p2):
+    def __init__(self, p1: Operand, p2: Operand):
         self.p1 = p1
         self.p2 = p2
 
@@ -208,7 +211,7 @@ class Ret(OpBase):
 
 
 class Push(OpBase):
-    def __init__(self, action: str, p1=None):
+    def __init__(self, action: str, p1: Operand = None):
         self.action = action
         self.p1 = p1
 
@@ -224,7 +227,7 @@ class Push(OpBase):
             if self.action == "push":
                 v = self.p1.value(self.computer_state)
                 # special type for bp
-                if isinstance(self.p1, Reg) and self.p1.reg == "bp":
+                if self.p1.tp == OperandType.Reg and self.p1.reg == "bp":
                     tp = MemType.BP
                 else:
                     tp = MemType.Data
@@ -241,7 +244,7 @@ class Push(OpBase):
 
 
 class Pop(OpBase):
-    def __init__(self, action: str, p1: Reg = None):
+    def __init__(self, action: str, p1: Operand = None):
         self.action = action
         self.p1 = p1
 
@@ -316,12 +319,12 @@ class Rand(OpBase):
     def execute(self):
         try:
             v = rnd.randint(0, 1000)
-            if isinstance(self.p1, Mem):
-                self.computer_state.set_mem_value(self.p1.addr(self.computer_state), v)
-            elif isinstance(self.p1, Reg):
+            if self.p1.tp == OperandType.Mem:
+                self.computer_state.set_mem_value(self.p1.mem_addr(self.computer_state), v)
+            elif self.p1.tp == OperandType.Reg:
                 self.computer_state.set_reg_value(self.p1.reg, v)
             else:
-                raise ValueError()
+                raise TypeError()
             self.computer_state.ip += 1
         except IndexError as e:
             self.computer_state.execution_state = ExecutionState.Error
@@ -329,21 +332,21 @@ class Rand(OpBase):
 
 
 class Dump(OpBase):
-    def __init__(self, p1=None, n: int = None):
+    def __init__(self, p1: Operand = None, cnt: int = None):
         self.p1 = p1
-        self.n = n
+        self.cnt = cnt
 
     def __repr__(self):
         if self.p1 is None:
             return f"dump"
         else:
-            return f"dump {self.p1}, {self.n}"
+            return f"dump {self.p1}, {self.cnt}"
 
     def execute(self):
         """Dump operation - delegates to executor."""
         # 检查参数合法性
         if self.p1 is not None:
-            if self.n < 0:
+            if self.cnt < 0:
                 self.computer_state.execution_state = ExecutionState.Error
                 self.computer_state.errmsg = f"{self} <== dump的参数不能小于0"
                 return
@@ -356,7 +359,7 @@ class Dump(OpBase):
         else:
             idx0 = None
 
-        self.executor.handle_dump(idx0, self.n if self.p1 is not None else 0)
+        self.executor.handle_dump(idx0, self.cnt if self.p1 is not None else 0)
         self.computer_state.ip += 1
 
 

@@ -3,7 +3,7 @@
 from .toy_asmParser import toy_asmParser
 from .toy_asmVisitor import toy_asmVisitor
 from ..computer.operations import *
-from ..computer.operand import Imm, Str
+from ..computer.operand import OperandType, Operand
 
 
 class VisitorImpl(toy_asmVisitor):
@@ -11,11 +11,11 @@ class VisitorImpl(toy_asmVisitor):
 
     def visitNum(self, ctx: toy_asmParser.NumContext):
         """Visit a number and return an Imm operand."""
-        return Imm(int(ctx.getText()))
+        return Operand(OperandType.Imm, immVal=int(ctx.getText()))
 
     def visitReg(self, ctx: toy_asmParser.RegContext):
         """Visit a register and return a Reg operand."""
-        return Reg(ctx.getText())
+        return Operand(OperandType.Reg, reg=ctx.getText())
 
     def visitMem(self, ctx: toy_asmParser.MemContext):
         """Visit a memory reference and return a Mem operand."""
@@ -24,13 +24,13 @@ class VisitorImpl(toy_asmVisitor):
             offset = 0
         else:
             offset = int(ctx.children[2].getText())
-        return Mem(reg, offset)
+        return Operand(OperandType.Mem, reg=reg, offset=offset)
 
     def visitStr(self, ctx: toy_asmParser.StrContext):
         """Visit a string literal and return a Str operand."""
         s = ctx.getText()
         text = s.encode('utf-8').decode('unicode_escape')[1:-1]
-        return Str(text)
+        return Operand(OperandType.Str, text=text)
 
     def visitMove(self, ctx: toy_asmParser.MoveContext):
         p1 = self.visit(ctx.children[1])
@@ -61,9 +61,9 @@ class VisitorImpl(toy_asmVisitor):
         return Cmp(p1, p2)
 
     def visitJump(self, ctx: toy_asmParser.JumpContext):
-        act = ctx.children[0].getText()
+        action = ctx.children[0].getText()
         label = ctx.children[1].getText()
-        return Jump(act, label)
+        return Jump(action, label)
 
     def visitCall(self, ctx: toy_asmParser.CallContext):
         label = ctx.children[1].getText()
@@ -73,32 +73,32 @@ class VisitorImpl(toy_asmVisitor):
         return Ret()
 
     def visitPush(self, ctx: toy_asmParser.PushContext):
-        act = ctx.children[0].getText()
+        action = ctx.children[0].getText()
         if len(ctx.children) == 2:
             p1 = self.visit(ctx.children[1])
         else:
             p1 = None
-        return Push(act, p1)
+        return Push(action, p1)
 
     def visitPop(self, ctx: toy_asmParser.PopContext):
-        act = ctx.children[0].getText()
+        action = ctx.children[0].getText()
         if len(ctx.children) == 2:
             p1 = self.visit(ctx.children[1])
         else:
             p1 = None
-        return Pop(act, p1)
+        return Pop(action, p1)
 
     def visitInput(self, ctx: toy_asmParser.InputContext):
         p1 = self.visit(ctx.children[1])
         return Input(p1)
 
     def visitPrint(self, ctx: toy_asmParser.PrintContext):
-        act = ctx.children[0].getText()
+        action = ctx.children[0].getText()
         if len(ctx.children) == 2:
             p1 = self.visit(ctx.children[1])
         else:
             p1 = None
-        return Print(act, p1)
+        return Print(action, p1)
 
     def visitDump(self, ctx: toy_asmParser.DumpContext):
         if len(ctx.children) > 1:

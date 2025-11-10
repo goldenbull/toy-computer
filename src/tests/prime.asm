@@ -11,7 +11,7 @@ _main_loop1:
     print " "
 _next:
     add ax, 1
-    cmp ax, 100000
+    cmp ax, 1000
     je _finish
     jmp _main_loop1
 _finish:
@@ -24,10 +24,10 @@ _f_is_prime:
     push bp
     mov bp, sp
 
-    // check if ax is prime
-    mov ax, [bp-3]
+    ; check if ax is prime
+    mov ax, [bp+3]
 
-    // check <2, ==2
+    ; check <2, ==2
     cmp ax, 2
     jl _not_prime
     je _is_prime
@@ -35,10 +35,10 @@ _f_is_prime:
     cmp dx, 0
     je _not_prime
 
-    // check 3 to ax-1
+    ; check 3 to ax-1
     mov cx, 3
 _f_is_prime_loop1:
-    mov ax, [bp-3]
+    mov ax, [bp+3]
     cmp cx, ax
     jge _is_prime
     div cx

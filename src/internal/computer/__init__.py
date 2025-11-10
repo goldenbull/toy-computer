@@ -14,7 +14,7 @@ class ExecutionState(Enum):
 # Import core classes from their respective modules
 from .state import MemType, ComputerState
 from .op_base import OpBase
-from .operand import Operand, Reg, Mem, Imm, Str, OperandType
+from .operand import OperandType, Operand
 
 
 # Exception classes
@@ -33,6 +33,7 @@ class MemError(Exception):
         self.op = op
         self.addr = addr
 
+
 from .executor_base import ExecutorBase
 
 # Export all public classes
@@ -41,12 +42,8 @@ __all__ = [
     'MemType',
     'ComputerState',
     'OpBase',
-    'Operand',
-    'Reg',
-    'Mem',
-    'Imm',
-    'Str',
     'OperandType',
+    'Operand',
     'OpError',
     'DivZeroError',
     'MemError',

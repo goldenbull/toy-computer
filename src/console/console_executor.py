@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
+from internal.computer import OperandType
 from internal.computer.executor_base import ExecutorBase, ExecutionState
-from internal.computer.operations import Dump, Pause, Input, Reg, Mem
 
 
 class ConsoleExecutor(ExecutorBase):
@@ -44,9 +43,9 @@ class ConsoleExecutor(ExecutorBase):
         """Handle input operation with console input."""
         s = input(f"Input a number into {target_operand}: ")
         v = int(s)
-        if isinstance(target_operand, Mem):
+        if target_operand.tp == OperandType.Mem:
             self.state.set_mem_value(target_operand.addr(self.state), v)
-        elif isinstance(target_operand, Reg):
+        elif target_operand.tp == OperandType.Reg:
             self.state.set_reg_value(target_operand.reg, v)
         else:
             raise ValueError(f"Invalid target operand type: {type(target_operand)}")
@@ -79,7 +78,8 @@ class ConsoleExecutor(ExecutorBase):
             print(self.state.errmsg)
 
         # Display general-purpose registers
-        print(f"ax={self.state.ax:8d} bx={self.state.bx:8d} cx={self.state.cx:8d} dx={self.state.dx:8d} flg={self.state.flg:8d}")
+        print(
+            f"ax={self.state.ax:8d} bx={self.state.bx:8d} cx={self.state.cx:8d} dx={self.state.dx:8d} flg={self.state.flg:8d}")
         print(f"ip={self.state.ip:8d} bp={self.state.bp:8d} sp={self.state.sp:8d}")
 
         # Display instruction context (14 lines before and after current instruction)

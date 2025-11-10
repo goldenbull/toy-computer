@@ -25,95 +25,45 @@ api = FastAPI()
 
 
 def serialize_operand(operand):
-    """Serialize an operand to JSON-compatible dict."""
-    from internal.computer.operand import Reg, Mem, Imm, Str
+    """Serialize an operand to JSON-compatible dict with all fields."""
+    from internal.computer.operand import Operand
 
-    if isinstance(operand, Reg):
-        return {
-            "type": "reg",
-            "value": operand.reg
-        }
-    elif isinstance(operand, Mem):
-        return {
-            "type": "mem",
-            "reg": operand.reg,
-            "offset": operand.offset
-        }
-    elif isinstance(operand, Imm):
-        return {
-            "type": "imm",
-            "value": operand.val
-        }
-    elif isinstance(operand, Str):
-        return {
-            "type": "str",
-            "value": operand.text
-        }
-    else:
-        return {
-            "type": "unknown",
-            "value": str(operand)
-        }
+    if operand is None:
+        return None
+
+    if not isinstance(operand, Operand):
+        raise TypeError("must be an Operand class instance")
+
+    return {
+        "tp": operand.tp.name,  # Convert enum to string (Reg/Mem/Imm/Str)
+        "reg": operand.reg,
+        "offset": operand.offset,
+        "immVal": operand.immVal,
+        "text": operand.text
+    }
 
 
 def serialize_operation(op):
     """Serialize an operation to JSON-compatible dict."""
-    from internal.computer.operations import (
-        Move, Add, Sub, Mul, Div, Cmp, Jump, Call, Ret,
-        Push, Pop, Input, Print, Rand, Dump, Pause, Halt, Nop
-    )
+    from internal.computer.operations import Dump
 
     # Get operation type name
     op_type = type(op).__name__.lower()
 
-    # Serialize based on operation type
+    # Base result with common fields
     result = {
         "addr": op.addr,
         "type": op_type,
-        "labels": op.labels if hasattr(op, 'labels') else []
+        "labels": op.labels,
+        "p1": serialize_operand(op.p1),
+        "p2": serialize_operand(op.p2),
+        "action": op.action,
+        "target": op.target,
     }
 
-    # Add operands based on operation type
-    if isinstance(op, (Move, Add, Sub, Cmp)):
-        result["operands"] = [serialize_operand(op.p1), serialize_operand(op.p2)]
-    elif isinstance(op, (Mul, Div)):
-        result["operands"] = [serialize_operand(op.p1)]
-    elif isinstance(op, Jump):
-        result["action"] = op.action
-        result["target"] = op.target
-        result["operands"] = []
-    elif isinstance(op, Call):
-        result["target"] = op.target
-        result["operands"] = []
-    elif isinstance(op, Ret):
-        result["operands"] = []
-    elif isinstance(op, Push):
-        result["action"] = op.action
-        result["operands"] = [serialize_operand(op.p1)] if op.p1 else []
-    elif isinstance(op, Pop):
-        result["action"] = op.action
-        result["operands"] = [serialize_operand(op.p1)] if op.p1 else []
-    elif isinstance(op, Input):
-        result["operands"] = [serialize_operand(op.p1)]
-    elif isinstance(op, Print):
-        result["action"] = op.action
-        result["operands"] = [serialize_operand(op.p1)] if op.p1 else []
-    elif isinstance(op, Rand):
-        result["operands"] = [serialize_operand(op.p1), serialize_operand(op.p2)]
-    elif isinstance(op, Dump):
-        if op.p1 is not None:
-            result["operands"] = [serialize_operand(op.p1), {"type": "imm", "value": op.p2}]
-        else:
-            result["operands"] = [{"type": "imm", "value": op.p1_val}, {"type": "imm", "value": op.p2}]
-    elif isinstance(op, (Pause, Halt, Nop)):
-        result["operands"] = []
-    else:
-        # Unknown operation type - try to serialize any p1, p2 attributes
-        result["operands"] = []
-        if hasattr(op, 'p1') and op.p1 is not None:
-            result["operands"].append(serialize_operand(op.p1))
-        if hasattr(op, 'p2') and op.p2 is not None:
-            result["operands"].append(serialize_operand(op.p2))
+    # Add operation-specific fields
+    if isinstance(op, Dump):
+        result["cnt"] = op.cnt
 
     return result
 
