@@ -12,16 +12,12 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import json
-from internal.grammar.compiler import Compiler
 
 # url_prefix = "/toy-computer"
 url_prefix = "/"
 
 # register javascript in mimetypes
 mimetypes.add_type('text/javascript', '.js')
-
-# setup HTTP services
-api = FastAPI()
 
 
 def serialize_operand(operand):
@@ -68,50 +64,6 @@ def serialize_operation(op):
     return result
 
 
-@api.post("/sourcecode")
-async def post_sourcecode(request: Request):
-    """
-    Parse assembly source code and return structured operations and labels.
-
-    Request body: { "sourceCode": "assembly code here..." }
-
-    Returns:
-    {
-        "success": true,
-        "operations": [...],
-        "labels": {...}
-    }
-    or
-    {
-        "success": false,
-        "error": "error message"
-    }
-    """
-    try:
-        body = await request.json()
-        source_code = body.get("sourceCode", "")
-
-        # Compile the source code
-        result = Compiler.compile(source_code)
-
-        # Serialize operations to JSON
-        operations = []
-        for op in result.ops:
-            operations.append(serialize_operation(op))
-
-        return JSONResponse({
-            "success": True,
-            "operations": operations,
-            "labels": result.labels_tbl
-        })
-
-    except Exception as e:
-        return JSONResponse({
-            "success": False,
-            "error": str(e)
-        })
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # config logs
@@ -136,18 +88,63 @@ app.add_middleware(CORSMiddleware,
                    allow_methods=["*"],
                    allow_headers=["*"])
 
-# Mount API endpoints
-app.mount("/api", api)
 
-# Mount static files if the directory exists
-if Path("./html").exists():
-    app.mount(url_prefix, StaticFiles(directory="./html", html=True), "static")
+@app.post("/api/sourcecode")
+async def post_sourcecode(request: Request):
+    """
+    Parse assembly source code and return structured operations and labels.
+
+    Request body: { "sourceCode": "assembly code here..." }
+
+    Returns:
+    {
+        "success": true,
+        "operations": [...],
+        "labels": {...}
+    }
+    or
+    {
+        "success": false,
+        "error": "error message"
+    }
+    """
+    try:
+        body = await request.json()
+        source_code = body.get("sourceCode", "")
+
+        # Compile the source code
+        from internal.grammar.compiler import Compiler
+        result = Compiler.compile(source_code)
+
+        # Serialize operations to JSON
+        operations = []
+        for op in result.ops:
+            operations.append(serialize_operation(op))
+
+        return JSONResponse({
+            "success": True,
+            "operations": operations,
+            "labels": result.labels_tbl
+        })
+
+    except Exception as e:
+        return JSONResponse({
+            "success": False,
+            "error": str(e)
+        })
+
+# Mount SvelteKit static files if the directory exists
+frontend_build_dir = Path(__file__).parent.parent / "web_frontend" / "build"
+if frontend_build_dir.exists():
+    app.mount(url_prefix, StaticFiles(directory=str(frontend_build_dir), html=True), "static")
 
 
 @app.get('/favicon.ico')
 async def favicon():
-    if Path("html/pc.ico").exists():
-        return FileResponse(path="html/pc.ico")
+    # Serve the favicon.png from build directory
+    favicon_path = frontend_build_dir / "favicon.png"
+    if favicon_path.exists():
+        return FileResponse(path=str(favicon_path), media_type="image/png")
     return JSONResponse({"error": "Not found"}, status_code=404)
 
 

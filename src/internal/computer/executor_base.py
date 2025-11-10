@@ -2,7 +2,6 @@
 
 from abc import ABC, abstractmethod
 from . import ComputerState, ExecutionState
-from ..grammar.compiler import Compiler
 
 
 class ExecutorBase(ABC):
@@ -13,6 +12,7 @@ class ExecutorBase(ABC):
 
     def __init__(self, content: str, step_mode: bool):
         # Compile the source code
+        from ..grammar.compiler import Compiler
         compiled = Compiler.compile(content)
 
         # Create the computer state
