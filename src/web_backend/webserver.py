@@ -89,7 +89,7 @@ app.add_middleware(CORSMiddleware,
                    allow_headers=["*"])
 
 
-@app.post("/api/sourcecode")
+@app.post("/api/compile")
 async def post_sourcecode(request: Request):
     """
     Parse assembly source code and return structured operations and labels.
@@ -132,6 +132,7 @@ async def post_sourcecode(request: Request):
             "success": False,
             "error": str(e)
         })
+
 
 # Mount SvelteKit static files if the directory exists
 frontend_build_dir = Path(__file__).parent.parent / "web_frontend" / "build"

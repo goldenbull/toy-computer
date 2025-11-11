@@ -70,6 +70,8 @@ class Compiler:
         cur_labels = []
         for x in visitor.ops_and_labels:
             if isinstance(x, str):
+                if x in cur_labels:
+                    raise SyntaxError(f"出现了重复的Label [{x}]")
                 cur_labels.append(x)
             elif isinstance(x, OpBase):
                 x.labels = cur_labels
@@ -82,6 +84,9 @@ class Compiler:
         labels_tbl = {}
         for op in ops:
             for label in op.labels:
+                print(label)
+                if label in labels_tbl:
+                    raise SyntaxError(f"出现了重复的Label [{label}]")
                 labels_tbl[label] = op.addr
 
         return CompileResult(ops, labels_tbl)

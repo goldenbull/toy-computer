@@ -5,4 +5,13 @@ import path from "path";
 
 export default defineConfig({
     plugins: [tailwindcss(), sveltekit()],
+    server: {
+        proxy: {
+            // Proxy API requests to Python backend during development
+            '/api': {
+                target: 'http://127.0.0.1:22000',
+                changeOrigin: true
+            }
+        }
+    }
 });

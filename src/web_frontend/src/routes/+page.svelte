@@ -2,34 +2,24 @@
     import {onMount} from 'svelte';
     import SourceCodeEditor from '../libs/components/SourceCodeEditor.svelte';
     import ExecutionPanel from '../libs/components/ExecutionPanel.svelte';
-    import {ComputerStatus} from '../libs/ComputerStatus';
+    import {ComputerStatus} from '../libs/ComputerStatus.svelte.ts';
 
     // global computer status object
-    let status = new ComputerStatus();
+    let status = $state(new ComputerStatus());
 
-    let activeTab = 'editor';
+    let activeTab = $state('editor');
     const switchTab = (tab: string) => {
         activeTab = tab;
     };
-
-    async function runCode(stepMode: boolean) {
-        if (status.isRunning) {
-            // TODO: ask if stop the running code
-            return;
-        }
-
-        status.stepMode = stepMode;
-        status.isRunning = true;
-
-        // TODO: switch to execution panel and start
-    }
-
 </script>
 
 <div class="min-h-screen flex flex-col">
     <header class="bg-blue-600 text-white p-4 shadow-md">
         <div class="container mx-auto">
-            <h1 class="text-2xl font-bold">Toy Computer Simulator</h1>
+            <h1 class="text-2xl font-bold flex items-center gap-3">
+                <img src="/favicon.png" alt="Toy Computer" class="w-10 h-10 p-1 bg-white"/>
+                <span>Toy Computer Simulator</span>
+            </h1>
         </div>
     </header>
 
@@ -39,15 +29,15 @@
             <div class="flex border-b">
                 <button
                         class={`p-3 font-medium text-sm ${activeTab === 'editor' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}`}
-                        on:click={() => switchTab('editor')}
+                        onclick={() => switchTab('editor')}
                 >
                     Source Code Editor
                 </button>
                 <button
-                        class={`px-6 py-3 font-medium text-sm ${activeTab === 'status' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}`}
-                        on:click={() => switchTab('status')}
+                        class={`px-6 py-3 font-medium text-sm ${activeTab === 'execution' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}`}
+                        onclick={() => switchTab('execution')}
                 >
-                    Execution Status
+                    Execution
                 </button>
             </div>
 
@@ -55,13 +45,11 @@
             <div class="p-2 flex-grow">
                 <!-- Editor Tab -->
                 {#if activeTab === 'editor'}
-                    <SourceCodeEditor
-                            status={status}
-                            runCode={runCode}/>
+                    <SourceCodeEditor bind:status={status} switchTab={switchTab}/>
                 {/if}
 
-                <!-- Execution Status Tab -->
-                {#if activeTab === 'status'}
+                <!-- Execution Panel Tab -->
+                {#if activeTab === 'execution'}
                     <ExecutionPanel status={status}/>
                 {/if}
             </div>

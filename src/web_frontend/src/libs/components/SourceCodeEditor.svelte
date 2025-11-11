@@ -1,11 +1,52 @@
-<script>
+<script lang="ts">
     import CodeMirror from "svelte-codemirror-editor";
+    import type {ComputerStatus} from '../ComputerStatus.svelte.ts';
 
-    let {status, runCode} = $props();
+    let {status = $bindable(), switchTab}: {
+        status: ComputerStatus,
+        switchTab: (tab: string) => void
+    } = $props();
 
     const loadSourceCode = () => {
         // TODO: load from disk file
     };
+
+    async function compileCode() {
+        // Compile the source code by calling the backend API
+        try {
+            const response = await fetch('/api/compile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    sourceCode: status.sourceCode
+                })
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                // Compilation error
+                status.output += `Compilation Error: ${result.error}\n`;
+                return;
+            }
+
+            // Load the compiled operations
+            status.loadCompiledCode(result.operations, result.labels);
+
+            // Switch to execution panel
+            switchTab('execution');
+
+            // TODO: Start execution
+            console.log('Compiled successfully:', result);
+            console.log('Operations:', status.operations);
+
+        } catch (error) {
+            status.output += `Error: ${error}\n`;
+        }
+    }
+
 </script>
 
 <div class="flex flex-col h-[500px] md:h-[600px] lg:h-[700px] flex-grow">
@@ -23,24 +64,10 @@
     </div>
 
     <div class="mt-4 flex space-x-2">
-        <button
-                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                onclick={()=>runCode(false)}
-                disabled={status.isRunning}
-        >
-            {status.isRunning ? 'Running...' : 'Run'}
+        <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" onclick={compileCode}>
+            Compile
         </button>
-        <button
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                onclick={()=>runCode(true)}
-                disabled={status.isRunning}
-        >
-            Run in Step Mode
-        </button>
-        <button
-                class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
-                onclick={loadSourceCode}
-        >
+        <button class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700" onclick={loadSourceCode}>
             Load Source Code
         </button>
     </div>

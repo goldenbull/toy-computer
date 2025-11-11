@@ -7,7 +7,8 @@ from ..computer.operand import OperandType, Operand
 
 
 class VisitorImpl(toy_asmVisitor):
-    ops_and_labels: list[OpBase | str] = []
+    def __init__(self):
+        self.ops_and_labels: list[OpBase | str] = []
 
     def visitNum(self, ctx: toy_asmParser.NumContext):
         """Visit a number and return an Imm operand."""
