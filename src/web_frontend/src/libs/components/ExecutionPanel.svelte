@@ -1,24 +1,40 @@
 <script lang="ts">
     import {type ComputerStatus, ExecStatus} from '../ComputerStatus.svelte.ts';
+    import {WebExecutor} from '../WebExecutor';
 
     let {status}: {
         status: ComputerStatus
     } = $props();
 
-    function runOneStep() {
+    let executor = $state<WebExecutor | null>(null);
 
+    // Create executor when operations are loaded
+    $effect(() => {
+        if (status.operations.length > 0) {
+            executor = new WebExecutor(status);
+        }
+    });
+
+    function runOneStep() {
+        if (!executor) return;
+        executor.runOneStep();
     }
 
-    function runContinue() {
-
+    async function runContinue() {
+        if (!executor) return;
+        await executor.runContinuous();
     }
 
     function runBreak() {
-
+        if (!executor) return;
+        executor.breakExecution();
     }
 
     function runReset() {
-
+        status.reset();
+        if (status.operations.length > 0) {
+            executor = new WebExecutor(status);
+        }
     }
 </script>
 
@@ -51,39 +67,48 @@
 <!-- Main Layout: Two columns -->
 <div class="flex gap-2 h-[calc(100vh-200px)]">
     <!-- Left Column: Operations -->
-    <div class="flex flex-col gap-2 w-1/5">
+    <div class="flex flex-col gap-2 w-1/4">
         <!-- Operations (flexible height with scroll) -->
         <div class="flex-1 bg-white overflow-auto p-2">
-            <table class="w-full text-xs border-collapse font-mono">
-                <thead>
-                <tr class="bg-gray-100">
-                    <th class="border border-gray-300 px-1 py-1 text-center w-12">Addr</th>
-                    <th class="border border-gray-300 px-1 py-1 text-left">Label & Op</th>
-                    <th class="border border-gray-300 px-1 py-1 text-center w-16">Offset</th>
-                </tr>
-                </thead>
-                <tbody>
-                {#each status.operations as op}
-                    {@const opString = op.toString()}
-                    <tr class={op.addr === status.registers.ip ? 'bg-amber-200' : ''}>
-                        <td class="border border-gray-300 px-1 py-1 text-right">{op.addr}</td>
-                        <td class="border border-gray-300 px-1 py-1">
-                            {#each op.labels as label}
-                                <p class="text-blue-600 font-semibold">{label}:</p>
-                            {/each}
-                            {opString}
-                        </td>
-                        <td class="border border-gray-300 px-1 py-1 text-center">
-                            {#if op.target && status.labels[op.target] !== undefined}
-                                {status.labels[op.target] - op.addr > 0 ? '+' : ''}{status.labels[op.target] - op.addr}
-                            {:else}
-                                {""}
-                            {/if}
-                        </td>
+            {#if status.execStatus === ExecStatus.Running}
+                <div class="flex items-center justify-center h-full">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                        <p class="text-sm font-semibold text-gray-700">Running...</p>
+                    </div>
+                </div>
+            {:else}
+                <table class="w-full text-xs border-collapse font-mono">
+                    <thead>
+                    <tr class="bg-gray-100 sticky top-0">
+                        <th class="border border-gray-300 px-1 py-1 text-center w-12">Addr</th>
+                        <th class="border border-gray-300 px-1 py-1 text-left">Label & Op</th>
+                        <th class="border border-gray-300 px-1 py-1 text-center w-16">Offset</th>
                     </tr>
-                {/each}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {#each status.operations as op}
+                        {@const opString = op.toString()}
+                        <tr class={op.addr === status.registers.ip ? 'bg-amber-200' : ''}>
+                            <td class="border border-gray-300 px-1 py-1 text-right">{op.addr}</td>
+                            <td class="border border-gray-300 px-1 py-1">
+                                {#each op.labels as label}
+                                    <p class="text-blue-600 font-semibold">{label}:</p>
+                                {/each}
+                                <p class="px-4">{opString}</p>
+                            </td>
+                            <td class="border border-gray-300 px-1 py-1 text-center">
+                                {#if op.target && status.labels[op.target] !== undefined}
+                                    {status.labels[op.target] - op.addr > 0 ? '+' : ''}{status.labels[op.target] - op.addr}
+                                {:else}
+                                    {""}
+                                {/if}
+                            </td>
+                        </tr>
+                    {/each}
+                    </tbody>
+                </table>
+            {/if}
         </div>
 
         <!-- Control buttons -->
@@ -120,13 +145,30 @@
     </div>
 
     <!-- Right Column -->
-    <div class="flex flex-col gap-2 w-4/5">
+    <div class="flex flex-col gap-2 w-full">
         <!-- Top: Registers and Memory -->
         <div class="flex gap-2 h-1/2">
-            <!-- Registers -->
-            <div class="flex flex-row p-2">
-                <div class="mr-4 columns-auto">
+            {#if status.execStatus === ExecStatus.Running}
+                <div class="flex items-center justify-center w-full">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                        <p class="text-sm font-semibold text-gray-700">Running...</p>
+                    </div>
+                </div>
+            {:else}
+                <!-- Registers -->
+                <div class="flex flex-col p-2">
+
                     <table class="reg-table">
+                        <tbody>
+                        <tr>
+                            <td class="reg-cell reg-name">ip</td>
+                            <td class="reg-cell reg-value bg-amber-200">{status.registers.ip}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="mt-4 reg-table">
                         <tbody>
                         <tr>
                             <td class="reg-cell reg-name">ax</td>
@@ -150,16 +192,6 @@
                         </tr>
                         </tbody>
                     </table>
-                </div>
-                <div class="flex flex-col columns-auto">
-                    <table class="reg-table">
-                        <tbody>
-                        <tr>
-                            <td class="reg-cell reg-name">ip</td>
-                            <td class="reg-cell reg-value bg-amber-200">{status.registers.ip}</td>
-                        </tr>
-                        </tbody>
-                    </table>
 
                     <table class="mt-4 reg-table">
                         <tbody>
@@ -173,42 +205,43 @@
                         </tr>
                         </tbody>
                     </table>
-                </div>
-            </div>
 
-            <!-- Memory (flexible width with scroll) -->
-            <div class="flex-1 border border-gray-300 rounded p-2 bg-white overflow-auto">
-                <div class="text-xs font-mono">
-                    <table class="text-xs border-collapse">
-                        <thead>
-                        <tr class="bg-gray-100 sticky top-0">
-                            <th class="border border-gray-300 px-1 py-1 text-center">Addr</th>
-                            {#each Array(16) as _, col}
-                                <th class="border border-gray-300 px-1 py-1 text-center w-16">+{col}</th>
-                            {/each}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {#each Array(1024 / 16) as _, row}
-                            <tr>
-                                <td class="border border-gray-300 px-1 py-1 text-center bg-gray-100 font-semibold">{row * 16}</td>
+                </div>
+
+                <!-- Memory (flexible width with scroll) -->
+                <div class="flex-1 border border-gray-300 rounded p-2 bg-white overflow-auto">
+                    <div class="text-xs font-mono">
+                        <table class="text-xs border-collapse">
+                            <thead>
+                            <tr class="bg-gray-100 sticky top-0">
+                                <th class="border border-gray-300 px-1 py-1 text-center">Addr</th>
                                 {#each Array(16) as _, col}
-                                    {@const addr = row * 16 + col}
-                                    {@const value = status.memory[addr]}
-                                    {@const memType = status.getMemType(addr)}
-                                    <td class="border border-gray-300 px-1 py-1 text-right
+                                    <th class="border border-gray-300 px-1 py-1 text-center w-16">+{col}</th>
+                                {/each}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {#each Array(1024 / 16) as _, row}
+                                <tr>
+                                    <td class="border border-gray-300 px-1 py-1 text-center bg-gray-100 font-semibold">{row * 16}</td>
+                                    {#each Array(16) as _, col}
+                                        {@const addr = row * 16 + col}
+                                        {@const value = status.memory[addr]}
+                                        {@const memType = status.getMemType(addr)}
+                                        <td class="border border-gray-300 px-1 py-1 text-right
                                     {memType === 'BP' ? 'bg-green-200' : ''}
                                     {memType === 'IP' ? 'bg-amber-200' : ''}
                                     {addr === status.registers.sp ? 'bg-purple-200' : ''}">
-                                        {value}
-                                    </td>
-                                {/each}
-                            </tr>
-                        {/each}
-                        </tbody>
-                    </table>
+                                            {value}
+                                        </td>
+                                    {/each}
+                                </tr>
+                            {/each}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            {/if}
         </div>
 
         <!-- Output (flexible height) -->

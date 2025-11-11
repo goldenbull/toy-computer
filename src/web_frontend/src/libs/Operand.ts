@@ -40,6 +40,9 @@ export class Operand {
                 return registers[this.reg];
             case OperandType.Mem:
                 const addr = this.memAddr(registers);
+                if (addr < 0 || addr >= memory.length) {
+                    throw new Error(`Memory address out of bounds: ${addr}`);
+                }
                 return memory[addr];
             case OperandType.Imm:
                 return this.immVal;

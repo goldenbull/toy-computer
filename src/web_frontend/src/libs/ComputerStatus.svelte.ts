@@ -130,16 +130,6 @@ _is_prime:
     }
 
     /**
-     * Get memory value at address
-     */
-    getMemValue(addr: number): number {
-        if (addr < 0 || addr >= this.memory.length) {
-            throw new Error(`Memory address out of bounds: ${addr}`);
-        }
-        return this.memory[addr];
-    }
-
-    /**
      * Set memory value at address
      */
     setMemValue(addr: number, value: number, type: MemType = MemType.Data) {
@@ -181,6 +171,7 @@ _is_prime:
             throw new Error('Stack underflow');
         }
         this.registers.sp++;
+        delete this.memoryTypes[this.registers.sp];
         return this.memory[this.registers.sp];
     }
 }
