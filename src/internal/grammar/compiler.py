@@ -84,9 +84,15 @@ class Compiler:
         labels_tbl = {}
         for op in ops:
             for label in op.labels:
-                print(label)
                 if label in labels_tbl:
                     raise SyntaxError(f"出现了重复的Label [{label}]")
                 labels_tbl[label] = op.addr
+
+        # check all jmp and call labels
+        for op in ops:
+            from internal.computer.operations import Jump, Call
+            if isinstance(op, (Jump, Call)):
+                if op.target not in labels_tbl:
+                    raise SyntaxError(f"{op.to_str()} [{op.target}]不存在")
 
         return CompileResult(ops, labels_tbl)

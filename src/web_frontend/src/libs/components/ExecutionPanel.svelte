@@ -1,33 +1,26 @@
 <script lang="ts">
-    import {type ComputerStatus, ExecStatus} from '../ComputerStatus.svelte.ts';
-    import {WebExecutor} from '../WebExecutor';
+    import {ExecStatus} from '../ComputerStatus.svelte.ts';
+    import {globalStatus, globalExecutor, setOutputScrollCallback} from '../store.svelte';
+    import {onMount} from 'svelte';
 
-    let {status}: {
-        status: ComputerStatus
-    } = $props();
-
-    let executor = $state<WebExecutor | null>(null);
     let outputTextarea: HTMLTextAreaElement;
     let operationsContainer: HTMLDivElement;
 
-    // Create executor when operations are loaded
-    $effect(() => {
-        if (status.operations.length > 0) {
-            executor = new WebExecutor(status, () => {
-                // Auto-scroll callback - use requestAnimationFrame to ensure DOM is updated
-                if (outputTextarea) {
-                    requestAnimationFrame(() => {
-                        outputTextarea.scrollTop = outputTextarea.scrollHeight;
-                    });
-                }
-            });
-        }
+    // Register output scroll callback when component mounts
+    onMount(() => {
+        setOutputScrollCallback(() => {
+            if (outputTextarea) {
+                requestAnimationFrame(() => {
+                    outputTextarea.scrollTop = outputTextarea.scrollHeight;
+                });
+            }
+        });
     });
 
     // Auto-scroll operations table to current IP
     $effect(() => {
-        const ip = status.registers.ip;
-        if (operationsContainer && status.operations.length > 0) {
+        const ip = globalStatus.registers.ip;
+        if (operationsContainer && globalStatus.operations.length > 0) {
             requestAnimationFrame(() => {
                 const currentRow = operationsContainer.querySelector(`tr[data-addr="${ip}"]`);
                 if (currentRow) {
@@ -38,22 +31,19 @@
     });
 
     function runOneStep() {
-        if (!executor) return;
-        executor.runOneStep();
+        globalExecutor.runOneStep();
     }
 
     async function runContinue() {
-        if (!executor) return;
-        await executor.runContinuous();
+        await globalExecutor.runContinuous();
     }
 
     function runBreak() {
-        if (!executor) return;
-        executor.breakExecution();
+        globalExecutor.breakExecution();
     }
 
     function runReset() {
-        status.reset();
+        globalStatus.reset();
     }
 </script>
 
@@ -89,7 +79,7 @@
     <div class="flex flex-col gap-2 w-1/4">
         <!-- Operations (flexible height with scroll) -->
         <div bind:this={operationsContainer} class="flex-1 bg-white overflow-auto p-2">
-            {#if status.execStatus === ExecStatus.Running}
+            {#if globalStatus.execStatus === ExecStatus.Running}
                 <div class="flex items-center justify-center h-full">
                     <div class="text-center">
                         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-2"></div>
@@ -106,9 +96,9 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {#each status.operations as op}
+                    {#each globalStatus.operations as op}
                         {@const opString = op.toString()}
-                        <tr data-addr={op.addr} class={op.addr === status.registers.ip ? 'bg-amber-200' : ''}>
+                        <tr data-addr={op.addr} class={op.addr === globalStatus.registers.ip ? 'bg-amber-200' : ''}>
                             <td class="border border-gray-300 px-1 py-1 text-right">{op.addr}</td>
                             <td class="border border-gray-300 px-1 py-1">
                                 {#each op.labels as label}
@@ -117,8 +107,8 @@
                                 <p class="px-4">{opString}</p>
                             </td>
                             <td class="border border-gray-300 px-1 py-1 text-center">
-                                {#if op.target && status.labels[op.target] !== undefined}
-                                    {status.labels[op.target] - op.addr > 0 ? '+' : ''}{status.labels[op.target] - op.addr}
+                                {#if op.target && globalStatus.labels[op.target] !== undefined}
+                                    {globalStatus.labels[op.target] - op.addr > 0 ? '+' : ''}{globalStatus.labels[op.target] - op.addr}
                                 {:else}
                                     {""}
                                 {/if}
@@ -135,28 +125,28 @@
             <button
                     class="flex-1 py-2 bg-green-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                     onclick={() => runContinue()}
-                    disabled={status.execStatus!==ExecStatus.Ready&&status.execStatus!==ExecStatus.Paused}
+                    disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
             >
                 Run
             </button>
             <button
                     class="flex-1 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                     onclick={() => runOneStep()}
-                    disabled={status.execStatus!==ExecStatus.Ready&&status.execStatus!==ExecStatus.Paused}
+                    disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
             >
                 Step
             </button>
             <button
                     class="flex-1 py-2 bg-orange-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                     onclick={() => runBreak()}
-                    disabled={status.execStatus!==ExecStatus.Running}
+                    disabled={globalStatus.execStatus!==ExecStatus.Running}
             >
                 Break
             </button>
             <button
                     class="flex-1 py-2 bg-red-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                     onclick={() => runReset()}
-                    disabled={status.execStatus===ExecStatus.Running}
+                    disabled={globalStatus.execStatus===ExecStatus.Running}
             >
                 Reset
             </button>
@@ -167,7 +157,7 @@
     <div class="flex flex-col gap-2 w-full">
         <!-- Top: Registers and Memory -->
         <div class="flex gap-2 h-1/2">
-            {#if status.execStatus === ExecStatus.Running}
+            {#if globalStatus.execStatus === ExecStatus.Running}
                 <div class="flex items-center justify-center w-full">
                     <div class="text-center">
                         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-2"></div>
@@ -182,7 +172,7 @@
                         <tbody>
                         <tr>
                             <td class="reg-cell reg-name">ip</td>
-                            <td class="reg-cell reg-value bg-amber-200">{status.registers.ip}</td>
+                            <td class="reg-cell reg-value bg-amber-200">{globalStatus.registers.ip}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -191,23 +181,23 @@
                         <tbody>
                         <tr>
                             <td class="reg-cell reg-name">ax</td>
-                            <td class="reg-cell reg-value bg-gray-100">{status.registers.ax}</td>
+                            <td class="reg-cell reg-value bg-gray-100">{globalStatus.registers.ax}</td>
                         </tr>
                         <tr>
                             <td class="reg-cell reg-name">bx</td>
-                            <td class="reg-cell reg-value bg-gray-100">{status.registers.bx}</td>
+                            <td class="reg-cell reg-value bg-gray-100">{globalStatus.registers.bx}</td>
                         </tr>
                         <tr>
                             <td class="reg-cell reg-name">cx</td>
-                            <td class="reg-cell reg-value bg-gray-100">{status.registers.cx}</td>
+                            <td class="reg-cell reg-value bg-gray-100">{globalStatus.registers.cx}</td>
                         </tr>
                         <tr>
                             <td class="reg-cell reg-name">dx</td>
-                            <td class="reg-cell reg-value bg-gray-100">{status.registers.dx}</td>
+                            <td class="reg-cell reg-value bg-gray-100">{globalStatus.registers.dx}</td>
                         </tr>
                         <tr>
                             <td class="reg-cell reg-name">flg</td>
-                            <td class="reg-cell reg-value bg-gray-100">{status.registers.flg}</td>
+                            <td class="reg-cell reg-value bg-gray-100">{globalStatus.registers.flg}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -216,11 +206,11 @@
                         <tbody>
                         <tr>
                             <td class="reg-cell reg-name">bp</td>
-                            <td class="reg-cell reg-value bg-green-200">{status.registers.bp}</td>
+                            <td class="reg-cell reg-value bg-green-200">{globalStatus.registers.bp}</td>
                         </tr>
                         <tr>
                             <td class="reg-cell reg-name">sp</td>
-                            <td class="reg-cell reg-value bg-purple-200">{status.registers.sp}</td>
+                            <td class="reg-cell reg-value bg-purple-200">{globalStatus.registers.sp}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -245,12 +235,12 @@
                                     <td class="border border-gray-300 px-1 py-1 text-center bg-gray-100 font-semibold">{row * 16}</td>
                                     {#each Array(16) as _, col}
                                         {@const addr = row * 16 + col}
-                                        {@const value = status.memory[addr]}
-                                        {@const memType = status.getMemType(addr)}
+                                        {@const value = globalStatus.memory[addr]}
+                                        {@const memType = globalStatus.getMemType(addr)}
                                         <td class="border border-gray-300 px-1 py-1 text-right
                                     {memType === 'BP' ? 'bg-green-200' : ''}
                                     {memType === 'IP' ? 'bg-amber-200' : ''}
-                                    {addr === status.registers.sp ? 'bg-purple-200' : ''}">
+                                    {addr === globalStatus.registers.sp ? 'bg-purple-200' : ''}">
                                             {value}
                                         </td>
                                     {/each}
@@ -269,7 +259,7 @@
             <textarea
                     bind:this={outputTextarea}
                     class="flex-grow w-full p-2 font-mono text-xs resize-none focus:outline-none border border-gray-200 rounded"
-                    bind:value={status.output}
+                    bind:value={globalStatus.output}
                     placeholder="Execution output appears here..."
                     readonly
             ></textarea>

@@ -1,16 +1,19 @@
 <script lang="ts">
-    import {onMount} from 'svelte';
     import SourceCodeEditor from '../libs/components/SourceCodeEditor.svelte';
     import ExecutionPanel from '../libs/components/ExecutionPanel.svelte';
-    import {ComputerStatus} from '../libs/ComputerStatus.svelte.ts';
-
-    // global computer status object
-    let status = $state(new ComputerStatus());
+    import {globalStatus, STORAGE_KEY} from '../libs/store.svelte';
 
     let activeTab = $state('editor');
     const switchTab = (tab: string) => {
         activeTab = tab;
     };
+
+    // Save source code to localStorage whenever it changes
+    $effect(() => {
+        if (globalStatus.sourceCode) {
+            localStorage.setItem(STORAGE_KEY, globalStatus.sourceCode);
+        }
+    });
 </script>
 
 <div class="min-h-screen flex flex-col">
@@ -51,12 +54,12 @@
             <div class="p-2 flex-grow">
                 <!-- Editor Tab -->
                 {#if activeTab === 'editor'}
-                    <SourceCodeEditor bind:status={status} switchTab={switchTab}/>
+                    <SourceCodeEditor switchTab={switchTab}/>
                 {/if}
 
                 <!-- Execution Panel Tab -->
                 {#if activeTab === 'execution'}
-                    <ExecutionPanel status={status}/>
+                    <ExecutionPanel/>
                 {/if}
             </div>
         </div>
