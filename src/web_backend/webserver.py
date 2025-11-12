@@ -41,7 +41,6 @@ def serialize_operand(operand):
 
 def serialize_operation(op):
     """Serialize an operation to JSON-compatible dict."""
-    from internal.computer.operations import Dump
 
     # Get operation type name
     op_type = type(op).__name__.lower()
@@ -58,6 +57,7 @@ def serialize_operation(op):
     }
 
     # Add operation-specific fields
+    from internal.computer.operations import Dump
     if isinstance(op, Dump):
         result["cnt"] = op.cnt
 
