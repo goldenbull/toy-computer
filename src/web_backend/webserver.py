@@ -89,7 +89,7 @@ app.add_middleware(CORSMiddleware,
                    allow_headers=["*"])
 
 
-@app.post("/api/compile")
+@app.post(url_prefix + "/api/compile")
 async def post_sourcecode(request: Request):
     """
     Parse assembly source code and return structured operations and labels.

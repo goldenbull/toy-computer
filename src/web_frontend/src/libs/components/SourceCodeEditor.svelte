@@ -37,7 +37,11 @@
     async function compileCode() {
         // Compile the source code by calling the backend API
         try {
-            const response = await fetch('/api/compile', {
+            const baseUrl = import.meta.env.BASE_URL || '/';
+            // Ensure baseUrl ends with / and apiPath starts without /
+            const normalizedBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+            const apiUrl = `${normalizedBase}api/compile`;
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -61,11 +65,6 @@
 
             // Switch to execution panel
             switchTab('execution');
-
-            // TODO: Start execution
-            console.log('Compiled successfully:', result);
-            console.log('Operations:', globalStatus.operations);
-
         } catch (error) {
             errorMessage = `Error: ${error}`;
             showErrorModal = true;
