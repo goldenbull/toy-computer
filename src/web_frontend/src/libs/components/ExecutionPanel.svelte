@@ -73,7 +73,7 @@
 </style>
 
 <!-- Main Layout: Two columns -->
-<div class="flex gap-2 h-[calc(100vh-200px)]">
+<div class="flex gap-2 h-full">
     <!-- Left Column: Operations -->
     <div class="flex flex-col gap-2 w-1/4">
         <!-- Operations (flexible height with scroll) -->

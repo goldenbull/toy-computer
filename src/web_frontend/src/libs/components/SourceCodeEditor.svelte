@@ -77,7 +77,7 @@
 
 </script>
 
-<div class="flex flex-col h-[500px] md:h-[600px] lg:h-[700px] flex-grow">
+<div class="flex flex-col h-full flex-grow">
     <!-- Hidden file input -->
     <input
             type="file"
