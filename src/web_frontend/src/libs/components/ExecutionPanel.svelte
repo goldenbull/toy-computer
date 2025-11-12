@@ -7,11 +7,33 @@
     } = $props();
 
     let executor = $state<WebExecutor | null>(null);
+    let outputTextarea: HTMLTextAreaElement;
+    let operationsContainer: HTMLDivElement;
 
     // Create executor when operations are loaded
     $effect(() => {
         if (status.operations.length > 0) {
-            executor = new WebExecutor(status);
+            executor = new WebExecutor(status, () => {
+                // Auto-scroll callback - use requestAnimationFrame to ensure DOM is updated
+                if (outputTextarea) {
+                    requestAnimationFrame(() => {
+                        outputTextarea.scrollTop = outputTextarea.scrollHeight;
+                    });
+                }
+            });
+        }
+    });
+
+    // Auto-scroll operations table to current IP
+    $effect(() => {
+        const ip = status.registers.ip;
+        if (operationsContainer && status.operations.length > 0) {
+            requestAnimationFrame(() => {
+                const currentRow = operationsContainer.querySelector(`tr[data-addr="${ip}"]`);
+                if (currentRow) {
+                    currentRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
         }
     });
 
@@ -32,9 +54,6 @@
 
     function runReset() {
         status.reset();
-        if (status.operations.length > 0) {
-            executor = new WebExecutor(status);
-        }
     }
 </script>
 
@@ -69,7 +88,7 @@
     <!-- Left Column: Operations -->
     <div class="flex flex-col gap-2 w-1/4">
         <!-- Operations (flexible height with scroll) -->
-        <div class="flex-1 bg-white overflow-auto p-2">
+        <div bind:this={operationsContainer} class="flex-1 bg-white overflow-auto p-2">
             {#if status.execStatus === ExecStatus.Running}
                 <div class="flex items-center justify-center h-full">
                     <div class="text-center">
@@ -89,7 +108,7 @@
                     <tbody>
                     {#each status.operations as op}
                         {@const opString = op.toString()}
-                        <tr class={op.addr === status.registers.ip ? 'bg-amber-200' : ''}>
+                        <tr data-addr={op.addr} class={op.addr === status.registers.ip ? 'bg-amber-200' : ''}>
                             <td class="border border-gray-300 px-1 py-1 text-right">{op.addr}</td>
                             <td class="border border-gray-300 px-1 py-1">
                                 {#each op.labels as label}
@@ -114,28 +133,28 @@
         <!-- Control buttons -->
         <div class="flex gap-2">
             <button
-                    class="flex-1 py-2 bg-green-600 text-white rounded disabled:cursor-not-allowed"
+                    class="flex-1 py-2 bg-green-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                     onclick={() => runContinue()}
                     disabled={status.execStatus!==ExecStatus.Ready&&status.execStatus!==ExecStatus.Paused}
             >
                 Run
             </button>
             <button
-                    class="flex-1 py-2 bg-blue-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="flex-1 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                     onclick={() => runOneStep()}
                     disabled={status.execStatus!==ExecStatus.Ready&&status.execStatus!==ExecStatus.Paused}
             >
                 Step
             </button>
             <button
-                    class="flex-1 py-2 bg-orange-500 text-white rounded disabled:cursor-not-allowed"
+                    class="flex-1 py-2 bg-orange-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                     onclick={() => runBreak()}
                     disabled={status.execStatus!==ExecStatus.Running}
             >
                 Break
             </button>
             <button
-                    class="flex-1 py-2 bg-red-500 text-white rounded disabled:cursor-not-allowed"
+                    class="flex-1 py-2 bg-red-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                     onclick={() => runReset()}
                     disabled={status.execStatus===ExecStatus.Running}
             >
@@ -248,6 +267,7 @@
         <div class="flex-1 border border-gray-300 rounded p-2 bg-white flex flex-col">
             <h3 class="font-bold mb-2 text-sm">Output</h3>
             <textarea
+                    bind:this={outputTextarea}
                     class="flex-grow w-full p-2 font-mono text-xs resize-none focus:outline-none border border-gray-200 rounded"
                     bind:value={status.output}
                     placeholder="Execution output appears here..."

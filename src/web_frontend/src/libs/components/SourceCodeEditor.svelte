@@ -60,6 +60,7 @@
         <CodeMirror bind:value={status.sourceCode}
                     class="w-full h-full p-4 font-mono text-sm resize-none focus:outline-none absolute inset-0"
                     placeholder="Enter your assembly code here..."
+                    styles={{"&": {height: "100%", overflow: "auto"}}}
         />
     </div>
 

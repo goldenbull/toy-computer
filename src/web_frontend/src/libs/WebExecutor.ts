@@ -7,9 +7,11 @@ import {Operand, OperandType} from './Operand';
  */
 export class WebExecutor {
     private status: ComputerStatus;
+    private onOutputChange?: () => void;
 
-    constructor(status: ComputerStatus) {
+    constructor(status: ComputerStatus, onOutputChange?: () => void) {
         this.status = status;
+        this.onOutputChange = onOutputChange;
     }
 
     /**
@@ -287,6 +289,9 @@ export class WebExecutor {
      */
     private appendOutput(text: string) {
         this.status.output += text;
+        if (this.onOutputChange) {
+            this.onOutputChange();
+        }
     }
 
     /**
@@ -346,10 +351,6 @@ export class WebExecutor {
                 stepCount = 0;
             }
         }
-        //
-        // if (this.status.execStatus === ExecStatus.Running) {
-        //     this.status.execStatus = ExecStatus.Paused;
-        // }
     }
 
     /**
