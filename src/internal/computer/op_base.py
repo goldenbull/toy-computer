@@ -19,8 +19,8 @@ class OpBase(ABC):
     computer_state: 'ComputerState' = None  # Reference to state
     executor: 'ExecutorBase' = None  # Reference to executor for I/O operations
 
-    p1: Operand = None
-    p2: Operand = None
+    p1: 'Operand' = None
+    p2: 'Operand' = None
 
     action: str = None  # for jmp/jne/...  push/pushf print/println etc.
     target: str = None  # for jmp and call
