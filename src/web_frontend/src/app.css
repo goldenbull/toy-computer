@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+/* override CodeMirror font-family on windows */
+
+.cm-editor .cm-content {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}

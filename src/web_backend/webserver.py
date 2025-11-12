@@ -140,7 +140,7 @@ if frontend_build_dir.exists():
     app.mount(url_prefix, StaticFiles(directory=str(frontend_build_dir), html=True), "static")
 
 
-@app.get('/favicon.ico')
+@app.get(url_prefix + '/favicon.ico')
 async def favicon():
     # Serve the favicon.png from build directory
     favicon_path = frontend_build_dir / "favicon.png"

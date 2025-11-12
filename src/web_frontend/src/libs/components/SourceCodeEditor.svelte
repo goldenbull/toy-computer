@@ -88,12 +88,6 @@
     />
 
     <div class="flex-grow border border-gray-300 rounded-lg overflow-hidden relative">
-        <!--        <textarea-->
-        <!--                bind:value={status.sourceCode}-->
-        <!--                class="w-full h-full p-4 font-mono text-sm resize-none focus:outline-none absolute inset-0"-->
-        <!--                placeholder="Enter your assembly code here..."-->
-        <!--                spellcheck="false"-->
-        <!--        ></textarea>-->
         <CodeMirror bind:value={globalStatus.sourceCode}
                     class="w-full h-full p-4 font-mono text-sm resize-none focus:outline-none absolute inset-0"
                     placeholder="Enter your assembly code here..."

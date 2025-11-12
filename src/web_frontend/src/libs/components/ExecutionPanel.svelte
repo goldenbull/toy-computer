@@ -56,19 +56,18 @@
 
     .reg-cell {
         border: 1px solid #d1d5db;
-        padding: 0.25rem;
+        padding: 0.25rem 0.5rem;
     }
 
     .reg-name {
-        /*font-weight: 500;*/
-        width: 2rem;
+        font-weight: 500;
+        width: 3rem;
         text-align: center;
     }
 
     .reg-value {
-        width: 4rem;
+        min-width: 4rem;
         text-align: right;
-        font-family: monospace;
     }
 
 </style>
@@ -168,7 +167,7 @@
                 <!-- Registers -->
                 <div class="flex flex-col p-2">
 
-                    <table class="reg-table">
+                    <table class="reg-table font-mono">
                         <tbody>
                         <tr>
                             <td class="reg-cell reg-name">ip</td>
@@ -177,7 +176,7 @@
                         </tbody>
                     </table>
 
-                    <table class="mt-4 reg-table">
+                    <table class="mt-4 reg-table font-mono">
                         <tbody>
                         <tr>
                             <td class="reg-cell reg-name">ax</td>
@@ -202,7 +201,7 @@
                         </tbody>
                     </table>
 
-                    <table class="mt-4 reg-table">
+                    <table class="mt-4 reg-table font-mono">
                         <tbody>
                         <tr>
                             <td class="reg-cell reg-name">bp</td>
