@@ -13,8 +13,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import json
 
-# url_prefix = "/toy-computer"
-url_prefix = "/"
+url_prefix = "/toy-computer"
+# url_prefix = "/"
 
 # register javascript in mimetypes
 mimetypes.add_type('text/javascript', '.js')
