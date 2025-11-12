@@ -5,7 +5,13 @@
         activeSection = sectionId;
         const element = document.getElementById(sectionId);
         if (element) {
-            element.scrollIntoView({behavior: 'smooth'});
+            // Scroll with offset to account for sticky header
+            const headerHeight = 72; // Height of sticky header
+            const offsetTop = element.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
         }
     };
 
@@ -20,7 +26,7 @@
             ]
         },
         {
-            id: 'instructions', title: '指令汇总', isParent: true,
+            id: 'instructions', title: '指令说明', isParent: true,
             children: [
                 {id: "op-mov", title: "mov"},
                 {id: "op-add", title: "add"},
@@ -57,6 +63,20 @@
         },
     ];
 </script>
+
+<style>
+    .manual-table {
+        width: 100%;
+        font-size: 0.8rem;
+        border-collapse: collapse;
+    }
+
+    .manual-table td {
+        border: 1px solid;
+        padding: 0.25rem 0.5rem;
+    }
+
+</style>
 
 <div class="min-h-screen bg-gray-50">
     <!-- Header -->
@@ -120,544 +140,605 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 p-8 max-w-5xl">
-            <section id="intro" class="mb-12">
-                <h2 class="text-3xl font-bold mb-4 text-gray-800">介绍</h2>
-                <p class="text-gray-700 mb-4">用于计算机编程的入门教学。</p>
-                <p class="text-gray-700">
-                    引入一个极度简化、抽象后的计算机模型，只包含最简单的CPU和内存，逐步引入各条ASM汇编指令。</p>
-            </section>
+        <main class="flex-1 p-8 max-w-5xl font-mono">
+            <section id="syntax-rules" class="mb-12">
+                <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">语法规则</h2>
 
-            <section id="basic-rules" class="mb-12">
-                <h2 class="text-3xl font-bold mb-4 text-gray-800">最基本的规则</h2>
-                <ol class="list-decimal list-inside space-y-3 text-gray-700">
-                    <li>整个系统只有几个概念：指令、CPU、寄存器、数字、内存</li>
-                    <li>
-                        指令：程序的最基本单位，一条语句就是一个指令，由CPU负责执行，每条指令的执行逻辑都是极度简单、清晰、明确的，指令的语句全部使用小写，每条指令前还可以有一个或多个自定义的标签
-                    </li>
-                    <li>用分号;开始注释，等同于C语言的//和python语言的#</li>
-                    <li>CPU、寄存器
-                        <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
-                            <li>
-                                CPU负责执行指令，具体执行指令的细节涉及到很低层的数字电路了，不是这里要解决的问题，因此执行过程可以简化，只需要抽象了解加减乘除等基本运算等逻辑就可以。
-                            </li>
-                            <li>寄存器在CPU内部，每个寄存器是一个小格子，可以存一个数字，要强调寄存器的"临时"性质</li>
-                        </ul>
-                    </li>
-                    <li>数字：只处理有符号整数，不考虑浮点数，也不考虑不同长度的整型</li>
-                    <li>内存，用来保存数据和指令，分为数据内存和指令内存
-                        <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
-                            <li>
-                                数据内存由1024个小格子组成，和寄存器一样，每个格子也可以存一个数字，所有格子顺序编号，0-base
-                            </li>
-                            <li>指令内存也是一堆小格子，每个格子一条指令，也顺序编号，且每条指令可以有一个自定义的label
-                            </li>
-                            <li>内存和寄存器的区别：内存比寄存器慢100倍，但量大便宜</li>
-                        </ul>
-                    </li>
-                    <li>教学时的类比：
-                        <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
-                            <li>指令内存和指令：操作手册，每一步的操作（不可擦写）</li>
-                            <li>数据内存：黑板（面积大，可擦写）</li>
-                            <li>寄存器：草稿纸（面积小，可擦写）</li>
-                            <li>CPU：操作员，人</li>
-                        </ul>
-                    </li>
-                </ol>
-            </section>
-
-            <section id="lessons" class="mb-12">
-                <h2 class="text-3xl font-bold mb-6 text-gray-800 pb-3 border-b-2 border-blue-600">Lessons</h2>
-
-                <section id="lesson-1" class="mb-12 ml-4">
-                    <h2 class="text-3xl font-bold mb-4 text-gray-800">Lesson 1 - 寄存器的简单操作</h2>
-                    <p class="text-gray-700 mb-4"><strong>核心概念：</strong>寄存器的赋值和算术运算</p>
-                    <p class="text-gray-700 mb-4">引入4个通用寄存器：<code
-                            class="bg-gray-100 px-2 py-1 rounded">ax</code>
-                        <code class="bg-gray-100 px-2 py-1 rounded">bx</code> <code
-                                class="bg-gray-100 px-2 py-1 rounded">cx</code> <code
-                                class="bg-gray-100 px-2 py-1 rounded">dx</code>
-                    </p>
-
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white border border-gray-300">
-                            <thead>
-                            <tr class="bg-gray-100">
-                                <th class="px-4 py-2 border">指令</th>
-                                <th class="px-4 py-2 border">格式</th>
-                                <th class="px-4 py-2 border">含义</th>
-                                <th class="px-4 py-2 border">样例</th>
-                            </tr>
-                            </thead>
-                            <tbody class="text-gray-700">
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">mov</td>
-                                <td class="px-4 py-2 border font-mono text-sm">mov r1, N</td>
-                                <td class="px-4 py-2 border">将数字N存入寄存器r1中</td>
-                                <td class="px-4 py-2 border font-mono text-sm">mov ax, 0<br/>mov bx, 100</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border"></td>
-                                <td class="px-4 py-2 border font-mono text-sm">mov r1, r2</td>
-                                <td class="px-4 py-2 border">将寄存器r2的值存入寄存器r1中<br/>r1被覆盖，r2保持不变</td>
-                                <td class="px-4 py-2 border font-mono text-sm">mov ax, bx</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">add</td>
-                                <td class="px-4 py-2 border font-mono text-sm">add r1, N</td>
-                                <td class="px-4 py-2 border">将数字N和寄存器r1中的数字相加<br/>结果依然存入r1中</td>
-                                <td class="px-4 py-2 border font-mono text-sm">mov ax, 1<br/>add ax, 2<br/>;此时ax=3
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border"></td>
-                                <td class="px-4 py-2 border font-mono text-sm">add r1, r2</td>
-                                <td class="px-4 py-2 border">将寄存器r1和r2中的数字相加<br/>结果存入r1中，r2保持不变</td>
-                                <td class="px-4 py-2 border font-mono text-sm">mov ax, 1<br/>mov bx, 2<br/>add ax,
-                                    bx<br/>;此时ax=3，bx=2
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">sub</td>
-                                <td class="px-4 py-2 border font-mono text-sm">sub r1, N<br/>sub r1, r2</td>
-                                <td class="px-4 py-2 border">减法 r1-N → r1<br/>r1-r2 → r1</td>
-                                <td class="px-4 py-2 border"></td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">mul</td>
-                                <td class="px-4 py-2 border font-mono text-sm">mul N</td>
-                                <td class="px-4 py-2 border">乘数必须预先放入ax中<br/>ax*N → ax</td>
-                                <td class="px-4 py-2 border font-mono text-sm">mov ax, 3<br/>mul 4<br/>;此时ax=12</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border"></td>
-                                <td class="px-4 py-2 border font-mono text-sm">mul r1</td>
-                                <td class="px-4 py-2 border">ax*r1 → ax</td>
-                                <td class="px-4 py-2 border"></td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">div</td>
-                                <td class="px-4 py-2 border font-mono text-sm">div N</td>
-                                <td class="px-4 py-2 border">
-                                    整数除法，被除数必须预先放入ax中<br/>商在ax中，余数在dx中<br/>余数始终和ax符号相同
-                                </td>
-                                <td class="px-4 py-2 border font-mono text-sm">mov ax, 11<br/>div 4<br/>;此时ax=2, dx=3
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">input</td>
-                                <td class="px-4 py-2 border font-mono text-sm">input r1</td>
-                                <td class="px-4 py-2 border">用户输入一个数字，存入r1中</td>
-                                <td class="px-4 py-2 border font-mono text-sm">input ax</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">print</td>
-                                <td class="px-4 py-2 border font-mono text-sm">print N<br/>print r1<br/>print "STR"<br/>println
-                                    ...
-                                </td>
-                                <td class="px-4 py-2 border">输出数字或字符串<br/>println在末尾自动换行</td>
-                                <td class="px-4 py-2 border font-mono text-sm">print cx<br/>println "hello"</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">rand</td>
-                                <td class="px-4 py-2 border font-mono text-sm">rand r1</td>
-                                <td class="px-4 py-2 border">生成[0, 999]范围内的随机数存入r1</td>
-                                <td class="px-4 py-2 border font-mono text-sm">rand ax</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4">
-                        <h4 class="font-bold text-blue-800 mb-2">练习任务</h4>
-                        <ol class="list-decimal list-inside space-y-1 text-gray-700">
-                            <li>从1加到10，输出结果</li>
-                            <li>输入两个数，输出两个数的加减乘除的各种结果</li>
-                        </ol>
-                    </div>
+                <section id="register" class="mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">寄存器</h3>
+                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                        <li>通用寄存器：ax, bx, cx, dx</li>
+                        <li>符号寄存器：flg</li>
+                        <li>栈操作寄存器：bp, sp</li>
+                        <li>指令寄存器：ip</li>
+                    </ol>
                 </section>
 
-                <section id="lesson-2" class="mb-12 ml-4">
-                    <h2 class="text-3xl font-bold mb-4 text-gray-800">Lesson 2 - 内存操作</h2>
-                    <p class="text-gray-700 mb-4"><strong>核心概念：</strong>按地址读写内存，变量</p>
-                    <p class="text-gray-700 mb-4">内存统一通过 <code
-                            class="bg-gray-100 px-2 py-1 rounded">[寄存器+偏移量]</code> 的格式访问，偏移量为0时可省略，也可以为负数。
-                    </p>
-
-                    <div class="overflow-x-auto mb-4">
-                        <table class="min-w-full bg-white border border-gray-300">
-                            <thead>
-                            <tr class="bg-gray-100">
-                                <th class="px-4 py-2 border">指令</th>
-                                <th class="px-4 py-2 border">格式</th>
-                                <th class="px-4 py-2 border">样例</th>
-                            </tr>
-                            </thead>
-                            <tbody class="text-gray-700">
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">mov</td>
-                                <td class="px-4 py-2 border font-mono text-sm">mov [r1+N1], N2<br/>mov [r1+N], r2<br/>mov
-                                    r1, [r2+N]
-                                </td>
-                                <td class="px-4 py-2 border font-mono text-sm">mov cx, 1<br/>mov [cx], 123<br/>;将123存入内存[1]
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">add/sub</td>
-                                <td class="px-4 py-2 border font-mono text-sm">add r1, [r2+N]<br/>sub r1, [r2+N]</td>
-                                <td class="px-4 py-2 border"></td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">mul/div</td>
-                                <td class="px-4 py-2 border font-mono text-sm">mul [r1+N]<br/>div [r1+N]</td>
-                                <td class="px-4 py-2 border"></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <h3 class="text-xl font-bold mb-3 text-gray-800">调试指令</h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white border border-gray-300">
-                            <thead>
-                            <tr class="bg-gray-100">
-                                <th class="px-4 py-2 border">指令</th>
-                                <th class="px-4 py-2 border">格式</th>
-                                <th class="px-4 py-2 border">含义</th>
-                            </tr>
-                            </thead>
-                            <tbody class="text-gray-700">
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">dump</td>
-                                <td class="px-4 py-2 border font-mono text-sm">dump<br/>dump r1, N<br/>dump N1, N2</td>
-                                <td class="px-4 py-2 border">输出当前计算机运行状态<br/>可选显示内存区域</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">halt</td>
-                                <td class="px-4 py-2 border font-mono text-sm">halt</td>
-                                <td class="px-4 py-2 border">立即结束运行，进入停机状态</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">pause</td>
-                                <td class="px-4 py-2 border font-mono text-sm">pause</td>
-                                <td class="px-4 py-2 border">暂停，回车后继续运行</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">nop</td>
-                                <td class="px-4 py-2 border font-mono text-sm">nop</td>
-                                <td class="px-4 py-2 border">no operation，CPU空转一次</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4">
-                        <h4 class="font-bold text-blue-800 mb-2">练习任务</h4>
-                        <p class="text-gray-700">输入4个数，然后依次输出：这4个数本身的值，4个数的和、平方和</p>
-                    </div>
+                <section id="memory" class="mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">内存</h3>
+                    <p>内存有 1024 个单元，地址是从 0 到 1023 每个单元可以存一个数字，栈从 1023
+                        开始从后往前生长，见示例中的斐波那契数列程序的执行过程</p>
                 </section>
 
-                <section id="lesson-3" class="mb-12 ml-4">
-                    <h2 class="text-3xl font-bold mb-4 text-gray-800">Lesson 3 - 循环，判断，跳转</h2>
-                    <p class="text-gray-700 mb-4"><strong>核心概念：</strong>条件控制，跳转，理解使用变量作为下标访问数组
-                    </p>
-
-                    <h3 class="text-xl font-bold mb-3 text-gray-800">跳转指令</h3>
-                    <p class="text-gray-700 mb-4">引入寄存器 <code class="bg-gray-100 px-2 py-1 rounded">flg</code>（只能通过cmp指令写入）和
-                        <code class="bg-gray-100 px-2 py-1 rounded">ip</code>（指令指针）</p>
-
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white border border-gray-300">
-                            <thead>
-                            <tr class="bg-gray-100">
-                                <th class="px-4 py-2 border">指令</th>
-                                <th class="px-4 py-2 border">格式</th>
-                                <th class="px-4 py-2 border">含义</th>
-                            </tr>
-                            </thead>
-                            <tbody class="text-gray-700">
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">jmp</td>
-                                <td class="px-4 py-2 border font-mono text-sm">jmp label</td>
-                                <td class="px-4 py-2 border">无条件跳转到label</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">cmp</td>
-                                <td class="px-4 py-2 border font-mono text-sm">cmp r1, N<br/>cmp r1, r2<br/>cmp r1,
-                                    [r2+N]
-                                </td>
-                                <td class="px-4 py-2 border">比较大小，结果存入flg<br/>r1>N → flg=1<br/>r1==N →
-                                    flg=0<br/>r1&lt;N
-                                    → flg=-1
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">je</td>
-                                <td class="px-4 py-2 border font-mono text-sm">je label</td>
-                                <td class="px-4 py-2 border">jump if equal（flg=0则跳转）</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">jne</td>
-                                <td class="px-4 py-2 border font-mono text-sm">jne label</td>
-                                <td class="px-4 py-2 border">jump if not equal（flg≠0则跳转）</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">jg</td>
-                                <td class="px-4 py-2 border font-mono text-sm">jg label</td>
-                                <td class="px-4 py-2 border">jump if greater（flg>0则跳转）</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">jge</td>
-                                <td class="px-4 py-2 border font-mono text-sm">jge label</td>
-                                <td class="px-4 py-2 border">jump if greater or equal（flg≥0则跳转）</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">jl</td>
-                                <td class="px-4 py-2 border font-mono text-sm">jl label</td>
-                                <td class="px-4 py-2 border">jump if less（flg&lt;0则跳转）</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">jle</td>
-                                <td class="px-4 py-2 border font-mono text-sm">jle label</td>
-                                <td class="px-4 py-2 border">jump if less or equal（flg≤0则跳转）</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4">
-                        <h4 class="font-bold text-blue-800 mb-2">练习任务</h4>
-                        <ol class="list-decimal list-inside space-y-1 text-gray-700 text-sm">
-                            <li>从1加到10，输出结果</li>
-                            <li>输入一个数N，从1加到N，输出结果</li>
-                            <li>输出斐波那契数列的前100项</li>
-                            <li>输入一个数，判断这个数是否是7的倍数</li>
-                            <li>输入一个数，判断这个数的十进制表达里面是否包含7</li>
-                            <li>输入一个数，判断是否是质数</li>
-                            <li>输出10000以内的所有质数</li>
-                            <li>孪生质数问题：找出10000以内的所有孪生质数（N和N+2都是质数）</li>
-                        </ol>
-                    </div>
+                <section id="instruction" class="mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">指令</h3>
+                    <p>每条指令执行一个非常简单且明确的操作，具体见每条指令的详细说明</p>
                 </section>
 
-                <section id="lesson-4" class="mb-12 ml-4">
-                    <h2 class="text-3xl font-bold mb-4 text-gray-800">Lesson 4 - 函数</h2>
-                    <p class="text-gray-700 mb-4"><strong>核心概念：</strong>函数调用和返回，栈的基本使用</p>
-
-                    <h3 class="text-xl font-bold mb-3 text-gray-800">栈和新寄存器</h3>
-                    <p class="text-gray-700 mb-4">引入寄存器 <code class="bg-gray-100 px-2 py-1 rounded">sp</code>（栈指针）和
-                        <code class="bg-gray-100 px-2 py-1 rounded">bp</code>（基指针）</p>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700 mb-4">
-                        <li><strong>sp (stack pointer):</strong> 记录下一个空闲的栈位置，初始值为1023，向下增长</li>
-                        <li><strong>bp (base pointer):</strong> 记录当前函数栈帧的起点</li>
-                        <li><strong>栈:</strong> 内存后部专用于栈，前部为堆（heap）</li>
-                    </ul>
-
-                    <div class="overflow-x-auto mb-4">
-                        <table class="min-w-full bg-white border border-gray-300">
-                            <thead>
-                            <tr class="bg-gray-100">
-                                <th class="px-4 py-2 border">指令</th>
-                                <th class="px-4 py-2 border">格式</th>
-                                <th class="px-4 py-2 border">含义</th>
-                            </tr>
-                            </thead>
-                            <tbody class="text-gray-700">
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">push</td>
-                                <td class="px-4 py-2 border font-mono text-sm">push N<br/>push r1</td>
-                                <td class="px-4 py-2 border">将值压入栈，sp自动减1</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">pop</td>
-                                <td class="px-4 py-2 border font-mono text-sm">pop r1<br/>pop</td>
-                                <td class="px-4 py-2 border">从栈中弹出值，sp自动加1</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">call</td>
-                                <td class="px-4 py-2 border font-mono text-sm">call label</td>
-                                <td class="px-4 py-2 border">将返回地址(ip)压栈并跳转</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 border font-mono">ret</td>
-                                <td class="px-4 py-2 border font-mono text-sm">ret</td>
-                                <td class="px-4 py-2 border">从栈中恢复ip并返回</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4">
-                        <h4 class="font-bold text-blue-800 mb-2">练习任务</h4>
-                        <ol class="list-decimal list-inside space-y-1 text-gray-700">
-                            <li>将Lesson 3的任务改用函数实现</li>
-                            <li>生成100个随机数，使用非递归排序算法排序</li>
-                            <li>使用 <code class="bg-gray-100 px-1 rounded">--step</code> 模式观察函数调用前后栈和寄存器的变化
-                            </li>
-                        </ol>
-                    </div>
+                <section id="code" class="mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">代码</h3>
+                    <p class="mb-4">一个程序由若干条代码构成，代码的编写和执行规则如下：</p>
+                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                        <li> 所有指令和寄存器都使用小写字母，大写字母无法通过编译</li>
+                        <li>
+                            每条指令可以有一个或多个label，作为跳转和函数调用的目标，label以字母和下划线(_)开头，可以包含字母、数字和下划线，以冒号结束
+                        </li>
+                        <li> 代码中可以有注释，以分号;开始注释，分号之后直到一行结束，都属于注释</li>
+                        <li>
+                            每个寄存器和每个内存单元可以类比为一个小盒子，里面只能放一个数，后放进去的数会覆盖之前的数。本系统只处理有符号整数，不处理浮点数，也不考虑字节长度等细节
+                        </li>
+                        <li> 系统执行代码时，永远从第一条指令开始，逐条往后执行，根据相应指令（jmp、call、ret）执行跳转，直到执行完最后一条指令，进入停机状态
+                        </li>
+                        <li> 代码需要首先经过Compile操作，Compile成功后才会加载到Execution面板，如果代码格式有错，Compile环节就会报错
+                        </li>
+                        <li>Compile成功后，系统进入初始状态，ip寄存器为0（即准备从第一条指令开始执行），栈寄存器初始化为1023，其他寄存器和内存都初始化为特殊值，方便观察和调试。（知道Visual
+                            Studio “烫烫烫烫烫烫”的故事么？）
+                        </li>
+                        <li>可以通过Reset按钮重置系统，恢复初始状态</li>
+                    </ol>
                 </section>
 
-                <section id="lesson-5" class="mb-12 ml-4">
-                    <h2 class="text-3xl font-bold mb-4 text-gray-800">Lesson 5 - 参数、返回值、局部变量</h2>
-                    <p class="text-gray-700 mb-4"><strong>核心概念：</strong>函数 Stack Frame 的运行机制</p>
-
-                    <h3 class="text-xl font-bold mb-3 text-gray-800">Stack Frame 布局</h3>
-                    <p class="text-gray-700 mb-4">以函数 f1(a, b) = a+b+1 为例，栈帧布局如下（栈向下生长）：</p>
-
-                    <div class="bg-gray-100 p-4 rounded font-mono text-sm mb-4">
-                        <div class="border-l-2 border-gray-400 pl-4">
-                            <div>b ; 第二个参数 &lt;-- sp在调用前</div>
-                            <div>a ; 第一个参数</div>
-                            <div>r ; 返回值槽位</div>
-                            <div>ip ; call指令压入的返回地址</div>
-                            <div>bp ; 保存的前一个frame的bp</div>
-                            <div>x1 ; 局部变量1 &lt;-- bp指向此处</div>
-                            <div>x2 ; 局部变量2</div>
-                            <div> ; &lt;-- sp指向此处（下一个可用位置）</div>
-                        </div>
-                    </div>
-
-                    <h3 class="text-xl font-bold mb-3 text-gray-800">调用示例</h3>
-                    <div class="bg-gray-800 text-gray-100 p-4 rounded font-mono text-sm mb-4">
-                        <div class="text-green-400">; 调用函数</div>
-                        <div>push ax <span class="text-gray-500">; 第一个参数</span></div>
-                        <div>push bx <span class="text-gray-500">; 第二个参数</span></div>
-                        <div>sub sp, 1 <span class="text-gray-500">; 为返回值预留位置</span></div>
-                        <div>call _f1</div>
-                        <div>mov ax, [sp+1] <span class="text-gray-500">; 获取返回值</span></div>
-                        <div>add sp, 3 <span class="text-gray-500">; 清理栈</span></div>
-                        <div class="mt-4"></div>
-                        <div class="text-green-400">; 函数实现</div>
-                        <div>_f1:</div>
-                        <div> push bp</div>
-                        <div> mov bp, sp</div>
-                        <div> mov ax, [bp+4] <span class="text-gray-500">; 第一个参数</span></div>
-                        <div> mov bx, [bp+5] <span class="text-gray-500">; 第二个参数</span></div>
-                        <div> add ax, bx</div>
-                        <div> add ax, 1</div>
-                        <div> mov [bp+3], ax <span class="text-gray-500">; 写入返回值</span></div>
-                        <div> mov sp, bp</div>
-                        <div> pop bp</div>
-                        <div> ret</div>
-                    </div>
-
-                    <div class="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4">
-                        <h4 class="font-bold text-blue-800 mb-2">练习任务</h4>
-                        <ol class="list-decimal list-inside space-y-1 text-gray-700">
-                            <li>使用 <code class="bg-gray-100 px-1 rounded">--step</code> 模式观察上述代码执行过程中栈和寄存器的变化
-                            </li>
-                            <li>使用递归函数实现斐波那契数列，观察递归调用和返回过程</li>
-                        </ol>
-                    </div>
-                </section>
-
-                <section id="lesson-6" class="mb-12 ml-4">
-                    <h2 class="text-3xl font-bold mb-4 text-gray-800">Lesson 6 - 大实验：排序算法</h2>
-                    <p class="text-gray-700 mb-4">
-                        到目前为止，一个抽象意义上的计算机已经功能齐全了，可以实现复杂的算法。</p>
-
-                    <div class="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4">
-                        <h4 class="font-bold text-blue-800 mb-2">练习任务</h4>
-                        <ul class="list-disc list-inside space-y-1 text-gray-700">
-                            <li>随机生成100个数，存到内存里，将其排序，输出排序前后的结果</li>
-                            <li>可以先使用交换排序、冒泡排序等非递归算法</li>
-                            <li>实现递归的快速排序</li>
-                        </ul>
-                    </div>
-                </section>
-
-            </section>
-
-            <section id="registers" class="mb-12">
-                <h2 class="text-3xl font-bold mb-4 text-gray-800">寄存器汇总</h2>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full bg-white border border-gray-300">
-                        <thead>
-                        <tr class="bg-gray-100">
-                            <th class="px-4 py-2 border">类型</th>
-                            <th class="px-4 py-2 border">寄存器</th>
-                            <th class="px-4 py-2 border">说明</th>
-                        </tr>
-                        </thead>
-                        <tbody class="text-gray-700">
-                        <tr>
-                            <td class="px-4 py-2 border">通用寄存器</td>
-                            <td class="px-4 py-2 border font-mono">ax, bx, cx, dx</td>
-                            <td class="px-4 py-2 border">可用于任意操作</td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 py-2 border">符号寄存器</td>
-                            <td class="px-4 py-2 border font-mono">flg</td>
-                            <td class="px-4 py-2 border">只能通过cmp或popf赋值，存储比较结果</td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 py-2 border">指令寄存器</td>
-                            <td class="px-4 py-2 border font-mono">ip</td>
-                            <td class="px-4 py-2 border">指令指针，初始化为0，不能用mov修改</td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 py-2 border">栈寄存器</td>
-                            <td class="px-4 py-2 border font-mono">sp, bp</td>
-                            <td class="px-4 py-2 border">sp初始化为1023，用于栈操作，需遵循规范</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
             </section>
 
             <section id="instructions" class="mb-12">
-                <h2 class="text-3xl font-bold mb-4 text-gray-800">指令汇总</h2>
-                <div class="space-y-6">
-                    <div>
-                        <h3 class="text-lg font-semibold mb-2 text-gray-800">数据传送</h3>
-                        <p class="font-mono text-sm text-gray-700">mov, push, pop</p>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold mb-2 text-gray-800">算术运算</h3>
-                        <p class="font-mono text-sm text-gray-700">add, sub, mul, div</p>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold mb-2 text-gray-800">比较与跳转</h3>
-                        <p class="font-mono text-sm text-gray-700">cmp, jmp, je, jne, jg, jge, jl, jle</p>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold mb-2 text-gray-800">函数调用</h3>
-                        <p class="font-mono text-sm text-gray-700">call, ret</p>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold mb-2 text-gray-800">输入输出</h3>
-                        <p class="font-mono text-sm text-gray-700">input, print, println, rand</p>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold mb-2 text-gray-800">调试控制</h3>
-                        <p class="font-mono text-sm text-gray-700">dump, halt, pause, nop</p>
-                    </div>
-                </div>
+                <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">指令说明</h2>
+                <p class="mb-4">以下会用到的符号</p>
+                <ul class="list-disc list-inside space-y-3 text-gray-700">
+                    <li> r1, r2: 表示寄存器</li>
+                    <li> N: 表示一个整数</li>
+                    <li> [r1 + N]:
+                        表示内存中的一个位置，用寄存器的值加上偏移量N作为内存单元的编号，例如ax=10，那么[ax+5]就指向内存中第16个单元（0-base，第一个内存单元的地址是0）。
+                        N可以是负数。N为0时可以简写为[r1]
+                    </li>
+                </ul>
 
-                <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-500 p-4">
-                    <h4 class="font-bold text-yellow-800 mb-2">程序语法</h4>
-                    <ul class="list-disc list-inside space-y-1 text-gray-700">
-                        <li>用分号 <code class="bg-gray-100 px-1 rounded">;</code> 表示注释</li>
-                        <li>每一行一条指令，指令全部小写</li>
-                        <li>指令可以有标签，标签可以单独占一行</li>
-                        <li>标签格式：小写字母加冒号，如 <code class="bg-gray-100 px-1 rounded">loop1:</code></li>
-                    </ul>
-                </div>
+                <section id="op-mov" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">mov</h3>
+                    <p class="mb-4">赋值操作，给指定寄存器或者指定内存位置赋值，有以下几种格式：</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td> mov r1, N</td>
+                            <td> 将数字 N 存入寄存器 r1 中</td>
+                            <td> mov ax, 0</td>
+                        </tr>
+                        <tr>
+                            <td> mov r1, r2</td>
+                            <td> 将寄存器 r2 的值存入寄存器 r1 中，r2 本身保持不变</td>
+                            <td><p>mov ax, bx</p>
+                                <p>mov bp, sp</p></td>
+                        </tr>
+                        <tr>
+                            <td> mov r1, [r2+N]</td>
+                            <td> 将内存 [r2+N] 的值存入寄存器 r1 中，内存本身保持不变</td>
+                            <td><p>mov ax, [bx]</p>
+                                <p>mov ax, [bp+4]</p></td>
+                        </tr>
+                        <tr>
+                            <td> mov [r1+N1], N2</td>
+                            <td> 给内存单元赋值</td>
+                            <td> mov [bp-2], 100</td>
+                        </tr>
+                        <tr>
+                            <td> mov [r1+N], r2</td>
+                            <td> 将寄存器 r2 的值写入内存</td>
+                            <td> mov [bp+3], ax</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-add" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">add</h3>
+                    <p class="mb-4">加法运算</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td> add r1, N</td>
+                            <td> 将寄存器 r1 中的值和 N 相加，结果依然存入 r1 中，记做 r1 + N --> r1</td>
+                            <td> add ax, 1</td>
+                        </tr>
+                        <tr>
+                            <td> add r1, r2</td>
+                            <td> r1 + r2 --> r1</td>
+                            <td><p>add ax, bx</p>
+                                <p>add sp, cx</p></td>
+                        </tr>
+                        <tr>
+                            <td> add r1, [r2+N]</td>
+                            <td> 将寄存器 r1 的值和内存 [r2+N] 的值相加，结果存入寄存器 r1 中，r1 + [r2+N] --> r1</td>
+                            <td><p>add ax, [bx]</p>
+                                <p>add ax, [bp+4]</p></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-sub" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">sub</h3>
+                    <p class="mb-4">减法运算</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td> sub r1, N</td>
+                            <td> r1 - N --> r1</td>
+                            <td> sub ax, 1</td>
+                        </tr>
+                        <tr>
+                            <td> sub r1, r2</td>
+                            <td> r1 - r2 --> r1</td>
+                            <td><p>sub ax, bx</p>
+                                <p>sub sp, cx</p></td>
+                        </tr>
+                        <tr>
+                            <td> sub r1, [r2+N]</td>
+                            <td> r1 - [r2+N] --> r1</td>
+                            <td><p>sub ax, [bx]</p>
+                                <p>sub ax, [bp+4]</p></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-mul" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">mul</h3>
+                    <p class="mb-4">乘法运算，将 ax 寄存器的值和指定值相乘，结果存入 ax</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>mul N</td>
+                            <td>ax * N --> ax</td>
+                            <td>mul 10</td>
+                        </tr>
+                        <tr>
+                            <td>mul r1</td>
+                            <td>ax * r1 --> ax</td>
+                            <td>mul bx</td>
+                        </tr>
+                        <tr>
+                            <td>mul [r1+N]</td>
+                            <td>ax * [r1+N] --> ax</td>
+                            <td>mul [bp+3]</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-div" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">div</h3>
+                    <p class="mb-4">除法运算，将 ax 寄存器的值除以指定值，商存入 ax，余数存入 dx</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>div N</td>
+                            <td>ax / N --> 商存入 ax，余数存入 dx</td>
+                            <td>div 3</td>
+                        </tr>
+                        <tr>
+                            <td>div r1</td>
+                            <td>ax / r1 --> 商存入 ax，余数存入 dx</td>
+                            <td>div cx</td>
+                        </tr>
+                        <tr>
+                            <td>div [r1+N]</td>
+                            <td>ax / [r1+N] --> 商存入 ax，余数存入 dx</td>
+                            <td>div [bp+2]</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-cmp" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">cmp</h3>
+                    <p class="mb-4">比较运算，比较两个值的大小，结果存入 flg 寄存器</p>
+                    <p class="mb-4">flg = 1 表示第一个值大于第二个值；flg = 0 表示相等；flg = -1 表示第一个值小于第二个值</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>cmp r1, N</td>
+                            <td>比较 r1 和 N，结果存入 flg</td>
+                            <td>cmp ax, 0</td>
+                        </tr>
+                        <tr>
+                            <td>cmp r1, r2</td>
+                            <td>比较 r1 和 r2，结果存入 flg</td>
+                            <td>cmp ax, bx</td>
+                        </tr>
+                        <tr>
+                            <td>cmp r1, [r2+N]</td>
+                            <td>比较 r1 和 [r2+N]，结果存入 flg</td>
+                            <td>cmp cx, [bp+3]</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-jmp" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">jmp / je / jne / jg / jge / jl / jle</h3>
+                    <p class="mb-4">跳转指令，根据 flg 寄存器的值决定是否跳转到指定标签</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>jmp label</td>
+                            <td>无条件跳转到 label</td>
+                        </tr>
+                        <tr>
+                            <td>je label</td>
+                            <td>如果 flg = 0（相等），跳转到 label</td>
+                        </tr>
+                        <tr>
+                            <td>jne label</td>
+                            <td>如果 flg ≠ 0（不相等），跳转到 label</td>
+                        </tr>
+                        <tr>
+                            <td>jg label</td>
+                            <td>如果 flg > 0（大于），跳转到 label</td>
+                        </tr>
+                        <tr>
+                            <td>jge label</td>
+                            <td>如果 flg ≥ 0（大于等于），跳转到 label</td>
+                        </tr>
+                        <tr>
+                            <td>jl label</td>
+                            <td>如果 flg &lt; 0（小于），跳转到 label</td>
+                        </tr>
+                        <tr>
+                            <td>jle label</td>
+                            <td>如果 flg ≤ 0（小于等于），跳转到 label</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-call" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">call</h3>
+                    <p class="mb-4">函数调用，跳转到指定标签，并将返回地址压入栈</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>call label</td>
+                            <td>将下一条指令的地址压入栈，然后跳转到 label</td>
+                            <td>call _function</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-ret" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">ret</h3>
+                    <p class="mb-4">函数返回，从栈中弹出返回地址并跳转</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>ret</td>
+                            <td>从栈中弹出返回地址，跳转回调用处</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-push" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">push / pushf</h3>
+                    <p class="mb-4">将值压入栈</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>push N</td>
+                            <td>将数字 N 压入栈</td>
+                            <td>push 100</td>
+                        </tr>
+                        <tr>
+                            <td>push r1</td>
+                            <td>将寄存器 r1 的值压入栈</td>
+                            <td>push ax</td>
+                        </tr>
+                        <tr>
+                            <td>push [r1+N]</td>
+                            <td>将内存 [r1+N] 的值压入栈</td>
+                            <td>push [bp+3]</td>
+                        </tr>
+                        <tr>
+                            <td>pushf</td>
+                            <td>将 flg 寄存器的值压入栈</td>
+                            <td>pushf</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-pop" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">pop / popf</h3>
+                    <p class="mb-4">从栈中弹出值</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>pop r1</td>
+                            <td>从栈中弹出值，存入寄存器 r1</td>
+                            <td>pop ax</td>
+                        </tr>
+                        <tr>
+                            <td>pop [r1+N]</td>
+                            <td>从栈中弹出值，存入内存 [r1+N]</td>
+                            <td>pop [bp-2]</td>
+                        </tr>
+                        <tr>
+                            <td>popf</td>
+                            <td>从栈中弹出值，存入 flg 寄存器</td>
+                            <td>popf</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-input" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">input</h3>
+                    <p class="mb-4">输入操作，从用户获取输入并存入指定位置</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>input r1</td>
+                            <td>从用户获取输入，存入寄存器 r1</td>
+                            <td>input ax</td>
+                        </tr>
+                        <tr>
+                            <td>input [r1+N]</td>
+                            <td>从用户获取输入，存入内存 [r1+N]</td>
+                            <td>input [bp-2]</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-print" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">print / println</h3>
+                    <p class="mb-4">输出操作，将值输出到输出面板</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>print N</td>
+                            <td>输出数字 N（不换行）</td>
+                            <td>print 100</td>
+                        </tr>
+                        <tr>
+                            <td>print r1</td>
+                            <td>输出寄存器 r1 的值（不换行）</td>
+                            <td>print ax</td>
+                        </tr>
+                        <tr>
+                            <td>print [r1+N]</td>
+                            <td>输出内存 [r1+N] 的值（不换行）</td>
+                            <td>print [bp+3]</td>
+                        </tr>
+                        <tr>
+                            <td>print "字符串"</td>
+                            <td>输出字符串（不换行）</td>
+                            <td>print "Hello"</td>
+                        </tr>
+                        <tr>
+                            <td>println</td>
+                            <td>输出换行符</td>
+                            <td>println</td>
+                        </tr>
+                        <tr>
+                            <td>println N / r1 / [r1+N] / "字符串"</td>
+                            <td>输出后自动换行</td>
+                            <td>println ax</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-rand" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">rand</h3>
+                    <p class="mb-4">生成随机数（0-999），存入指定位置</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>rand r1</td>
+                            <td>生成随机数，存入寄存器 r1</td>
+                            <td>rand ax</td>
+                        </tr>
+                        <tr>
+                            <td>rand [r1+N]</td>
+                            <td>生成随机数，存入内存 [r1+N]</td>
+                            <td>rand [bp-2]</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-dump" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">dump</h3>
+                    <p class="mb-4">调试指令，在控制台模式下输出系统状态（Web 模式下无效果）</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>dump</td>
+                            <td>输出所有寄存器和部分内存</td>
+                        </tr>
+                        <tr>
+                            <td>dump N</td>
+                            <td>输出所有寄存器和前 N 个内存单元</td>
+                        </tr>
+                        <tr>
+                            <td>dump r1, N</td>
+                            <td>输出寄存器 r1 及其周围 N 个内存单元</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-pause" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">pause</h3>
+                    <p class="mb-4">暂停执行，切换到暂停状态</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>pause</td>
+                            <td>暂停程序执行，可以通过 Continue 或 Step 按钮继续</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-halt" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">halt</h3>
+                    <p class="mb-4">停机指令，终止程序执行</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>halt</td>
+                            <td>停止程序执行，进入停机状态</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-nop" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">nop</h3>
+                    <p class="mb-4">空操作指令，不执行任何操作</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>nop</td>
+                            <td>不做任何操作，仅用于占位或调试</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
             </section>
-
-            <div class="mt-12 pt-8 border-t border-gray-300 text-center text-gray-600">
-                <p>使用 <code class="bg-gray-100 px-2 py-1 rounded">-s</code> 或 <code
-                        class="bg-gray-100 px-2 py-1 rounded">--step</code> 参数可以进入逐行模式</p>
-                <p class="mt-2">每执行一条指令，就会自动执行一次 <code class="bg-gray-100 px-2 py-1 rounded">dump</code>
-                </p>
-            </div>
         </main>
     </div>
 </div>
 
-<style>
-    code {
-        font-family: 'Monaco', 'Courier New', monospace;
-    }
-</style>
