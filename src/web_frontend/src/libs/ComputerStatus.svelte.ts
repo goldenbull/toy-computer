@@ -1,4 +1,5 @@
 import {Operation} from './Operation';
+import type {Operand} from "./Operand.ts";
 
 export enum MemType {
     Data = "Data",
@@ -11,6 +12,7 @@ export enum ExecStatus {
     Running = "Running",
     Paused = "Paused",
     Halted = "Halted",
+    WaitingForInput = "WaitingForInput",
 }
 
 export class ComputerStatus {
@@ -97,6 +99,11 @@ _is_prime:
     execStatus = $state<ExecStatus>(ExecStatus.Ready);
     output = $state('');
 
+    // For input operation - stores the target operand when waiting for input
+    inputTarget = $state<Operand | null>(null);
+    // Store the execution state before waiting for input (to resume properly)
+    previousExecStatus = $state<ExecStatus | null>(null);
+
     /**
      * Load compiled operations from backend response
      */
@@ -134,7 +141,7 @@ _is_prime:
      */
     setMemValue(addr: number, value: number, type: MemType = MemType.Data) {
         if (addr < 0 || addr >= this.memory.length) {
-            throw new Error(`Memory address out of bounds: ${addr}`);
+            throw new Error(`内存越界: ${addr}`);
         }
         this.memory[addr] = value;
 

@@ -5,6 +5,7 @@
 
     let outputTextarea: HTMLTextAreaElement;
     let operationsContainer: HTMLDivElement;
+    let inputTextbox: HTMLInputElement;
 
     // Register output scroll callback when component mounts
     onMount(() => {
@@ -24,7 +25,7 @@
             requestAnimationFrame(() => {
                 const currentRow = operationsContainer.querySelector(`tr[data-addr="${ip}"]`);
                 if (currentRow) {
-                    currentRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    currentRow.scrollIntoView({behavior: 'smooth', block: 'center'});
                 }
             });
         }
@@ -44,6 +45,48 @@
 
     function runReset() {
         globalStatus.reset();
+    }
+
+    // Input dialog state
+    let inputValue = $state('');
+    let inputError = $state('');
+
+    // Auto-focus input field when dialog appears
+    $effect(() => {
+        if (globalStatus.execStatus === ExecStatus.WaitingForInput && inputTextbox) {
+            requestAnimationFrame(() => {
+                inputTextbox.focus();
+            });
+        }
+    });
+
+    async function handleInputSubmit() {
+        try {
+            inputError = '';
+            globalExecutor.provideInput(inputValue);
+            inputValue = '';
+
+            // If status is Running after providing input, continue execution
+            if (globalStatus.execStatus === ExecStatus.Running) {
+                await globalExecutor.runContinuous();
+            }
+        } catch (e) {
+            // Only show input validation errors in the dialog
+            // Execution errors (like invalid memory address) will be shown in output
+            if (globalStatus.execStatus === ExecStatus.WaitingForInput) {
+                inputError = e instanceof Error ? e.message : String(e);
+            }
+            // If dialog closed (status changed), the error is already in output, don't show in dialog
+        }
+    }
+
+    function handleInputKeydown(event: KeyboardEvent) {
+        if (event.key === 'Enter') {
+            handleInputSubmit();
+        } else if (event.key === 'Escape') {
+            inputValue = '';
+            inputError = '';
+        }
     }
 </script>
 
@@ -126,7 +169,7 @@
                     onclick={() => runContinue()}
                     disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
             >
-                Run
+                {globalStatus.execStatus === ExecStatus.Ready ? "Run" : "Continue"}
             </button>
             <button
                     class="flex-1 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
@@ -265,3 +308,40 @@
         </div>
     </div>
 </div>
+
+<!-- Input Dialog Modal -->
+{#if globalStatus.execStatus === ExecStatus.WaitingForInput}
+    <div class="fixed inset-0 flex items-start justify-center pt-20 z-50 pointer-events-none">
+        <div class="bg-white rounded-lg shadow-2xl border-2 border-blue-500 p-4 w-80 pointer-events-auto">
+            <h3 class="text-base font-bold mb-2">等待输入</h3>
+            <p class="text-xs text-gray-600 mb-2">
+                输入整数赋值给 <span class="font-mono font-semibold">{globalStatus.inputTarget?.toString()}</span>:
+            </p>
+            <input
+                    bind:this={inputTextbox}
+                    type="text"
+                    class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                    bind:value={inputValue}
+                    onkeydown={handleInputKeydown}
+                    placeholder="输入整数..."
+            />
+            {#if inputError}
+                <p class="text-red-600 text-xs mt-1">{inputError}</p>
+            {/if}
+            <div class="flex gap-2 mt-3">
+                <button
+                        class="flex-1 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                        onclick={handleInputSubmit}
+                >
+                    确定
+                </button>
+                <button
+                        class="flex-1 py-1.5 text-sm bg-gray-400 text-white rounded hover:bg-gray-500"
+                        onclick={() => { inputValue = ''; inputError = ''; }}
+                >
+                    清空
+                </button>
+            </div>
+        </div>
+    </div>
+{/if}

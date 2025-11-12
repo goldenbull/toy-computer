@@ -236,9 +236,12 @@ export class WebExecutor {
     }
 
     private execInput(op: Operation) {
-        // For web executor, input needs to be handled asynchronously
-        // For now, throw error - this will need special handling
-        throw new Error('Input operation not supported in web executor yet');
+        // Store the current execution status before waiting for input
+        this.status.previousExecStatus = this.status.execStatus;
+        // Mark status as waiting for input and store the target operand
+        this.status.execStatus = ExecStatus.WaitingForInput;
+        this.status.inputTarget = op.p1!;
+        // Don't increment IP - will be incremented when input is provided
     }
 
     private execPrint(op: Operation) {
@@ -359,6 +362,63 @@ export class WebExecutor {
     breakExecution() {
         if (this.status.execStatus === ExecStatus.Running) {
             this.status.execStatus = ExecStatus.Paused;
+        }
+    }
+
+    /**
+     * Provide input value and continue execution
+     */
+    provideInput(value: string) {
+        if (this.status.execStatus !== ExecStatus.WaitingForInput) {
+            throw new Error('Not waiting for input');
+        }
+
+        if (!this.status.inputTarget) {
+            throw new Error('No input target specified');
+        }
+
+        // Parse and validate input - strict integer check
+        const trimmedValue = value.trim();
+
+        // Check if the string is a valid integer format (optional +/- followed by digits)
+        if (!/^[+-]?\d+$/.test(trimmedValue)) {
+            throw new Error('输入错误，必须输入一个整数');
+        }
+
+        const numValue = parseInt(trimmedValue, 10);
+        if (isNaN(numValue)) {
+            throw new Error('输入错误，必须输入一个整数');
+        }
+
+        // Store the input value temporarily
+        const inputTarget = this.status.inputTarget;
+        const previousStatus = this.status.previousExecStatus;
+
+        // Clear input state and close dialog first
+        this.status.inputTarget = null;
+        this.status.previousExecStatus = null;
+
+        // Set status to indicate we're processing
+        if (previousStatus === ExecStatus.Running) {
+            this.status.execStatus = ExecStatus.Running;
+        } else {
+            this.status.execStatus = ExecStatus.Paused;
+        }
+
+        // Now try to set the value - this may throw an error for invalid memory address
+        try {
+            this.setOperandValue(inputTarget, numValue);
+            this.status.registers.ip++;
+
+            // corner case: this is the last operation
+            if (this.status.registers.ip === this.status.operations.length) {
+                this.status.execStatus = ExecStatus.Halted;
+            }
+        } catch (e) {
+            // Memory address error or other execution error - halt execution
+            this.status.execStatus = ExecStatus.Halted;
+            this.appendOutput(`\n${e}\n`);
+            throw e;
         }
     }
 }

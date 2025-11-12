@@ -62,12 +62,25 @@ fib_return:
 	ret
 
 main:
-    ; call fib(20)
-    push 20
+    ; call fib(N)
+    println "input N"
+    input ax
+    cmp ax,0
+    jle _stop
+    mov bx,0
+    mov [bx+10],ax
+    push ax
     sub sp, 1
     call fib
     pop dx
     add sp, 1
+    mov bx,0
     println
-    print "result = "
+    print "fib("
+    print [bx+10]
+    print ")="
     println dx
+    pause
+    jmp main
+_stop:
+    halt
