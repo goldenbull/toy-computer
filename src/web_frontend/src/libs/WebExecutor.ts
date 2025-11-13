@@ -303,6 +303,8 @@ export class WebExecutor {
     runOneStep(): boolean {
         if (this.status.execStatus === ExecStatus.Halted) {
             return false;
+        } else if (this.status.execStatus === ExecStatus.Ready) {
+            this.status.execStatus = ExecStatus.Paused;
         }
 
         const ip = this.status.registers.ip;
