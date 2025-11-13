@@ -39,13 +39,12 @@
                 {id: "op-ret", title: "ret"},
                 {id: "op-push", title: "push pushf"},
                 {id: "op-pop", title: "pop popf"},
+                {id: "op-nop", title: "nop"},
                 {id: "op-input", title: "input"},
                 {id: "op-print", title: "print println"},
                 {id: "op-rand", title: "rand"},
-                {id: "op-dump", title: "dump"},
                 {id: "op-pause", title: "pause"},
                 {id: "op-halt", title: "halt"},
-                {id: "op-nop", title: "nop"},
             ]
         },
         {
@@ -58,7 +57,7 @@
                 {id: 'demo-call', title: '函数调用'},
                 {id: 'demo-prime', title: '找质数'},
                 {id: 'demo-fib', title: '斐波那契数列'},
-                {id: 'demo-sort', title: '排序'},
+                {id: 'demo-sort', title: '快速排序'},
             ]
         },
     ];
@@ -146,7 +145,7 @@
 
                 <section id="register" class="mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">寄存器</h3>
-                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                    <ol class="list-decimal list-inside space-y-3">
                         <li>通用寄存器：ax, bx, cx, dx</li>
                         <li>符号寄存器：flg</li>
                         <li>栈操作寄存器：bp, sp</li>
@@ -168,15 +167,16 @@
                 <section id="code" class="mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">代码</h3>
                     <p class="mb-4">一个程序由若干条代码构成，代码的编写和执行规则如下：</p>
-                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                    <ol class="list-decimal list-inside space-y-3">
                         <li> 所有指令和寄存器都使用小写字母，大写字母无法通过编译</li>
+                        <li>
+                            每个寄存器和每个内存单元可以类比为一个小盒子，里面只能放一个数，后放进去的数会覆盖之前的数。本系统只处理有符号整数，不处理浮点数，也不考虑字节长度等细节
+                        </li>
                         <li>
                             每条指令可以有一个或多个label，作为跳转和函数调用的目标，label以字母和下划线(_)开头，可以包含字母、数字和下划线，以冒号结束
                         </li>
                         <li> 代码中可以有注释，以分号;开始注释，分号之后直到一行结束，都属于注释</li>
-                        <li>
-                            每个寄存器和每个内存单元可以类比为一个小盒子，里面只能放一个数，后放进去的数会覆盖之前的数。本系统只处理有符号整数，不处理浮点数，也不考虑字节长度等细节
-                        </li>
+                        <li> 字符串首尾使用双引号，支持C风格的\转义</li>
                         <li> 系统执行代码时，永远从第一条指令开始，逐条往后执行，根据相应指令（jmp、call、ret）执行跳转，直到执行完最后一条指令，进入停机状态
                         </li>
                         <li> 代码需要首先经过Compile操作，Compile成功后才会加载到Execution面板，如果代码格式有错，Compile环节就会报错
@@ -193,7 +193,7 @@
             <section id="instructions" class="mb-12">
                 <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">指令说明</h2>
                 <p class="mb-4">以下会用到的符号</p>
-                <ul class="list-disc list-inside space-y-3 text-gray-700">
+                <ul class="list-disc list-inside space-y-3">
                     <li> r1, r2: 表示寄存器</li>
                     <li> N: 表示一个整数</li>
                     <li> [r1 + N]:
@@ -313,7 +313,7 @@
 
                 <section id="op-mul" class="mt-8 mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">mul</h3>
-                    <p class="mb-4">乘法运算，将 ax 寄存器的值和指定值相乘，结果存入 ax</p>
+                    <p class="mb-4">乘法运算，固定使用寄存器 ax，将 ax 的值和指定值相乘，结果存入 ax</p>
                     <table class="manual-table">
                         <thead>
                         <tr>
@@ -344,7 +344,13 @@
 
                 <section id="op-div" class="mt-8 mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">div</h3>
-                    <p class="mb-4">除法运算，将 ax 寄存器的值除以指定值，商存入 ax，余数存入 dx</p>
+                    <p class="mb-4">除法运算，固定使用ax作为被除数，将 ax 的值除以指定值，商存入 ax，余数存入 dx。
+                        除法运算比较特殊，需要注意的几点：</p>
+                    <ul class="list-disc list-inside space-y-3 mb-4">
+                        <li>结果会占用两个寄存器，dx 保存余数，其原先的值会被覆盖</li>
+                        <li>除数为0时，系统会报错，进入停机状态。事实上，除0操作的处理是CPU中很重要的一个技术。</li>
+                        <li>余数不为0时，其符号和被除数相同</li>
+                    </ul>
                     <table class="manual-table">
                         <thead>
                         <tr>
@@ -357,17 +363,18 @@
                         <tr>
                             <td>div N</td>
                             <td>ax / N --> 商存入 ax，余数存入 dx</td>
-                            <td>div 3</td>
+                            <td><p>mov ax, 15</p>
+                                <p>div -7</p></td>
                         </tr>
                         <tr>
                             <td>div r1</td>
-                            <td>ax / r1 --> 商存入 ax，余数存入 dx</td>
+                            <td>ax / r1，同上</td>
                             <td>div cx</td>
                         </tr>
                         <tr>
                             <td>div [r1+N]</td>
-                            <td>ax / [r1+N] --> 商存入 ax，余数存入 dx</td>
-                            <td>div [bp+2]</td>
+                            <td>ax / [r1+N]，同上</td>
+                            <td>div [bp+3]</td>
                         </tr>
                         </tbody>
                     </table>
@@ -376,7 +383,11 @@
                 <section id="op-cmp" class="mt-8 mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">cmp</h3>
                     <p class="mb-4">比较运算，比较两个值的大小，结果存入 flg 寄存器</p>
-                    <p class="mb-4">flg = 1 表示第一个值大于第二个值；flg = 0 表示相等；flg = -1 表示第一个值小于第二个值</p>
+                    <ul class="list-disc list-inside space-y-3 mb-4">
+                        <li>第一个值大于第二个值时，flg = 1</li>
+                        <li>第一个值等于第二个值时，flg = 0</li>
+                        <li>第一个值小于第二个值时，flg = -1</li>
+                    </ul>
                     <table class="manual-table">
                         <thead>
                         <tr>
@@ -407,42 +418,78 @@
 
                 <section id="op-jmp" class="mt-8 mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">jmp / je / jne / jg / jge / jl / jle</h3>
-                    <p class="mb-4">跳转指令，根据 flg 寄存器的值决定是否跳转到指定标签</p>
+                    <p class="mb-4">跳转指令，根据 flg
+                        寄存器的值决定是否跳转到指定标签。如果不跳转，则继续执行下一条指令。</p>
                     <table class="manual-table">
                         <thead>
                         <tr>
                             <td>格式</td>
                             <td>说明</td>
+                            <td>示例</td>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
                             <td>jmp label</td>
                             <td>无条件跳转到 label</td>
+                            <td>jmp _main</td>
                         </tr>
                         <tr>
                             <td>je label</td>
-                            <td>如果 flg = 0（相等），跳转到 label</td>
+                            <td><span class="text-red-700">J</span>ump if <span class="text-red-700">E</span>qual,
+                                如果 flg = 0（相等），跳转到 label
+                            </td>
+                            <td>
+                                <p>; jump to _finish if cx is 0</p>
+                                <p>cmp cx, 0</p>
+                                <p>je _finish</p>
+                            </td>
                         </tr>
                         <tr>
                             <td>jne label</td>
-                            <td>如果 flg ≠ 0（不相等），跳转到 label</td>
+                            <td><span class="text-red-700">J</span>ump if <span class="text-red-700">N</span>ot <span
+                                    class="text-red-700">E</span>qual,
+                                如果 flg ≠ 0，跳转到 label
+                            </td>
+                            <td>
+                                <p>; jump to _loop1 if cx is not 0</p>
+                                <p>cmp cx, 0</p>
+                                <p>jne _loop1</p>
+                            </td>
                         </tr>
                         <tr>
                             <td>jg label</td>
-                            <td>如果 flg > 0（大于），跳转到 label</td>
+                            <td><span class="text-red-700">J</span>ump if <span class="text-red-700">G</span>reater,
+                                如果 flg > 0，跳转到 label
+                            </td>
+                            <td>
+                                <p>; jump to _case1 if ax > bx</p>
+                                <p>cmp ax, bx</p>
+                                <p>jg _case1</p>
+                            </td>
                         </tr>
                         <tr>
                             <td>jge label</td>
-                            <td>如果 flg ≥ 0（大于等于），跳转到 label</td>
+                            <td><span class="text-red-700">J</span>ump if <span class="text-red-700">G</span>reater or
+                                <span class="text-red-700">E</span>qual,
+                                如果 flg ≥ 0，跳转到 label
+                            </td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>jl label</td>
-                            <td>如果 flg &lt; 0（小于），跳转到 label</td>
+                            <td><span class="text-red-700">J</span>ump if <span class="text-red-700">L</span>ess,
+                                如果 flg &lt; 0，跳转到 label
+                            </td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>jle label</td>
-                            <td>如果 flg ≤ 0（小于等于），跳转到 label</td>
+                            <td><span class="text-red-700">J</span>ump if <span class="text-red-700">L</span>ess or
+                                <span class="text-red-700">E</span>qual,
+                                如果 flg ≤ 0，跳转到 label
+                            </td>
+                            <td></td>
                         </tr>
                         </tbody>
                     </table>
@@ -450,7 +497,7 @@
 
                 <section id="op-call" class="mt-8 mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">call</h3>
-                    <p class="mb-4">函数调用，跳转到指定标签，并将返回地址压入栈</p>
+                    <p class="mb-4">函数调用，跳转到指定标签，并将返回地址（即当前ip寄存器+1）压入栈</p>
                     <table class="manual-table">
                         <thead>
                         <tr>
@@ -462,8 +509,20 @@
                         <tbody>
                         <tr>
                             <td>call label</td>
-                            <td>将下一条指令的地址压入栈，然后跳转到 label</td>
-                            <td>call _function</td>
+                            <td>
+                                <p>将下一条指令的地址压入栈，然后跳转到 label，即依次完成三个操作</p>
+                                <ol class="list-decimal list-inside">
+                                    <li> ip + 1 --> [sp]</li>
+                                    <li> sp - 1 --> sp</li>
+                                    <li> address of label --> ip</li>
+                                </ol>
+                            </td>
+                            <td>
+                                <p><span class="text-blue-500">_f1</span>: push bp</p>
+                                <p> mov bp, sp</p>
+                                <p> ...</p>
+                                <p> call <span class="text-blue-500">_f1</span></p>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -477,12 +536,19 @@
                         <tr>
                             <td>格式</td>
                             <td>说明</td>
+                            <td>示例</td>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
                             <td>ret</td>
-                            <td>从栈中弹出返回地址，跳转回调用处</td>
+                            <td>从栈中弹出返回地址，跳转回调用处，即依次完成两个操作
+                                <ol class="list-decimal list-inside">
+                                    <li> sp + 1 --> sp</li>
+                                    <li> [sp] --> ip</li>
+                                </ol>
+                            </td>
+                            <td>ret</td>
                         </tr>
                         </tbody>
                     </table>
@@ -502,7 +568,13 @@
                         <tbody>
                         <tr>
                             <td>push N</td>
-                            <td>将数字 N 压入栈</td>
+                            <td>
+                                <p>将数字 N 压入栈，即依次完成两个操作</p>
+                                <ol class="list-decimal list-inside">
+                                    <li> N --> [sp]</li>
+                                    <li> sp - 1 --> sp</li>
+                                </ol>
+                            </td>
                             <td>push 100</td>
                         </tr>
                         <tr>
@@ -538,7 +610,13 @@
                         <tbody>
                         <tr>
                             <td>pop r1</td>
-                            <td>从栈中弹出值，存入寄存器 r1</td>
+                            <td>
+                                <p>从栈中弹出值，存入寄存器 r1，即依次完成两个操作</p>
+                                <ol class="list-decimal list-inside">
+                                    <li> sp + 1 --> sp</li>
+                                    <li> [sp] --> r1</li>
+                                </ol>
+                            </td>
                             <td>pop ax</td>
                         </tr>
                         <tr>
@@ -555,9 +633,32 @@
                     </table>
                 </section>
 
+                <section id="op-nop" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">nop</h3>
+                    <p class="mb-4"><span class="text-red-700">N</span>o <span class="text-red-700">Op</span>reation,
+                        空操作指令，不执行任何操作，只是简单的执行ip+1</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>nop</td>
+                            <td>不做任何操作，仅用于占位或调试</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
                 <section id="op-input" class="mt-8 mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">input</h3>
-                    <p class="mb-4">输入操作，从用户获取输入并存入指定位置</p>
+                    <p>输入操作，用户输入一个整数，存入指定位置。</p>
+                    <p class="mb-4"> 从这条指令开始，后续的几条指令都是“伪指令”，即不存在于实际的汇编语言中，要通过复杂的函数才能实现线相应功能。
+                        但出于教学目的，我们使用一条指令实现这些功能，以方便使用。
+                    </p>
                     <table class="manual-table">
                         <thead>
                         <tr>
@@ -583,7 +684,8 @@
 
                 <section id="op-print" class="mt-8 mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">print / println</h3>
-                    <p class="mb-4">输出操作，将值输出到输出面板</p>
+                    <p class="mb-4">
+                        输出操作，将值输出到界面上。为了使用方便，有两个版本，print不会自动换行，而println会在输出的末尾自动换行</p>
                     <table class="manual-table">
                         <thead>
                         <tr>
@@ -611,17 +713,19 @@
                         <tr>
                             <td>print "字符串"</td>
                             <td>输出字符串（不换行）</td>
-                            <td>print "Hello"</td>
+                            <td>print "Hello World!"</td>
                         </tr>
                         <tr>
                             <td>println</td>
-                            <td>输出换行符</td>
+                            <td>print line, 输出一个换行符，等价于 print "\n"</td>
                             <td>println</td>
                         </tr>
                         <tr>
                             <td>println N / r1 / [r1+N] / "字符串"</td>
                             <td>输出后自动换行</td>
-                            <td>println ax</td>
+                            <td><p>println ax</p>
+                                <p>println "Hello World!"</p>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -648,33 +752,6 @@
                             <td>rand [r1+N]</td>
                             <td>生成随机数，存入内存 [r1+N]</td>
                             <td>rand [bp-2]</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </section>
-
-                <section id="op-dump" class="mt-8 mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">dump</h3>
-                    <p class="mb-4">调试指令，在控制台模式下输出系统状态（Web 模式下无效果）</p>
-                    <table class="manual-table">
-                        <thead>
-                        <tr>
-                            <td>格式</td>
-                            <td>说明</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>dump</td>
-                            <td>输出所有寄存器和部分内存</td>
-                        </tr>
-                        <tr>
-                            <td>dump N</td>
-                            <td>输出所有寄存器和前 N 个内存单元</td>
-                        </tr>
-                        <tr>
-                            <td>dump r1, N</td>
-                            <td>输出寄存器 r1 及其周围 N 个内存单元</td>
                         </tr>
                         </tbody>
                     </table>
@@ -718,26 +795,29 @@
                     </table>
                 </section>
 
-                <section id="op-nop" class="mt-8 mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">nop</h3>
-                    <p class="mb-4">空操作指令，不执行任何操作</p>
-                    <table class="manual-table">
-                        <thead>
-                        <tr>
-                            <td>格式</td>
-                            <td>说明</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>nop</td>
-                            <td>不做任何操作，仅用于占位或调试</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </section>
+            </section>
+
+            <section id="demos" class="mb-12">
+                <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">代码示例</h2>
+                <ul class="list-disc list-inside space-y-3 mb-4">
+                    <li>
+                        <a id="demo-basic" href="demo-basic.asm" class="text-green-700 hover:underline">
+                            基本运算和输入输出 </a>
+                    </li>
+                    <li><a id="demo-jmp" href="demo-jmp.asm" class="text-green-700 hover:underline"> 判断，跳转，循环 </a>
+                    </li>
+                    <li><a id="demo-call" href="demo-call.asm" class="text-green-700 hover:underline"> 函数调用 </a>
+                    </li>
+                    <li><a id="demo-prime" href="demo-prime.asm" class="text-green-700 hover:underline"> 找质数 </a>
+                    </li>
+                    <li><a id="demo-fib" href="demo-fib.asm" class="text-green-700 hover:underline"> 斐波那契数列 </a>
+                    </li>
+                    <li><a id="demo-qsort" href="demo-qsort.asm" class="text-green-700 hover:underline"> 快速排序 </a>
+                    </li>
+                </ul>
 
             </section>
+
         </main>
     </div>
 </div>

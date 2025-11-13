@@ -5,7 +5,7 @@
 
     let outputTextarea: HTMLTextAreaElement;
     let operationsContainer: HTMLDivElement;
-    let inputTextbox: HTMLInputElement;
+    let inputTextbox = $state<HTMLInputElement | null>(null);
 
     // Register output scroll callback when component mounts
     onMount(() => {

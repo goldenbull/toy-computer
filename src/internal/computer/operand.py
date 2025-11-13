@@ -18,9 +18,9 @@ class Operand:
     reg: str = ""
     offset: int = 0
     immVal: int = 0
-    text: str = ""
+    text: list[str] = []
 
-    def __init__(self, tp: OperandType, reg: str = "", offset: int = 0, immVal: int = 0, text: str = ""):
+    def __init__(self, tp: OperandType, reg: str = "", offset: int = 0, immVal: int = 0, text: list[str] = None):
         self.tp = tp
         self.reg = reg
         self.offset = offset
@@ -41,7 +41,7 @@ class Operand:
         elif self.tp == OperandType.Imm:
             return self.immVal
         elif self.tp == OperandType.Str:
-            return self.text
+            return self.text[1]
         else:
             raise TypeError(f"invalid Operand type:{self.tp}")
 
@@ -56,6 +56,6 @@ class Operand:
         elif self.tp == OperandType.Imm:
             return str(self.immVal)
         elif self.tp == OperandType.Str:
-            return f'"{self.text}"'
+            return self.text[0]
         else:
             raise TypeError(f"invalid Operand type:{self.tp}")

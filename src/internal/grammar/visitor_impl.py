@@ -30,8 +30,9 @@ class VisitorImpl(toy_asmVisitor):
     def visitStr(self, ctx: toy_asmParser.StrContext):
         """Visit a string literal and return a Str operand."""
         s = ctx.getText()
-        text = s.encode('utf-8').decode('unicode_escape')[1:-1]
-        return Operand(OperandType.Str, text=text)
+        # s is the repr form of the str shown in source code editor
+        # we also need it's runtime form
+        return Operand(OperandType.Str, text=[s, eval(s)])
 
     def visitMove(self, ctx: toy_asmParser.MoveContext):
         p1 = self.visit(ctx.children[1])

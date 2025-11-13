@@ -10,14 +10,14 @@ export class Operand {
     reg: string;
     offset: number;
     immVal: number;
-    text: string;
+    text: string[];
 
     constructor(data: any) {
         this.tp = data.tp as OperandType;
         this.reg = data.reg || "";
         this.offset = data.offset || 0;
         this.immVal = data.immVal || 0;
-        this.text = data.text || "";
+        this.text = data.text || [];
     }
 
     /**
@@ -47,7 +47,7 @@ export class Operand {
             case OperandType.Imm:
                 return this.immVal;
             case OperandType.Str:
-                return this.text;
+                return this.text[1];
             default:
                 throw new Error(`Invalid Operand type: ${this.tp}`);
         }
@@ -66,7 +66,7 @@ export class Operand {
             case OperandType.Imm:
                 return String(this.immVal);
             case OperandType.Str:
-                return `"${this.text}"`;
+                return this.text[0];
             default:
                 throw new Error(`Invalid Operand type: ${this.tp}`);
         }
