@@ -1,6 +1,7 @@
 <script lang="ts">
     import CodeMirror from "svelte-codemirror-editor";
     import {globalStatus} from '../store.svelte';
+    import {buildApiUrl} from '../utils/url';
 
     let {switchTab}: {
         switchTab: (tab: string) => void
@@ -37,10 +38,7 @@
     async function compileCode() {
         // Compile the source code by calling the backend API
         try {
-            const baseUrl = import.meta.env.BASE_URL || '/';
-            // Ensure baseUrl ends with / and apiPath starts without /
-            const normalizedBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
-            const apiUrl = `${normalizedBase}api/compile`;
+            const apiUrl = buildApiUrl('api/compile');
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {

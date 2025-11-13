@@ -1,4 +1,6 @@
 <script lang="ts">
+    import {buildPath} from '../../libs/utils/url';
+
     let activeSection = $state('syntax-rules');
 
     const scrollToSection = (sectionId: string) => {
@@ -57,7 +59,7 @@
                 {id: 'demo-call', title: '函数调用'},
                 {id: 'demo-prime', title: '找质数'},
                 {id: 'demo-fib', title: '斐波那契数列'},
-                {id: 'demo-sort', title: '快速排序'},
+                {id: 'demo-qsort', title: '快速排序'},
             ]
         },
     ];
@@ -80,7 +82,7 @@
 <div class="min-h-screen bg-gray-50">
     <!-- Header -->
     <header class="bg-blue-600 text-white p-4 shadow-md sticky top-0 z-10">
-        <a href="../"
+        <a href={buildPath('')}
            class="absolute left-2 top-1/2 -translate-y-1/2 flex items-center gap-2 hover:text-blue-200 transition-colors px-3 py-2 rounded-lg">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
