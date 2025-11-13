@@ -40,9 +40,8 @@
     }
 
     async function runAnimation() {
-        // TODO: Implement animation mode
-        // This will execute operations one by one with delays for visualization
-        console.log('Run Animation mode - to be implemented');
+        // Execute with animation - 100ms delay between each instruction
+        await globalExecutor.runAnimation();
     }
 
     function runBreak() {
@@ -75,6 +74,8 @@
             // If status is Running after providing input, continue execution
             if (globalStatus.execStatus === ExecStatus.Running) {
                 await globalExecutor.runContinuous();
+            } else if (globalStatus.execStatus === ExecStatus.RunningAnimation) {
+                await globalExecutor.runAnimation();
             }
         } catch (e) {
             // Only show input validation errors in the dialog
@@ -200,14 +201,14 @@
                 <button
                         class="flex-1 py-2 bg-orange-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                         onclick={() => runBreak()}
-                        disabled={globalStatus.execStatus!==ExecStatus.Running}
+                        disabled={globalStatus.execStatus!==ExecStatus.Running&&globalStatus.execStatus!==ExecStatus.RunningAnimation}
                 >
                     Break
                 </button>
                 <button
                         class="flex-1 py-2 bg-red-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                         onclick={() => runReset()}
-                        disabled={globalStatus.execStatus===ExecStatus.Running}
+                        disabled={globalStatus.execStatus===ExecStatus.Running||globalStatus.execStatus===ExecStatus.RunningAnimation}
                 >
                     Reset
                 </button>

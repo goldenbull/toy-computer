@@ -357,10 +357,29 @@ export class WebExecutor {
     }
 
     /**
+     * Run with animation - executes one step at a time with delays for visualization
+     * Each instruction execution is visible to the user
+     */
+    async runAnimation(delayMs: number = 100) {
+        this.status.execStatus = ExecStatus.RunningAnimation;
+
+        while (this.status.execStatus === ExecStatus.RunningAnimation) {
+            const canContinue = this.runOneStep();
+
+            if (!canContinue) {
+                break;
+            }
+
+            // Yield after each step to allow UI updates
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+    }
+
+    /**
      * Stop continuous execution
      */
     breakExecution() {
-        if (this.status.execStatus === ExecStatus.Running) {
+        if (this.status.execStatus === ExecStatus.Running || this.status.execStatus === ExecStatus.RunningAnimation) {
             this.status.execStatus = ExecStatus.Paused;
         }
     }
@@ -401,6 +420,8 @@ export class WebExecutor {
         // Set status to indicate we're processing
         if (previousStatus === ExecStatus.Running) {
             this.status.execStatus = ExecStatus.Running;
+        } else if (previousStatus === ExecStatus.RunningAnimation) {
+            this.status.execStatus = ExecStatus.RunningAnimation;
         } else {
             this.status.execStatus = ExecStatus.Paused;
         }

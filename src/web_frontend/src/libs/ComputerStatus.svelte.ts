@@ -10,6 +10,7 @@ export enum MemType {
 export enum ExecStatus {
     Ready = "Ready",
     Running = "Running",
+    RunningAnimation = "RunningAnimation",
     Paused = "Paused",
     Halted = "Halted",
     WaitingForInput = "WaitingForInput",
