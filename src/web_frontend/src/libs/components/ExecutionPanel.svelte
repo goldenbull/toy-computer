@@ -39,6 +39,12 @@
         await globalExecutor.runContinuous();
     }
 
+    async function runAnimation() {
+        // TODO: Implement animation mode
+        // This will execute operations one by one with delays for visualization
+        console.log('Run Animation mode - to be implemented');
+    }
+
     function runBreak() {
         globalExecutor.breakExecution();
     }
@@ -163,35 +169,49 @@
         </div>
 
         <!-- Control buttons -->
-        <div class="flex gap-2">
-            <button
-                    class="flex-1 py-2 bg-green-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    onclick={() => runContinue()}
-                    disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
-            >
-                {globalStatus.execStatus === ExecStatus.Ready ? "Run" : "Continue"}
-            </button>
-            <button
-                    class="flex-1 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    onclick={() => runOneStep()}
-                    disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
-            >
-                Step
-            </button>
-            <button
-                    class="flex-1 py-2 bg-orange-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    onclick={() => runBreak()}
-                    disabled={globalStatus.execStatus!==ExecStatus.Running}
-            >
-                Break
-            </button>
-            <button
-                    class="flex-1 py-2 bg-red-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    onclick={() => runReset()}
-                    disabled={globalStatus.execStatus===ExecStatus.Running}
-            >
-                Reset
-            </button>
+        <div class="flex flex-col gap-2">
+            <!-- First row: Run, Run Animation, Step -->
+            <div class="flex gap-2">
+                <button
+                        class="flex-1 p-2 h-16 bg-green-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        onclick={() => runContinue()}
+                        disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
+                >
+                    {globalStatus.execStatus === ExecStatus.Ready ? "Run Background": "Continue Background"}
+                </button>
+                <button
+                        class="flex-1 p-2 h-16 bg-teal-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        onclick={() => runAnimation()}
+                        disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
+                >
+                     {globalStatus.execStatus === ExecStatus.Ready ? "Run Animation": "Continue Animation"}
+                </button>
+                <button
+                        class="flex-1 p-2 h-16 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        onclick={() => runOneStep()}
+                        disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
+                >
+                    Step
+                </button>
+            </div>
+            <!-- Second row: Break, Reset -->
+            <div class="flex gap-2">
+                <div class="flex-1"></div>
+                <button
+                        class="flex-1 py-2 bg-orange-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        onclick={() => runBreak()}
+                        disabled={globalStatus.execStatus!==ExecStatus.Running}
+                >
+                    Break
+                </button>
+                <button
+                        class="flex-1 py-2 bg-red-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        onclick={() => runReset()}
+                        disabled={globalStatus.execStatus===ExecStatus.Running}
+                >
+                    Reset
+                </button>
+            </div>
         </div>
     </div>
 
