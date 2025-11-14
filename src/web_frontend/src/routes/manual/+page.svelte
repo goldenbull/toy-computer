@@ -77,6 +77,10 @@
         padding: 0.25rem 0.5rem;
     }
 
+    .my-font-mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', '微软雅黑', monospace;
+    }
+
 </style>
 
 <div class="min-h-screen bg-gray-50">
@@ -141,7 +145,7 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 p-8 max-w-5xl font-mono">
+        <main class="flex-1 p-8 max-w-5xl my-font-mono">
             <section id="syntax-rules" class="mb-12">
                 <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">语法规则</h2>
 
@@ -438,7 +442,7 @@
                         </tr>
                         <tr>
                             <td>je label</td>
-                            <td><span class="text-red-700">J</span>ump if <span class="text-red-700">E</span>qual,
+                            <td><span class="text-red-700 font-bold">J</span>ump if <span class="text-red-700 font-bold">E</span>qual,
                                 如果 flg = 0（相等），跳转到 label
                             </td>
                             <td>
@@ -449,8 +453,8 @@
                         </tr>
                         <tr>
                             <td>jne label</td>
-                            <td><span class="text-red-700">J</span>ump if <span class="text-red-700">N</span>ot <span
-                                    class="text-red-700">E</span>qual,
+                            <td><span class="text-red-700 font-bold">J</span>ump if <span class="text-red-700 font-bold">N</span>ot <span
+                                    class="text-red-700 font-bold">E</span>qual,
                                 如果 flg ≠ 0，跳转到 label
                             </td>
                             <td>
@@ -461,7 +465,7 @@
                         </tr>
                         <tr>
                             <td>jg label</td>
-                            <td><span class="text-red-700">J</span>ump if <span class="text-red-700">G</span>reater,
+                            <td><span class="text-red-700 font-bold">J</span>ump if <span class="text-red-700 font-bold">G</span>reater,
                                 如果 flg > 0，跳转到 label
                             </td>
                             <td>
@@ -472,23 +476,23 @@
                         </tr>
                         <tr>
                             <td>jge label</td>
-                            <td><span class="text-red-700">J</span>ump if <span class="text-red-700">G</span>reater or
-                                <span class="text-red-700">E</span>qual,
+                            <td><span class="text-red-700 font-bold">J</span>ump if <span class="text-red-700 font-bold">G</span>reater or
+                                <span class="text-red-700 font-bold">E</span>qual,
                                 如果 flg ≥ 0，跳转到 label
                             </td>
                             <td></td>
                         </tr>
                         <tr>
                             <td>jl label</td>
-                            <td><span class="text-red-700">J</span>ump if <span class="text-red-700">L</span>ess,
+                            <td><span class="text-red-700 font-bold">J</span>ump if <span class="text-red-700 font-bold">L</span>ess,
                                 如果 flg &lt; 0，跳转到 label
                             </td>
                             <td></td>
                         </tr>
                         <tr>
                             <td>jle label</td>
-                            <td><span class="text-red-700">J</span>ump if <span class="text-red-700">L</span>ess or
-                                <span class="text-red-700">E</span>qual,
+                            <td><span class="text-red-700 font-bold">J</span>ump if <span class="text-red-700 font-bold">L</span>ess or
+                                <span class="text-red-700 font-bold">E</span>qual,
                                 如果 flg ≤ 0，跳转到 label
                             </td>
                             <td></td>
@@ -637,7 +641,7 @@
 
                 <section id="op-nop" class="mt-8 mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">nop</h3>
-                    <p class="mb-4"><span class="text-red-700">N</span>o <span class="text-red-700">Op</span>reation,
+                    <p class="mb-4"><span class="text-red-700 font-bold">N</span>o <span class="text-red-700 font-bold">Op</span>reation,
                         空操作指令，不执行任何操作，只是简单的执行ip+1</p>
                     <table class="manual-table">
                         <thead>
@@ -658,7 +662,7 @@
                 <section id="op-input" class="mt-8 mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">input</h3>
                     <p>输入操作，用户输入一个整数，存入指定位置。</p>
-                    <p class="mb-4"> 从这条指令开始，后续的几条指令都是“伪指令”，即不存在于实际的汇编语言中，要通过复杂的函数才能实现线相应功能。
+                    <p class="mb-4"> 从这条指令开始，后续的几条指令都是“伪指令”，实际的汇编语言中没有这些指令，而是要通过复杂的函数才能实现相应功能。
                         但出于教学目的，我们使用一条指令实现这些功能，以方便使用。
                     </p>
                     <table class="manual-table">
