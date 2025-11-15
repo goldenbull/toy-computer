@@ -40,7 +40,7 @@
     }
 
     async function runAnimation() {
-        // Execute with animation - 100ms delay between each instruction
+        // Execute with animation using the current speed setting
         await globalExecutor.runAnimation();
     }
 
@@ -174,18 +174,18 @@
             <!-- First row: Run, Run Animation, Step -->
             <div class="flex gap-2">
                 <button
-                        class="flex-1 p-2 h-16 bg-green-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
-                        onclick={() => runContinue()}
-                        disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
-                >
-                    {globalStatus.execStatus === ExecStatus.Ready ? "Run Background": "Continue Background"}
-                </button>
-                <button
                         class="flex-1 p-2 h-16 bg-teal-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                         onclick={() => runAnimation()}
                         disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
                 >
-                     {globalStatus.execStatus === ExecStatus.Ready ? "Run Animation": "Continue Animation"}
+                    {globalStatus.execStatus === ExecStatus.Ready ? "Run Animation" : "Continue Animation"}
+                </button>
+                <button
+                        class="flex-1 p-2 h-16 bg-green-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        onclick={() => runContinue()}
+                        disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
+                >
+                    {globalStatus.execStatus === ExecStatus.Ready ? "Run Background" : "Continue Background"}
                 </button>
                 <button
                         class="flex-1 p-2 h-16 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
@@ -195,9 +195,23 @@
                     Step
                 </button>
             </div>
-            <!-- Second row: Break, Reset -->
-            <div class="flex gap-2">
-                <div class="flex-1"></div>
+            <!-- Second row: Animation Speed, Break, Reset -->
+            <div class="flex gap-2 items-center">
+                <div class="flex-1 flex flex-col gap-1">
+                    <div class="flex justify-between text-xs text-gray-600">
+                        <span>Slow</span>
+                        <span>Fast</span>
+                    </div>
+                    <input
+                            id="speed-slider"
+                            type="range"
+                            min="0"
+                            max="100"
+                            step="1"
+                            bind:value={globalExecutor.animationSpeed}
+                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600"
+                    />
+                </div>
                 <button
                         class="flex-1 py-2 bg-orange-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                         onclick={() => runBreak()}

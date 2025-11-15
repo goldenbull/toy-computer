@@ -50,17 +50,7 @@
             ]
         },
         {
-            id: 'demos',
-            title: '代码示例',
-            isParent: true,
-            children: [
-                {id: 'demo-basic', title: '基本运算和输入输出'},
-                {id: 'demo-jmp', title: '判断，跳转，循环'},
-                {id: 'demo-call', title: '函数调用'},
-                {id: 'demo-prime', title: '找质数'},
-                {id: 'demo-fib', title: '斐波那契数列'},
-                {id: 'demo-qsort', title: '快速排序'},
-            ]
+            id: 'demos', title: '代码示例',
         },
     ];
 </script>
@@ -442,7 +432,8 @@
                         </tr>
                         <tr>
                             <td>je label</td>
-                            <td><span class="text-red-700 font-bold">J</span>ump if <span class="text-red-700 font-bold">E</span>qual,
+                            <td><span class="text-red-700 font-bold">J</span>ump if <span
+                                    class="text-red-700 font-bold">E</span>qual,
                                 如果 flg = 0（相等），跳转到 label
                             </td>
                             <td>
@@ -453,7 +444,8 @@
                         </tr>
                         <tr>
                             <td>jne label</td>
-                            <td><span class="text-red-700 font-bold">J</span>ump if <span class="text-red-700 font-bold">N</span>ot <span
+                            <td><span class="text-red-700 font-bold">J</span>ump if <span
+                                    class="text-red-700 font-bold">N</span>ot <span
                                     class="text-red-700 font-bold">E</span>qual,
                                 如果 flg ≠ 0，跳转到 label
                             </td>
@@ -465,7 +457,8 @@
                         </tr>
                         <tr>
                             <td>jg label</td>
-                            <td><span class="text-red-700 font-bold">J</span>ump if <span class="text-red-700 font-bold">G</span>reater,
+                            <td><span class="text-red-700 font-bold">J</span>ump if <span
+                                    class="text-red-700 font-bold">G</span>reater,
                                 如果 flg > 0，跳转到 label
                             </td>
                             <td>
@@ -476,7 +469,8 @@
                         </tr>
                         <tr>
                             <td>jge label</td>
-                            <td><span class="text-red-700 font-bold">J</span>ump if <span class="text-red-700 font-bold">G</span>reater or
+                            <td><span class="text-red-700 font-bold">J</span>ump if <span
+                                    class="text-red-700 font-bold">G</span>reater or
                                 <span class="text-red-700 font-bold">E</span>qual,
                                 如果 flg ≥ 0，跳转到 label
                             </td>
@@ -484,14 +478,16 @@
                         </tr>
                         <tr>
                             <td>jl label</td>
-                            <td><span class="text-red-700 font-bold">J</span>ump if <span class="text-red-700 font-bold">L</span>ess,
+                            <td><span class="text-red-700 font-bold">J</span>ump if <span
+                                    class="text-red-700 font-bold">L</span>ess,
                                 如果 flg &lt; 0，跳转到 label
                             </td>
                             <td></td>
                         </tr>
                         <tr>
                             <td>jle label</td>
-                            <td><span class="text-red-700 font-bold">J</span>ump if <span class="text-red-700 font-bold">L</span>ess or
+                            <td><span class="text-red-700 font-bold">J</span>ump if <span
+                                    class="text-red-700 font-bold">L</span>ess or
                                 <span class="text-red-700 font-bold">E</span>qual,
                                 如果 flg ≤ 0，跳转到 label
                             </td>
@@ -806,19 +802,19 @@
             <section id="demos" class="mb-12">
                 <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">代码示例</h2>
                 <ul class="list-disc list-inside space-y-3 mb-4">
-                    <li>
-                        <a id="demo-basic" href="demo-basic.asm" class="text-green-700 hover:underline">
-                            基本运算和输入输出 </a>
+                    <li><a href="demo-basic.asm" class="text-green-700 hover:underline"> 基本运算和输入输出 </a>
                     </li>
-                    <li><a id="demo-jmp" href="demo-jmp.asm" class="text-green-700 hover:underline"> 判断，跳转，循环 </a>
+                    <li><a href="demo-jmp.asm" class="text-green-700 hover:underline"> 判断，跳转，循环 </a>
                     </li>
-                    <li><a id="demo-call" href="demo-call.asm" class="text-green-700 hover:underline"> 函数调用 </a>
+                    <li><a href="demo-call.asm" class="text-green-700 hover:underline"> 函数调用 </a>
                     </li>
-                    <li><a id="demo-prime" href="demo-prime.asm" class="text-green-700 hover:underline"> 找质数 </a>
+                    <li><a href="demo-prime.asm" class="text-green-700 hover:underline"> 找质数 </a>
                     </li>
-                    <li><a id="demo-fib" href="demo-fib.asm" class="text-green-700 hover:underline"> 斐波那契数列 </a>
+                    <li><a href="demo-fib.asm" class="text-green-700 hover:underline"> 斐波那契数列 </a>
                     </li>
-                    <li><a id="demo-qsort" href="demo-qsort.asm" class="text-green-700 hover:underline"> 快速排序 </a>
+                    <li><a href="demo-bsort.asm" class="text-green-700 hover:underline"> 冒泡排序 </a>
+                    </li>
+                    <li><a href="demo-qsort.asm" class="text-green-700 hover:underline"> 快速排序 </a>
                     </li>
                 </ul>
 

@@ -8,6 +8,7 @@ import {Operand, OperandType} from './Operand';
 export class WebExecutor {
     private status: ComputerStatus;
     private onOutputChange?: () => void;
+    public animationSpeed: number = 50; // Animation speed control (0=fastest, 100=slowest)
 
     constructor(status: ComputerStatus, onOutputChange?: () => void) {
         this.status = status;
@@ -361,8 +362,9 @@ export class WebExecutor {
     /**
      * Run with animation - executes one step at a time with delays for visualization
      * Each instruction execution is visible to the user
+     * animationSpeed: 0 = fastest (0ms delay), 100 = slowest (100ms delay)
      */
-    async runAnimation(delayMs: number = 100) {
+    async runAnimation() {
         this.status.execStatus = ExecStatus.RunningAnimation;
 
         while (this.status.execStatus === ExecStatus.RunningAnimation) {
@@ -373,7 +375,8 @@ export class WebExecutor {
             }
 
             // Yield after each step to allow UI updates
-            await new Promise(resolve => setTimeout(resolve, delayMs));
+            // Invert speed: lower slider value = faster (less delay)
+            await new Promise(resolve => setTimeout(resolve, 100 - this.animationSpeed));
         }
     }
 
