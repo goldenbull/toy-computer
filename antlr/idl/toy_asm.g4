@@ -23,7 +23,6 @@ op
     | input
     | print
     | rand
-    | dump
     | pause
     | halt
     | nop
@@ -138,12 +137,6 @@ print
 rand
     : 'rand' reg
     | 'rand' mem
-    ;
-
-dump
-    : 'dump'
-    | 'dump' reg ',' INT
-    | 'dump' num ',' INT
     ;
 
 pause

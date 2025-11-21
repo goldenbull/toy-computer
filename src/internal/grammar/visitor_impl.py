@@ -102,13 +102,13 @@ class VisitorImpl(toy_asmVisitor):
             p1 = None
         return Print(action, p1)
 
-    def visitDump(self, ctx: toy_asmParser.DumpContext):
-        if len(ctx.children) > 1:
-            p1 = self.visit(ctx.children[1])
-            n = int(ctx.children[3].getText())
-            return Dump(p1, n)
-        else:
-            return Dump()
+    # def visitDump(self, ctx: toy_asmParser.DumpContext):
+    #     if len(ctx.children) > 1:
+    #         p1 = self.visit(ctx.children[1])
+    #         n = int(ctx.children[3].getText())
+    #         return Dump(p1, n)
+    #     else:
+    #         return Dump()
 
     def visitPause(self, ctx: toy_asmParser.PauseContext):
         return Pause()

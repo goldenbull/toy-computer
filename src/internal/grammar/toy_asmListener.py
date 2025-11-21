@@ -206,15 +206,6 @@ class toy_asmListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by toy_asmParser#dump.
-    def enterDump(self, ctx:toy_asmParser.DumpContext):
-        pass
-
-    # Exit a parse tree produced by toy_asmParser#dump.
-    def exitDump(self, ctx:toy_asmParser.DumpContext):
-        pass
-
-
     # Enter a parse tree produced by toy_asmParser#pause.
     def enterPause(self, ctx:toy_asmParser.PauseContext):
         pass
