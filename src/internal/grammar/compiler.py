@@ -13,7 +13,6 @@ class MyErrorListener(ErrorListener):
 
     def __init__(self, source_code: str):
         super().__init__()
-        print(source_code)
         self.source_code_lines = source_code.split("\n")
         self.errors = []
 

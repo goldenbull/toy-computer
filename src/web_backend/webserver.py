@@ -151,58 +151,25 @@ async def serve_app_assets(full_path: str):
     return JSONResponse({"error": "Not found"}, status_code=404)
 
 
-@app.get(url_prefix + '/favicon.ico')
-async def favicon():
-    # Serve the favicon.png from build directory
-    favicon_path = frontend_build_dir / "favicon.png"
-    if favicon_path.exists():
-        return FileResponse(path=str(favicon_path), media_type="image/png")
-    return JSONResponse({"error": "Not found"}, status_code=404)
-
-
-@app.get(url_prefix + '/favicon.png')
-async def favicon_png():
-    favicon_path = frontend_build_dir / "favicon.png"
-    if favicon_path.exists():
-        return FileResponse(path=str(favicon_path), media_type="image/png")
-    return JSONResponse({"error": "Not found"}, status_code=404)
-
-
-@app.get(url_prefix + '/favicon.svg')
-async def favicon_svg():
-    favicon_path = frontend_build_dir / "favicon.svg"
-    if favicon_path.exists():
-        return FileResponse(path=str(favicon_path), media_type="image/svg+xml")
-    return JSONResponse({"error": "Not found"}, status_code=404)
-
-
-# Serve .asm demo files
-@app.get(url_prefix + "/{filename}.asm")
-async def serve_asm_files(filename: str):
-    """Serve .asm demo files from the static directory"""
-    file_path = frontend_build_dir / f"{filename}.asm"
-    if file_path.exists() and file_path.is_file():
-        return FileResponse(path=str(file_path), media_type="text/plain")
-    return JSONResponse({"error": "Not found"}, status_code=404)
-
-
-# Serve jpg files
-@app.get(url_prefix + "/{filename}.jpg")
-async def serve_asm_files(filename: str):
-    file_path = frontend_build_dir / f"{filename}.jpg"
-    if file_path.exists() and file_path.is_file():
-        return FileResponse(path=str(file_path), media_type="image/jpeg")
-    return JSONResponse({"error": "Not found"}, status_code=404)
-
-
-# Catch-all route for SPA - serves index.html for all client-side routes
+# Catch-all route: serve static files or SPA index.html
 @app.get(url_prefix + "/{full_path:path}")
 async def catch_all(full_path: str):
     """
-    Catch-all route to serve index.html for SPA routing.
-    This handles client-side routes like /manual, /settings, etc.
+    Universal handler: serves static files if they exist, otherwise serves index.html for SPA routing.
+    Handles both static assets (.ico, .png, .svg, .asm, .jpg) and client-side routes (/manual, /settings, etc.)
     """
-    # Serve index.html for all other paths
+    # Special case: favicon.ico requests serve favicon.png
+    if full_path == "favicon.ico":
+        file_path = frontend_build_dir / "favicon.png"
+    else:
+        file_path = frontend_build_dir / full_path
+
+    # If the requested file exists, serve it with appropriate media type
+    if file_path.exists() and file_path.is_file():
+        media_type, _ = mimetypes.guess_type(str(file_path))
+        return FileResponse(path=str(file_path), media_type=media_type)
+
+    # Otherwise, serve index.html for SPA client-side routing
     index_path = frontend_build_dir / "index.html"
     if index_path.exists():
         return FileResponse(path=str(index_path), media_type="text/html")

@@ -60,7 +60,7 @@
     $effect(() => {
         if (globalStatus.execStatus === ExecStatus.WaitingForInput && inputTextbox) {
             requestAnimationFrame(() => {
-                inputTextbox.focus();
+                if (inputTextbox) inputTextbox.focus();
             });
         }
     });
@@ -132,7 +132,7 @@
                 <div class="flex items-center justify-center h-full">
                     <div class="text-center">
                         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                        <p class="text-sm font-semibold text-gray-700">Running...</p>
+                        <p class="text-sm font-semibold text-gray-700">运行中...</p>
                     </div>
                 </div>
             {:else}
@@ -140,7 +140,7 @@
                     <thead>
                     <tr class="bg-gray-100 sticky top-0">
                         <th class="border border-gray-300 px-1 py-1 text-center w-12">Addr</th>
-                        <th class="border border-gray-300 px-1 py-1 text-left">Label & Op</th>
+                        <th class="border border-gray-300 px-1 py-1 text-center">Code</th>
                         <th class="border border-gray-300 px-1 py-1 text-center w-16">Offset</th>
                     </tr>
                     </thead>
@@ -174,25 +174,25 @@
             <!-- First row: Run, Run Animation, Step -->
             <div class="flex gap-2">
                 <button
-                        class="flex-1 p-2 h-16 bg-teal-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        class="flex-1 p-2 bg-teal-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                         onclick={() => runAnimation()}
                         disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
                 >
-                    {globalStatus.execStatus === ExecStatus.Ready ? "Run Animation" : "Continue Animation"}
+                    {globalStatus.execStatus === ExecStatus.Ready ? "动画-运行" : "动画-继续"}
                 </button>
                 <button
-                        class="flex-1 p-2 h-16 bg-green-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        class="flex-1 p-2 bg-green-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                         onclick={() => runContinue()}
                         disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
                 >
-                    {globalStatus.execStatus === ExecStatus.Ready ? "Run Background" : "Continue Background"}
+                    {globalStatus.execStatus === ExecStatus.Ready ? "后台-运行" : "后台-继续"}
                 </button>
                 <button
-                        class="flex-1 p-2 h-16 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        class="flex-1 p-2 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                         onclick={() => runOneStep()}
                         disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
                 >
-                    Step
+                    逐步
                 </button>
             </div>
             <!-- Second row: Animation Speed, Break, Reset -->
@@ -217,7 +217,7 @@
                         onclick={() => runBreak()}
                         disabled={globalStatus.execStatus!==ExecStatus.Running&&globalStatus.execStatus!==ExecStatus.RunningAnimation}
                 >
-                    Break
+                    中断
                 </button>
                 <button
                         class="flex-1 py-2 bg-red-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"

@@ -35,6 +35,25 @@
         target.value = '';
     };
 
+    const saveSourceCode = () => {
+        // Create a blob with the source code content
+        const blob = new Blob([globalStatus.sourceCode], { type: 'text/plain' });
+
+        // Create a temporary URL for the blob
+        const url = URL.createObjectURL(blob);
+
+        // Create a temporary anchor element and trigger download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'source.asm';
+        document.body.appendChild(a);
+        a.click();
+
+        // Clean up
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
     async function compileCode() {
         // Compile the source code by calling the backend API
         try {
@@ -94,11 +113,14 @@
     </div>
 
     <div class="mt-4 flex space-x-2">
-        <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" onclick={compileCode}>
-            Compile
-        </button>
         <button class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700" onclick={loadSourceCode}>
-            Load Source Code
+            从本地加载
+        </button>
+        <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onclick={saveSourceCode}>
+            保存到本地
+        </button>
+        <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" onclick={compileCode}>
+            编译
         </button>
     </div>
 </div>
