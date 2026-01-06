@@ -132,7 +132,7 @@
                 <div class="flex items-center justify-center h-full">
                     <div class="text-center">
                         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                        <p class="text-sm font-semibold text-gray-700">运行中...</p>
+                        <p class="text-sm font-semibold text-gray-700">后台运行中...</p>
                     </div>
                 </div>
             {:else}
@@ -178,14 +178,14 @@
                         onclick={() => runAnimation()}
                         disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
                 >
-                    {globalStatus.execStatus === ExecStatus.Ready ? "动画-运行" : "动画-继续"}
+                    {globalStatus.execStatus === ExecStatus.Ready ? "动画-启动" : "动画-继续"}
                 </button>
                 <button
                         class="flex-1 p-2 bg-green-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                         onclick={() => runContinue()}
                         disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
                 >
-                    {globalStatus.execStatus === ExecStatus.Ready ? "后台-运行" : "后台-继续"}
+                    {globalStatus.execStatus === ExecStatus.Ready ? "后台-启动" : "后台-继续"}
                 </button>
                 <button
                         class="flex-1 p-2 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
@@ -238,7 +238,7 @@
                 <div class="flex items-center justify-center w-full">
                     <div class="text-center">
                         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                        <p class="text-sm font-semibold text-gray-700">Running...</p>
+                        <p class="text-sm font-semibold text-gray-700">后台运行中...</p>
                     </div>
                 </div>
             {:else}
