@@ -186,6 +186,15 @@ async def serve_asm_files(filename: str):
     return JSONResponse({"error": "Not found"}, status_code=404)
 
 
+# Serve jpg files
+@app.get(url_prefix + "/{filename}.jpg")
+async def serve_asm_files(filename: str):
+    file_path = frontend_build_dir / f"{filename}.jpg"
+    if file_path.exists() and file_path.is_file():
+        return FileResponse(path=str(file_path), media_type="image/jpeg")
+    return JSONResponse({"error": "Not found"}, status_code=404)
+
+
 # Catch-all route for SPA - serves index.html for all client-side routes
 @app.get(url_prefix + "/{full_path:path}")
 async def catch_all(full_path: str):
