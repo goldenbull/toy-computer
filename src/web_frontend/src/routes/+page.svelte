@@ -60,7 +60,7 @@
             </div>
 
             <!-- Tab Content -->
-            <div class="p-2 flex-grow h-[calc(100vh-140px)]">
+            <div class="p-2 flex-grow h-[calc(100vh-150px)]">
                 <!-- Editor Tab -->
                 {#if activeTab === 'editor'}
                     <SourceCodeEditor switchTab={switchTab}/>
