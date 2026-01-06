@@ -112,6 +112,9 @@ async def post_sourcecode(request: Request):
         body = await request.json()
         source_code = body.get("sourceCode", "")
 
+        # 处于实际考虑，将中文全角标点转为英文
+        source_code = source_code.replace("，", ",").replace("；", ";").replace("：", ":")
+
         # Compile the source code
         from internal.grammar.compiler import Compiler
         result = Compiler.compile(source_code)

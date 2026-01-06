@@ -153,6 +153,8 @@
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">内存</h3>
                     <p>内存有 1024 个单元，地址是从 0 到 1023 每个单元可以存一个数字，栈从 1023
                         开始从后往前生长，见示例中的斐波那契数列程序的执行过程</p>
+                    <p class="m-6">“1024个单元够用么？”</p>
+                    <img src="memory-history.jpg" alt=""/>
                 </section>
 
                 <section id="instruction" class="mb-12 ml-4">

@@ -11,12 +11,16 @@ from ..computer import OpBase
 class MyErrorListener(ErrorListener):
     """Custom error listener that raises exceptions on syntax errors."""
 
-    def __init__(self):
+    def __init__(self, source_code: str):
         super().__init__()
+        print(source_code)
+        self.source_code_lines = source_code.split("\n")
         self.errors = []
 
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
-        error_message = f"[{line}:{column}] syntax error: {msg}"
+        error_message = f"第{line}行：\n"
+        error_message += self.source_code_lines[line - 1] + "\n"
+        error_message += " " * (column - 1) + "^ 语法错误，请检查"
         raise Exception(error_message)
 
 
@@ -49,7 +53,7 @@ class Compiler:
             Exception: If there are syntax errors in the source code
         """
         # Parse ASM source code
-        err_listener = MyErrorListener()
+        err_listener = MyErrorListener(source_code)
         stm = InputStream(source_code)
         lexer = toy_asmLexer(stm)
         lexer.addErrorListener(err_listener)
