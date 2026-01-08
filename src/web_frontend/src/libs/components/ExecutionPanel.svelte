@@ -120,6 +120,30 @@
         text-align: right;
     }
 
+    .mem-cell {
+        position: relative;
+    }
+
+    .mem-cell-dot-bp {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #86efac; /* green-300 */
+    }
+
+    .mem-cell-dot-sp {
+        position: absolute;
+        top: 10px;
+        left: 2px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #c084fc; /* purple-400 */
+    }
+
 </style>
 
 <!-- Main Layout: Two columns -->
@@ -248,8 +272,8 @@
                     <table class="reg-table font-mono">
                         <tbody>
                         <tr>
-                            <td class="reg-cell reg-name">ip</td>
-                            <td class="reg-cell reg-value bg-amber-200">{globalStatus.registers.ip}</td>
+                            <td class="reg-cell reg-name bg-amber-200">ip</td>
+                            <td class="reg-cell reg-value">{globalStatus.registers.ip}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -282,12 +306,12 @@
                     <table class="mt-4 reg-table font-mono">
                         <tbody>
                         <tr>
-                            <td class="reg-cell reg-name">bp</td>
-                            <td class="reg-cell reg-value bg-green-200">{globalStatus.registers.bp}</td>
+                            <td class="reg-cell reg-name bg-green-200">bp</td>
+                            <td class="reg-cell reg-value">{globalStatus.registers.bp}</td>
                         </tr>
                         <tr>
-                            <td class="reg-cell reg-name">sp</td>
-                            <td class="reg-cell reg-value bg-purple-200">{globalStatus.registers.sp}</td>
+                            <td class="reg-cell reg-name bg-purple-200">sp</td>
+                            <td class="reg-cell reg-value">{globalStatus.registers.sp}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -314,10 +338,17 @@
                                         {@const addr = row * 16 + col}
                                         {@const value = globalStatus.memory[addr]}
                                         {@const memType = globalStatus.getMemType(addr)}
-                                        <td class="border border-gray-300 px-1 py-1 text-right
+                                        {@const isBpPointer = addr === globalStatus.registers.bp}
+                                        {@const isSpPointer = addr === globalStatus.registers.sp}
+                                        <td class="border border-gray-300 px-1 py-1 text-right mem-cell
                                     {memType === 'BP' ? 'bg-green-200' : ''}
-                                    {memType === 'IP' ? 'bg-amber-200' : ''}
-                                    {addr === globalStatus.registers.sp ? 'bg-purple-200' : ''}">
+                                    {memType === 'IP' ? 'bg-amber-200' : ''}">
+                                            {#if isBpPointer}
+                                                <span class="mem-cell-dot-bp"></span>
+                                            {/if}
+                                            {#if isSpPointer}
+                                                <span class="mem-cell-dot-sp"></span>
+                                            {/if}
                                             {value}
                                         </td>
                                     {/each}

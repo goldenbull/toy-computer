@@ -115,19 +115,37 @@ _is_prime:
         this.reset();
     }
 
+    initRandVal() {
+        return Math.floor(Math.random() * 20000 - 10000);
+    }
+
     /**
      * Reset computer state
      */
     reset() {
-        // reset memory and register with special magic value
-        this.memory.fill(-999);
+        // reset memory and register with random values
+        // this.memory.fill(-999);
+        // this.memoryTypes = {};
+        // this.registers = {
+        //     ax: -999,
+        //     bx: -999,
+        //     cx: -999,
+        //     dx: -999,
+        //     flg: 0,
+        //     sp: 1023,
+        //     bp: 1023,
+        //     ip: 0,
+        // };
+        for (let i = 0; i < this.memory.length; i++) {
+            this.memory[i] = this.initRandVal();
+        }
         this.memoryTypes = {};
         this.registers = {
-            ax: -999,
-            bx: -999,
-            cx: -999,
-            dx: -999,
-            flg: 0,
+            ax: this.initRandVal(),
+            bx: this.initRandVal(),
+            cx: this.initRandVal(),
+            dx: this.initRandVal(),
+            flg: Math.floor(Math.random() * 3 - 1),
             sp: 1023,
             bp: 1023,
             ip: 0,
