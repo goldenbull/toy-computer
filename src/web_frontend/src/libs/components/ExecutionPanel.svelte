@@ -131,7 +131,7 @@
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background-color: #86efac; /* green-300 */
+        background-color: #66cccc; /* green */
     }
 
     .mem-cell-dot-sp {
@@ -141,7 +141,7 @@
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background-color: #c084fc; /* purple-400 */
+        background-color: #c084fc; /* purple */
     }
 
 </style>
@@ -162,7 +162,7 @@
             {:else}
                 <table class="w-full text-xs border-collapse font-mono">
                     <thead>
-                    <tr class="bg-gray-100 sticky top-0">
+                    <tr class="bg-gray-100 sticky top-0 z-10">
                         <th class="border border-gray-300 px-1 py-1 text-center w-12">Addr</th>
                         <th class="border border-gray-300 px-1 py-1 text-center">Code</th>
                         <th class="border border-gray-300 px-1 py-1 text-center w-16">Offset</th>
@@ -323,7 +323,7 @@
                     <div class="text-xs font-mono">
                         <table class="text-xs border-collapse">
                             <thead>
-                            <tr class="bg-gray-100 sticky top-0">
+                            <tr class="bg-gray-100 sticky top-0 z-10">
                                 <th class="border border-gray-300 px-1 py-1 text-center">Addr</th>
                                 {#each Array(16) as _, col}
                                     <th class="border border-gray-300 px-1 py-1 text-center w-16">+{col}</th>
