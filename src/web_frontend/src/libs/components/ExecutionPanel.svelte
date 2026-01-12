@@ -160,36 +160,46 @@
                     </div>
                 </div>
             {:else}
-                <table class="w-full text-xs border-collapse font-mono">
-                    <thead>
-                    <tr class="bg-gray-100 sticky top-0 z-10">
-                        <th class="border border-gray-300 px-1 py-1 text-center w-12">Addr</th>
-                        <th class="border border-gray-300 px-1 py-1 text-center">Code</th>
-                        <th class="border border-gray-300 px-1 py-1 text-center w-16">Offset</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {#each globalStatus.operations as op}
-                        {@const opString = op.toString()}
-                        <tr data-addr={op.addr} class={op.addr === globalStatus.registers.ip ? 'bg-amber-200' : ''}>
-                            <td class="border border-gray-300 px-1 py-1 text-right">{op.addr}</td>
-                            <td class="border border-gray-300 px-1 py-1">
-                                {#each op.labels as label}
-                                    <p class="text-blue-600 font-semibold">{label}:</p>
-                                {/each}
-                                <p class="px-4">{opString}</p>
-                            </td>
-                            <td class="border border-gray-300 px-1 py-1 text-center">
-                                {#if op.target && globalStatus.labels[op.target] !== undefined}
-                                    {globalStatus.labels[op.target] - op.addr > 0 ? '+' : ''}{globalStatus.labels[op.target] - op.addr}
-                                {:else}
-                                    {""}
-                                {/if}
-                            </td>
+                {#if globalStatus.operations.length > 0}
+                    <table class="w-full text-xs border-collapse font-mono">
+                        <thead>
+                        <tr class="bg-gray-100 sticky top-0 z-10">
+                            <th class="border border-gray-300 px-1 py-1 text-center w-12">Addr</th>
+                            <th class="border border-gray-300 px-1 py-1 text-center">Code</th>
+                            <th class="border border-gray-300 px-1 py-1 text-center w-16">Offset</th>
                         </tr>
-                    {/each}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {#each globalStatus.operations as op}
+                            {@const opString = op.toString()}
+                            <tr data-addr={op.addr} class={op.addr === globalStatus.registers.ip ? 'bg-amber-200' : ''}>
+                                <td class="border border-gray-300 px-1 py-1 text-right">{op.addr}</td>
+                                <td class="border border-gray-300 px-1 py-1">
+                                    {#each op.labels as label}
+                                        <p class="text-blue-600 font-semibold">{label}:</p>
+                                    {/each}
+                                    <p class="px-4">{opString}</p>
+                                </td>
+                                <td class="border border-gray-300 px-1 py-1 text-center">
+                                    {#if op.target && globalStatus.labels[op.target] !== undefined}
+                                        {globalStatus.labels[op.target] - op.addr > 0 ? '+' : ''}{globalStatus.labels[op.target] - op.addr}
+                                    {:else}
+                                        {""}
+                                    {/if}
+                                </td>
+                            </tr>
+                        {/each}
+                        </tbody>
+                    </table>
+                {:else}
+                    <!-- no source code -->
+                    <div class="flex items-center justify-center h-full">
+                        <div class="text-center">
+                            <p class="text-xl">代码尚未编译</p>
+                        </div>
+                    </div>
+                {/if}
+
             {/if}
         </div>
 

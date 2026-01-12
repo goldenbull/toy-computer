@@ -23,21 +23,9 @@ export class ComputerStatus {
     operations = $state<Operation[]>([]);
     labels = $state<{ [key: string]: number }>({});
 
-    // Memory (1024 cells)
-    memory = $state<number[]>(new Array(1024));
-    // Track special memory types (BP and IP) for debugging
+    memory = $state<number[]>(this.initRandomMemory());
     memoryTypes = $state<{ [addr: number]: MemType }>({});
-
-    registers = $state({
-        ax: 0,
-        bx: 0,
-        cx: 0,
-        dx: 0,
-        flg: 0,
-        sp: 1023,
-        bp: 1023,
-        ip: 0,
-    });
+    registers = $state(this.initRandomRegisters());
 
     execStatus = $state<ExecStatus>(ExecStatus.Ready);
     output = $state('');
@@ -61,28 +49,16 @@ export class ComputerStatus {
         return Math.floor(Math.random() * 20000 - 10000);
     }
 
-    /**
-     * Reset computer state
-     */
-    reset() {
-        // reset memory and register with random values
-        // this.memory.fill(-999);
-        // this.memoryTypes = {};
-        // this.registers = {
-        //     ax: -999,
-        //     bx: -999,
-        //     cx: -999,
-        //     dx: -999,
-        //     flg: 0,
-        //     sp: 1023,
-        //     bp: 1023,
-        //     ip: 0,
-        // };
-        for (let i = 0; i < this.memory.length; i++) {
-            this.memory[i] = this.initRandVal();
+    initRandomMemory() {
+        let mem = new Array(1024);
+        for (let i = 0; i < mem.length; i++) {
+            mem[i] = this.initRandVal();
         }
-        this.memoryTypes = {};
-        this.registers = {
+        return mem;
+    }
+
+    initRandomRegisters() {
+        return {
             ax: this.initRandVal(),
             bx: this.initRandVal(),
             cx: this.initRandVal(),
@@ -92,7 +68,15 @@ export class ComputerStatus {
             bp: 1023,
             ip: 0,
         };
+    }
 
+    /**
+     * Reset computer state
+     */
+    reset() {
+        this.memory = this.initRandomMemory();
+        this.memoryTypes = {};
+        this.registers = this.initRandomRegisters();
         this.execStatus = ExecStatus.Ready;
         this.output = '';
     }
