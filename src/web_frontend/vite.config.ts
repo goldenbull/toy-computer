@@ -8,7 +8,8 @@ export default defineConfig({
     server: {
         proxy: {
             // Proxy API requests to Python backend during development
-            '/toy-computer/api': {
+            // '/toy-computer/api': {
+            '/api': {
                 target: 'http://127.0.0.1:22000',
                 changeOrigin: true
             }

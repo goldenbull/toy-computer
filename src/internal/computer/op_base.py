@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import dataclasses
 from abc import ABC
 from typing import TYPE_CHECKING
 
@@ -9,13 +10,19 @@ if TYPE_CHECKING:
     from .executor_base import ExecutorBase
 
 
+@dataclasses.dataclass
+class OpLabel:
+    src_line: int  # line no. in source code, to provide better compiler error message
+    label: str
+
+
 class OpBase(ABC):
     """
     Base class for all assembly operations.
     Each operation can execute itself and modify the computer state.
     """
     addr: int = 0  # Address (line number) of this operation
-    labels: list[str] = []  # Labels pointing to this operation
+    op_labels: list[OpLabel] = []  # Labels pointing to this operation
     computer_state: 'ComputerState' = None  # Reference to state
     executor: 'ExecutorBase' = None  # Reference to executor for I/O operations
 
@@ -35,7 +42,7 @@ class OpBase(ABC):
     def to_str(self):
         """Convert operation to string with labels."""
         ret = ""
-        for l in self.labels:
-            ret += f"{l}:\n"
+        for ol in self.op_labels:
+            ret += f"{ol.label}:\n"
         ret += f"<{self.addr}> {self.__repr__()}"
         return ret

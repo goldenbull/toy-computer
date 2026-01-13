@@ -13,8 +13,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import json
 
-url_prefix = "/toy-computer"
-# url_prefix = "/"
+# url_prefix = "/toy-computer"
+url_prefix = ""
 
 # register javascript in mimetypes
 mimetypes.add_type('text/javascript', '.js')
@@ -49,7 +49,7 @@ def serialize_operation(op):
     result = {
         "addr": op.addr,
         "type": op_type,
-        "labels": op.labels,
+        "labels": [ol.label for ol in op.op_labels],
         "p1": serialize_operand(op.p1),
         "p2": serialize_operand(op.p2),
         "action": op.action,
@@ -112,7 +112,7 @@ async def post_sourcecode(request: Request):
         body = await request.json()
         source_code = body.get("sourceCode", "")
 
-        # 处于实际考虑，将中文全角标点转为英文
+        # 出于实际考虑，将中文全角标点转为英文
         source_code = source_code.replace("，", ",").replace("；", ";").replace("：", ":")
 
         # Compile the source code

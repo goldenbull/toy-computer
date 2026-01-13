@@ -10,103 +10,102 @@ else:
 
 def serializedATN():
     return [
-        4,1,43,274,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
+        4,1,43,270,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
         6,2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,
         2,14,7,14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,
         7,20,2,21,7,21,2,22,7,22,2,23,7,23,2,24,7,24,1,0,1,0,1,0,5,0,54,
-        8,0,10,0,12,0,57,9,0,1,0,1,0,3,0,61,8,0,1,0,1,0,1,1,1,1,1,1,1,2,
-        1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,
-        3,2,85,8,2,1,3,3,3,88,8,3,1,3,1,3,1,3,3,3,93,8,3,1,4,1,4,1,5,1,5,
-        1,5,1,6,1,6,1,6,3,6,103,8,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,
-        1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,
-        1,7,1,7,3,7,132,8,7,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,
-        1,8,1,8,1,8,1,8,3,8,149,8,8,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,
-        1,9,1,9,1,9,1,9,1,9,1,9,3,9,166,8,9,1,10,1,10,1,10,1,10,1,10,1,10,
-        3,10,174,8,10,1,11,1,11,1,11,1,11,1,11,1,11,3,11,182,8,11,1,12,1,
-        12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,
-        12,3,12,199,8,12,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,
-        13,1,13,1,13,1,13,1,13,3,13,215,8,13,1,14,1,14,1,14,1,15,1,15,1,
-        16,1,16,1,16,1,16,1,16,3,16,227,8,16,1,17,1,17,1,17,1,17,3,17,233,
-        8,17,1,18,1,18,1,18,1,18,3,18,239,8,18,1,19,1,19,1,20,1,20,1,20,
-        1,20,1,20,1,20,1,20,1,20,1,20,1,20,1,20,1,20,1,20,1,20,1,20,1,20,
-        1,20,3,20,260,8,20,1,21,1,21,1,21,1,21,3,21,266,8,21,1,22,1,22,1,
-        23,1,23,1,24,1,24,1,24,0,0,25,0,2,4,6,8,10,12,14,16,18,20,22,24,
-        26,28,30,32,34,36,38,40,42,44,46,48,0,2,1,0,4,9,1,0,2,3,305,0,55,
-        1,0,0,0,2,64,1,0,0,0,4,84,1,0,0,0,6,92,1,0,0,0,8,94,1,0,0,0,10,96,
-        1,0,0,0,12,99,1,0,0,0,14,131,1,0,0,0,16,148,1,0,0,0,18,165,1,0,0,
-        0,20,173,1,0,0,0,22,181,1,0,0,0,24,198,1,0,0,0,26,214,1,0,0,0,28,
-        216,1,0,0,0,30,219,1,0,0,0,32,226,1,0,0,0,34,232,1,0,0,0,36,238,
-        1,0,0,0,38,240,1,0,0,0,40,259,1,0,0,0,42,265,1,0,0,0,44,267,1,0,
-        0,0,46,269,1,0,0,0,48,271,1,0,0,0,50,54,5,39,0,0,51,54,3,2,1,0,52,
-        54,3,4,2,0,53,50,1,0,0,0,53,51,1,0,0,0,53,52,1,0,0,0,54,57,1,0,0,
-        0,55,53,1,0,0,0,55,56,1,0,0,0,56,60,1,0,0,0,57,55,1,0,0,0,58,61,
-        5,39,0,0,59,61,3,4,2,0,60,58,1,0,0,0,60,59,1,0,0,0,61,62,1,0,0,0,
-        62,63,5,0,0,1,63,1,1,0,0,0,64,65,5,41,0,0,65,66,5,1,0,0,66,3,1,0,
-        0,0,67,85,3,14,7,0,68,85,3,16,8,0,69,85,3,18,9,0,70,85,3,20,10,0,
-        71,85,3,22,11,0,72,85,3,24,12,0,73,85,3,26,13,0,74,85,3,28,14,0,
-        75,85,3,30,15,0,76,85,3,32,16,0,77,85,3,34,17,0,78,85,3,36,18,0,
-        79,85,3,40,20,0,80,85,3,42,21,0,81,85,3,44,22,0,82,85,3,46,23,0,
-        83,85,3,48,24,0,84,67,1,0,0,0,84,68,1,0,0,0,84,69,1,0,0,0,84,70,
-        1,0,0,0,84,71,1,0,0,0,84,72,1,0,0,0,84,73,1,0,0,0,84,74,1,0,0,0,
-        84,75,1,0,0,0,84,76,1,0,0,0,84,77,1,0,0,0,84,78,1,0,0,0,84,79,1,
-        0,0,0,84,80,1,0,0,0,84,81,1,0,0,0,84,82,1,0,0,0,84,83,1,0,0,0,85,
-        5,1,0,0,0,86,88,5,2,0,0,87,86,1,0,0,0,87,88,1,0,0,0,88,89,1,0,0,
-        0,89,93,5,40,0,0,90,91,5,3,0,0,91,93,5,40,0,0,92,87,1,0,0,0,92,90,
-        1,0,0,0,93,7,1,0,0,0,94,95,7,0,0,0,95,9,1,0,0,0,96,97,7,1,0,0,97,
-        98,5,40,0,0,98,11,1,0,0,0,99,100,5,10,0,0,100,102,3,8,4,0,101,103,
-        3,10,5,0,102,101,1,0,0,0,102,103,1,0,0,0,103,104,1,0,0,0,104,105,
-        5,11,0,0,105,13,1,0,0,0,106,107,5,12,0,0,107,108,3,8,4,0,108,109,
-        5,13,0,0,109,110,3,6,3,0,110,132,1,0,0,0,111,112,5,12,0,0,112,113,
-        3,8,4,0,113,114,5,13,0,0,114,115,3,8,4,0,115,132,1,0,0,0,116,117,
-        5,12,0,0,117,118,3,8,4,0,118,119,5,13,0,0,119,120,3,12,6,0,120,132,
-        1,0,0,0,121,122,5,12,0,0,122,123,3,12,6,0,123,124,5,13,0,0,124,125,
-        3,6,3,0,125,132,1,0,0,0,126,127,5,12,0,0,127,128,3,12,6,0,128,129,
-        5,13,0,0,129,130,3,8,4,0,130,132,1,0,0,0,131,106,1,0,0,0,131,111,
-        1,0,0,0,131,116,1,0,0,0,131,121,1,0,0,0,131,126,1,0,0,0,132,15,1,
-        0,0,0,133,134,5,14,0,0,134,135,3,8,4,0,135,136,5,13,0,0,136,137,
-        3,6,3,0,137,149,1,0,0,0,138,139,5,14,0,0,139,140,3,8,4,0,140,141,
-        5,13,0,0,141,142,3,8,4,0,142,149,1,0,0,0,143,144,5,14,0,0,144,145,
-        3,8,4,0,145,146,5,13,0,0,146,147,3,12,6,0,147,149,1,0,0,0,148,133,
-        1,0,0,0,148,138,1,0,0,0,148,143,1,0,0,0,149,17,1,0,0,0,150,151,5,
-        15,0,0,151,152,3,8,4,0,152,153,5,13,0,0,153,154,3,6,3,0,154,166,
-        1,0,0,0,155,156,5,15,0,0,156,157,3,8,4,0,157,158,5,13,0,0,158,159,
-        3,8,4,0,159,166,1,0,0,0,160,161,5,15,0,0,161,162,3,8,4,0,162,163,
-        5,13,0,0,163,164,3,12,6,0,164,166,1,0,0,0,165,150,1,0,0,0,165,155,
-        1,0,0,0,165,160,1,0,0,0,166,19,1,0,0,0,167,168,5,16,0,0,168,174,
-        3,6,3,0,169,170,5,16,0,0,170,174,3,8,4,0,171,172,5,16,0,0,172,174,
-        3,12,6,0,173,167,1,0,0,0,173,169,1,0,0,0,173,171,1,0,0,0,174,21,
-        1,0,0,0,175,176,5,17,0,0,176,182,3,6,3,0,177,178,5,17,0,0,178,182,
-        3,8,4,0,179,180,5,17,0,0,180,182,3,12,6,0,181,175,1,0,0,0,181,177,
-        1,0,0,0,181,179,1,0,0,0,182,23,1,0,0,0,183,184,5,18,0,0,184,185,
-        3,8,4,0,185,186,5,13,0,0,186,187,3,6,3,0,187,199,1,0,0,0,188,189,
-        5,18,0,0,189,190,3,8,4,0,190,191,5,13,0,0,191,192,3,8,4,0,192,199,
-        1,0,0,0,193,194,5,18,0,0,194,195,3,8,4,0,195,196,5,13,0,0,196,197,
-        3,12,6,0,197,199,1,0,0,0,198,183,1,0,0,0,198,188,1,0,0,0,198,193,
-        1,0,0,0,199,25,1,0,0,0,200,201,5,19,0,0,201,215,5,41,0,0,202,203,
-        5,20,0,0,203,215,5,41,0,0,204,205,5,21,0,0,205,215,5,41,0,0,206,
-        207,5,22,0,0,207,215,5,41,0,0,208,209,5,23,0,0,209,215,5,41,0,0,
-        210,211,5,24,0,0,211,215,5,41,0,0,212,213,5,25,0,0,213,215,5,41,
-        0,0,214,200,1,0,0,0,214,202,1,0,0,0,214,204,1,0,0,0,214,206,1,0,
-        0,0,214,208,1,0,0,0,214,210,1,0,0,0,214,212,1,0,0,0,215,27,1,0,0,
-        0,216,217,5,26,0,0,217,218,5,41,0,0,218,29,1,0,0,0,219,220,5,27,
-        0,0,220,31,1,0,0,0,221,222,5,28,0,0,222,227,3,6,3,0,223,224,5,28,
-        0,0,224,227,3,8,4,0,225,227,5,29,0,0,226,221,1,0,0,0,226,223,1,0,
-        0,0,226,225,1,0,0,0,227,33,1,0,0,0,228,233,5,30,0,0,229,230,5,30,
-        0,0,230,233,3,8,4,0,231,233,5,31,0,0,232,228,1,0,0,0,232,229,1,0,
-        0,0,232,231,1,0,0,0,233,35,1,0,0,0,234,235,5,32,0,0,235,239,3,8,
-        4,0,236,237,5,32,0,0,237,239,3,12,6,0,238,234,1,0,0,0,238,236,1,
-        0,0,0,239,37,1,0,0,0,240,241,5,42,0,0,241,39,1,0,0,0,242,243,5,33,
-        0,0,243,260,3,6,3,0,244,245,5,33,0,0,245,260,3,8,4,0,246,247,5,33,
-        0,0,247,260,3,12,6,0,248,249,5,33,0,0,249,260,3,38,19,0,250,251,
-        5,34,0,0,251,260,3,6,3,0,252,253,5,34,0,0,253,260,3,8,4,0,254,255,
-        5,34,0,0,255,260,3,12,6,0,256,257,5,34,0,0,257,260,3,38,19,0,258,
-        260,5,34,0,0,259,242,1,0,0,0,259,244,1,0,0,0,259,246,1,0,0,0,259,
-        248,1,0,0,0,259,250,1,0,0,0,259,252,1,0,0,0,259,254,1,0,0,0,259,
-        256,1,0,0,0,259,258,1,0,0,0,260,41,1,0,0,0,261,262,5,35,0,0,262,
-        266,3,8,4,0,263,264,5,35,0,0,264,266,3,12,6,0,265,261,1,0,0,0,265,
-        263,1,0,0,0,266,43,1,0,0,0,267,268,5,36,0,0,268,45,1,0,0,0,269,270,
-        5,37,0,0,270,47,1,0,0,0,271,272,5,38,0,0,272,49,1,0,0,0,19,53,55,
-        60,84,87,92,102,131,148,165,173,181,198,214,226,232,238,259,265
+        8,0,10,0,12,0,57,9,0,1,0,1,0,1,1,1,1,1,1,1,2,1,2,1,2,1,2,1,2,1,2,
+        1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,81,8,2,1,3,3,3,84,
+        8,3,1,3,1,3,1,3,3,3,89,8,3,1,4,1,4,1,5,1,5,1,5,1,6,1,6,1,6,3,6,99,
+        8,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,
+        1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,3,7,128,8,7,1,8,
+        1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,3,8,145,
+        8,8,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,
+        3,9,162,8,9,1,10,1,10,1,10,1,10,1,10,1,10,3,10,170,8,10,1,11,1,11,
+        1,11,1,11,1,11,1,11,3,11,178,8,11,1,12,1,12,1,12,1,12,1,12,1,12,
+        1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,3,12,195,8,12,1,13,
+        1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,
+        3,13,211,8,13,1,14,1,14,1,14,1,15,1,15,1,16,1,16,1,16,1,16,1,16,
+        3,16,223,8,16,1,17,1,17,1,17,1,17,3,17,229,8,17,1,18,1,18,1,18,1,
+        18,3,18,235,8,18,1,19,1,19,1,20,1,20,1,20,1,20,1,20,1,20,1,20,1,
+        20,1,20,1,20,1,20,1,20,1,20,1,20,1,20,1,20,1,20,3,20,256,8,20,1,
+        21,1,21,1,21,1,21,3,21,262,8,21,1,22,1,22,1,23,1,23,1,24,1,24,1,
+        24,0,0,25,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,
+        40,42,44,46,48,0,2,1,0,4,9,1,0,2,3,300,0,55,1,0,0,0,2,60,1,0,0,0,
+        4,80,1,0,0,0,6,88,1,0,0,0,8,90,1,0,0,0,10,92,1,0,0,0,12,95,1,0,0,
+        0,14,127,1,0,0,0,16,144,1,0,0,0,18,161,1,0,0,0,20,169,1,0,0,0,22,
+        177,1,0,0,0,24,194,1,0,0,0,26,210,1,0,0,0,28,212,1,0,0,0,30,215,
+        1,0,0,0,32,222,1,0,0,0,34,228,1,0,0,0,36,234,1,0,0,0,38,236,1,0,
+        0,0,40,255,1,0,0,0,42,261,1,0,0,0,44,263,1,0,0,0,46,265,1,0,0,0,
+        48,267,1,0,0,0,50,54,5,39,0,0,51,54,3,2,1,0,52,54,3,4,2,0,53,50,
+        1,0,0,0,53,51,1,0,0,0,53,52,1,0,0,0,54,57,1,0,0,0,55,53,1,0,0,0,
+        55,56,1,0,0,0,56,58,1,0,0,0,57,55,1,0,0,0,58,59,5,0,0,1,59,1,1,0,
+        0,0,60,61,5,41,0,0,61,62,5,1,0,0,62,3,1,0,0,0,63,81,3,14,7,0,64,
+        81,3,16,8,0,65,81,3,18,9,0,66,81,3,20,10,0,67,81,3,22,11,0,68,81,
+        3,24,12,0,69,81,3,26,13,0,70,81,3,28,14,0,71,81,3,30,15,0,72,81,
+        3,32,16,0,73,81,3,34,17,0,74,81,3,36,18,0,75,81,3,40,20,0,76,81,
+        3,42,21,0,77,81,3,44,22,0,78,81,3,46,23,0,79,81,3,48,24,0,80,63,
+        1,0,0,0,80,64,1,0,0,0,80,65,1,0,0,0,80,66,1,0,0,0,80,67,1,0,0,0,
+        80,68,1,0,0,0,80,69,1,0,0,0,80,70,1,0,0,0,80,71,1,0,0,0,80,72,1,
+        0,0,0,80,73,1,0,0,0,80,74,1,0,0,0,80,75,1,0,0,0,80,76,1,0,0,0,80,
+        77,1,0,0,0,80,78,1,0,0,0,80,79,1,0,0,0,81,5,1,0,0,0,82,84,5,2,0,
+        0,83,82,1,0,0,0,83,84,1,0,0,0,84,85,1,0,0,0,85,89,5,40,0,0,86,87,
+        5,3,0,0,87,89,5,40,0,0,88,83,1,0,0,0,88,86,1,0,0,0,89,7,1,0,0,0,
+        90,91,7,0,0,0,91,9,1,0,0,0,92,93,7,1,0,0,93,94,5,40,0,0,94,11,1,
+        0,0,0,95,96,5,10,0,0,96,98,3,8,4,0,97,99,3,10,5,0,98,97,1,0,0,0,
+        98,99,1,0,0,0,99,100,1,0,0,0,100,101,5,11,0,0,101,13,1,0,0,0,102,
+        103,5,12,0,0,103,104,3,8,4,0,104,105,5,13,0,0,105,106,3,6,3,0,106,
+        128,1,0,0,0,107,108,5,12,0,0,108,109,3,8,4,0,109,110,5,13,0,0,110,
+        111,3,8,4,0,111,128,1,0,0,0,112,113,5,12,0,0,113,114,3,8,4,0,114,
+        115,5,13,0,0,115,116,3,12,6,0,116,128,1,0,0,0,117,118,5,12,0,0,118,
+        119,3,12,6,0,119,120,5,13,0,0,120,121,3,6,3,0,121,128,1,0,0,0,122,
+        123,5,12,0,0,123,124,3,12,6,0,124,125,5,13,0,0,125,126,3,8,4,0,126,
+        128,1,0,0,0,127,102,1,0,0,0,127,107,1,0,0,0,127,112,1,0,0,0,127,
+        117,1,0,0,0,127,122,1,0,0,0,128,15,1,0,0,0,129,130,5,14,0,0,130,
+        131,3,8,4,0,131,132,5,13,0,0,132,133,3,6,3,0,133,145,1,0,0,0,134,
+        135,5,14,0,0,135,136,3,8,4,0,136,137,5,13,0,0,137,138,3,8,4,0,138,
+        145,1,0,0,0,139,140,5,14,0,0,140,141,3,8,4,0,141,142,5,13,0,0,142,
+        143,3,12,6,0,143,145,1,0,0,0,144,129,1,0,0,0,144,134,1,0,0,0,144,
+        139,1,0,0,0,145,17,1,0,0,0,146,147,5,15,0,0,147,148,3,8,4,0,148,
+        149,5,13,0,0,149,150,3,6,3,0,150,162,1,0,0,0,151,152,5,15,0,0,152,
+        153,3,8,4,0,153,154,5,13,0,0,154,155,3,8,4,0,155,162,1,0,0,0,156,
+        157,5,15,0,0,157,158,3,8,4,0,158,159,5,13,0,0,159,160,3,12,6,0,160,
+        162,1,0,0,0,161,146,1,0,0,0,161,151,1,0,0,0,161,156,1,0,0,0,162,
+        19,1,0,0,0,163,164,5,16,0,0,164,170,3,6,3,0,165,166,5,16,0,0,166,
+        170,3,8,4,0,167,168,5,16,0,0,168,170,3,12,6,0,169,163,1,0,0,0,169,
+        165,1,0,0,0,169,167,1,0,0,0,170,21,1,0,0,0,171,172,5,17,0,0,172,
+        178,3,6,3,0,173,174,5,17,0,0,174,178,3,8,4,0,175,176,5,17,0,0,176,
+        178,3,12,6,0,177,171,1,0,0,0,177,173,1,0,0,0,177,175,1,0,0,0,178,
+        23,1,0,0,0,179,180,5,18,0,0,180,181,3,8,4,0,181,182,5,13,0,0,182,
+        183,3,6,3,0,183,195,1,0,0,0,184,185,5,18,0,0,185,186,3,8,4,0,186,
+        187,5,13,0,0,187,188,3,8,4,0,188,195,1,0,0,0,189,190,5,18,0,0,190,
+        191,3,8,4,0,191,192,5,13,0,0,192,193,3,12,6,0,193,195,1,0,0,0,194,
+        179,1,0,0,0,194,184,1,0,0,0,194,189,1,0,0,0,195,25,1,0,0,0,196,197,
+        5,19,0,0,197,211,5,41,0,0,198,199,5,20,0,0,199,211,5,41,0,0,200,
+        201,5,21,0,0,201,211,5,41,0,0,202,203,5,22,0,0,203,211,5,41,0,0,
+        204,205,5,23,0,0,205,211,5,41,0,0,206,207,5,24,0,0,207,211,5,41,
+        0,0,208,209,5,25,0,0,209,211,5,41,0,0,210,196,1,0,0,0,210,198,1,
+        0,0,0,210,200,1,0,0,0,210,202,1,0,0,0,210,204,1,0,0,0,210,206,1,
+        0,0,0,210,208,1,0,0,0,211,27,1,0,0,0,212,213,5,26,0,0,213,214,5,
+        41,0,0,214,29,1,0,0,0,215,216,5,27,0,0,216,31,1,0,0,0,217,218,5,
+        28,0,0,218,223,3,6,3,0,219,220,5,28,0,0,220,223,3,8,4,0,221,223,
+        5,29,0,0,222,217,1,0,0,0,222,219,1,0,0,0,222,221,1,0,0,0,223,33,
+        1,0,0,0,224,229,5,30,0,0,225,226,5,30,0,0,226,229,3,8,4,0,227,229,
+        5,31,0,0,228,224,1,0,0,0,228,225,1,0,0,0,228,227,1,0,0,0,229,35,
+        1,0,0,0,230,231,5,32,0,0,231,235,3,8,4,0,232,233,5,32,0,0,233,235,
+        3,12,6,0,234,230,1,0,0,0,234,232,1,0,0,0,235,37,1,0,0,0,236,237,
+        5,42,0,0,237,39,1,0,0,0,238,239,5,33,0,0,239,256,3,6,3,0,240,241,
+        5,33,0,0,241,256,3,8,4,0,242,243,5,33,0,0,243,256,3,12,6,0,244,245,
+        5,33,0,0,245,256,3,38,19,0,246,247,5,34,0,0,247,256,3,6,3,0,248,
+        249,5,34,0,0,249,256,3,8,4,0,250,251,5,34,0,0,251,256,3,12,6,0,252,
+        253,5,34,0,0,253,256,3,38,19,0,254,256,5,34,0,0,255,238,1,0,0,0,
+        255,240,1,0,0,0,255,242,1,0,0,0,255,244,1,0,0,0,255,246,1,0,0,0,
+        255,248,1,0,0,0,255,250,1,0,0,0,255,252,1,0,0,0,255,254,1,0,0,0,
+        256,41,1,0,0,0,257,258,5,35,0,0,258,262,3,8,4,0,259,260,5,35,0,0,
+        260,262,3,12,6,0,261,257,1,0,0,0,261,259,1,0,0,0,262,43,1,0,0,0,
+        263,264,5,36,0,0,264,45,1,0,0,0,265,266,5,37,0,0,266,47,1,0,0,0,
+        267,268,5,38,0,0,268,49,1,0,0,0,18,53,55,80,83,88,98,127,144,161,
+        169,177,194,210,222,228,234,255,261
     ]
 
 class toy_asmParser ( Parser ):
@@ -240,18 +239,18 @@ class toy_asmParser ( Parser ):
             else:
                 return self.getToken(toy_asmParser.Comment, i)
 
-        def op(self, i:int=None):
-            if i is None:
-                return self.getTypedRuleContexts(toy_asmParser.OpContext)
-            else:
-                return self.getTypedRuleContext(toy_asmParser.OpContext,i)
-
-
         def opLabel(self, i:int=None):
             if i is None:
                 return self.getTypedRuleContexts(toy_asmParser.OpLabelContext)
             else:
                 return self.getTypedRuleContext(toy_asmParser.OpLabelContext,i)
+
+
+        def op(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(toy_asmParser.OpContext)
+            else:
+                return self.getTypedRuleContext(toy_asmParser.OpContext,i)
 
 
         def getRuleIndex(self):
@@ -278,50 +277,36 @@ class toy_asmParser ( Parser ):
 
         localctx = toy_asmParser.ProgramContext(self, self._ctx, self.state)
         self.enterRule(localctx, 0, self.RULE_program)
+        self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 55
             self._errHandler.sync(self)
-            _alt = self._interp.adaptivePredict(self._input,1,self._ctx)
-            while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
-                if _alt==1:
-                    self.state = 53
-                    self._errHandler.sync(self)
-                    token = self._input.LA(1)
-                    if token in [39]:
-                        self.state = 50
-                        self.match(toy_asmParser.Comment)
-                        pass
-                    elif token in [41]:
-                        self.state = 51
-                        self.opLabel()
-                        pass
-                    elif token in [12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38]:
-                        self.state = 52
-                        self.op()
-                        pass
-                    else:
-                        raise NoViableAltException(self)
-             
+            _la = self._input.LA(1)
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & 3298534871040) != 0):
+                self.state = 53
+                self._errHandler.sync(self)
+                token = self._input.LA(1)
+                if token in [39]:
+                    self.state = 50
+                    self.match(toy_asmParser.Comment)
+                    pass
+                elif token in [41]:
+                    self.state = 51
+                    self.opLabel()
+                    pass
+                elif token in [12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38]:
+                    self.state = 52
+                    self.op()
+                    pass
+                else:
+                    raise NoViableAltException(self)
+
                 self.state = 57
                 self._errHandler.sync(self)
-                _alt = self._interp.adaptivePredict(self._input,1,self._ctx)
+                _la = self._input.LA(1)
 
-            self.state = 60
-            self._errHandler.sync(self)
-            token = self._input.LA(1)
-            if token in [39]:
-                self.state = 58
-                self.match(toy_asmParser.Comment)
-                pass
-            elif token in [12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38]:
-                self.state = 59
-                self.op()
-                pass
-            else:
-                raise NoViableAltException(self)
-
-            self.state = 62
+            self.state = 58
             self.match(toy_asmParser.EOF)
         except RecognitionException as re:
             localctx.exception = re
@@ -368,9 +353,9 @@ class toy_asmParser ( Parser ):
         self.enterRule(localctx, 2, self.RULE_opLabel)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 64
+            self.state = 60
             self.match(toy_asmParser.Label)
-            self.state = 65
+            self.state = 61
             self.match(toy_asmParser.T__0)
         except RecognitionException as re:
             localctx.exception = re
@@ -481,92 +466,92 @@ class toy_asmParser ( Parser ):
         localctx = toy_asmParser.OpContext(self, self._ctx, self.state)
         self.enterRule(localctx, 4, self.RULE_op)
         try:
-            self.state = 84
+            self.state = 80
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [12]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 67
+                self.state = 63
                 self.move()
                 pass
             elif token in [14]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 68
+                self.state = 64
                 self.add()
                 pass
             elif token in [15]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 69
+                self.state = 65
                 self.sub()
                 pass
             elif token in [16]:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 70
+                self.state = 66
                 self.mul()
                 pass
             elif token in [17]:
                 self.enterOuterAlt(localctx, 5)
-                self.state = 71
+                self.state = 67
                 self.div()
                 pass
             elif token in [18]:
                 self.enterOuterAlt(localctx, 6)
-                self.state = 72
+                self.state = 68
                 self.cmp()
                 pass
             elif token in [19, 20, 21, 22, 23, 24, 25]:
                 self.enterOuterAlt(localctx, 7)
-                self.state = 73
+                self.state = 69
                 self.jump()
                 pass
             elif token in [26]:
                 self.enterOuterAlt(localctx, 8)
-                self.state = 74
+                self.state = 70
                 self.call()
                 pass
             elif token in [27]:
                 self.enterOuterAlt(localctx, 9)
-                self.state = 75
+                self.state = 71
                 self.ret()
                 pass
             elif token in [28, 29]:
                 self.enterOuterAlt(localctx, 10)
-                self.state = 76
+                self.state = 72
                 self.push()
                 pass
             elif token in [30, 31]:
                 self.enterOuterAlt(localctx, 11)
-                self.state = 77
+                self.state = 73
                 self.pop()
                 pass
             elif token in [32]:
                 self.enterOuterAlt(localctx, 12)
-                self.state = 78
+                self.state = 74
                 self.input_()
                 pass
             elif token in [33, 34]:
                 self.enterOuterAlt(localctx, 13)
-                self.state = 79
+                self.state = 75
                 self.print_()
                 pass
             elif token in [35]:
                 self.enterOuterAlt(localctx, 14)
-                self.state = 80
+                self.state = 76
                 self.rand()
                 pass
             elif token in [36]:
                 self.enterOuterAlt(localctx, 15)
-                self.state = 81
+                self.state = 77
                 self.pause()
                 pass
             elif token in [37]:
                 self.enterOuterAlt(localctx, 16)
-                self.state = 82
+                self.state = 78
                 self.halt()
                 pass
             elif token in [38]:
                 self.enterOuterAlt(localctx, 17)
-                self.state = 83
+                self.state = 79
                 self.nop()
                 pass
             else:
@@ -617,27 +602,27 @@ class toy_asmParser ( Parser ):
         self.enterRule(localctx, 6, self.RULE_num)
         self._la = 0 # Token type
         try:
-            self.state = 92
+            self.state = 88
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [2, 40]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 87
+                self.state = 83
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if _la==2:
-                    self.state = 86
+                    self.state = 82
                     self.match(toy_asmParser.T__1)
 
 
-                self.state = 89
+                self.state = 85
                 self.match(toy_asmParser.INT)
                 pass
             elif token in [3]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 90
+                self.state = 86
                 self.match(toy_asmParser.T__2)
-                self.state = 91
+                self.state = 87
                 self.match(toy_asmParser.INT)
                 pass
             else:
@@ -687,7 +672,7 @@ class toy_asmParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 94
+            self.state = 90
             _la = self._input.LA(1)
             if not((((_la) & ~0x3f) == 0 and ((1 << _la) & 1008) != 0)):
                 self._errHandler.recoverInline(self)
@@ -740,14 +725,14 @@ class toy_asmParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 96
+            self.state = 92
             _la = self._input.LA(1)
             if not(_la==2 or _la==3):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
                 self.consume()
-            self.state = 97
+            self.state = 93
             self.match(toy_asmParser.INT)
         except RecognitionException as re:
             localctx.exception = re
@@ -800,19 +785,19 @@ class toy_asmParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 99
+            self.state = 95
             self.match(toy_asmParser.T__9)
-            self.state = 100
+            self.state = 96
             self.reg()
-            self.state = 102
+            self.state = 98
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la==2 or _la==3:
-                self.state = 101
+                self.state = 97
                 self.offset()
 
 
-            self.state = 104
+            self.state = 100
             self.match(toy_asmParser.T__10)
         except RecognitionException as re:
             localctx.exception = re
@@ -870,66 +855,66 @@ class toy_asmParser ( Parser ):
         localctx = toy_asmParser.MoveContext(self, self._ctx, self.state)
         self.enterRule(localctx, 14, self.RULE_move)
         try:
-            self.state = 131
+            self.state = 127
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,7,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,6,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 106
+                self.state = 102
                 self.match(toy_asmParser.T__11)
-                self.state = 107
+                self.state = 103
                 self.reg()
-                self.state = 108
+                self.state = 104
                 self.match(toy_asmParser.T__12)
-                self.state = 109
+                self.state = 105
                 self.num()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 111
+                self.state = 107
                 self.match(toy_asmParser.T__11)
-                self.state = 112
+                self.state = 108
                 self.reg()
-                self.state = 113
+                self.state = 109
                 self.match(toy_asmParser.T__12)
-                self.state = 114
+                self.state = 110
                 self.reg()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 116
+                self.state = 112
                 self.match(toy_asmParser.T__11)
-                self.state = 117
+                self.state = 113
                 self.reg()
-                self.state = 118
+                self.state = 114
                 self.match(toy_asmParser.T__12)
-                self.state = 119
+                self.state = 115
                 self.mem()
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 121
+                self.state = 117
                 self.match(toy_asmParser.T__11)
-                self.state = 122
+                self.state = 118
                 self.mem()
-                self.state = 123
+                self.state = 119
                 self.match(toy_asmParser.T__12)
-                self.state = 124
+                self.state = 120
                 self.num()
                 pass
 
             elif la_ == 5:
                 self.enterOuterAlt(localctx, 5)
-                self.state = 126
+                self.state = 122
                 self.match(toy_asmParser.T__11)
-                self.state = 127
+                self.state = 123
                 self.mem()
-                self.state = 128
+                self.state = 124
                 self.match(toy_asmParser.T__12)
-                self.state = 129
+                self.state = 125
                 self.reg()
                 pass
 
@@ -990,42 +975,42 @@ class toy_asmParser ( Parser ):
         localctx = toy_asmParser.AddContext(self, self._ctx, self.state)
         self.enterRule(localctx, 16, self.RULE_add)
         try:
-            self.state = 148
+            self.state = 144
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,8,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,7,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 133
+                self.state = 129
                 self.match(toy_asmParser.T__13)
-                self.state = 134
+                self.state = 130
                 self.reg()
-                self.state = 135
+                self.state = 131
                 self.match(toy_asmParser.T__12)
-                self.state = 136
+                self.state = 132
                 self.num()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 138
+                self.state = 134
                 self.match(toy_asmParser.T__13)
-                self.state = 139
+                self.state = 135
                 self.reg()
-                self.state = 140
+                self.state = 136
                 self.match(toy_asmParser.T__12)
-                self.state = 141
+                self.state = 137
                 self.reg()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 143
+                self.state = 139
                 self.match(toy_asmParser.T__13)
-                self.state = 144
+                self.state = 140
                 self.reg()
-                self.state = 145
+                self.state = 141
                 self.match(toy_asmParser.T__12)
-                self.state = 146
+                self.state = 142
                 self.mem()
                 pass
 
@@ -1086,42 +1071,42 @@ class toy_asmParser ( Parser ):
         localctx = toy_asmParser.SubContext(self, self._ctx, self.state)
         self.enterRule(localctx, 18, self.RULE_sub)
         try:
-            self.state = 165
+            self.state = 161
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,9,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,8,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 150
+                self.state = 146
                 self.match(toy_asmParser.T__14)
-                self.state = 151
+                self.state = 147
                 self.reg()
-                self.state = 152
+                self.state = 148
                 self.match(toy_asmParser.T__12)
-                self.state = 153
+                self.state = 149
                 self.num()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 155
+                self.state = 151
                 self.match(toy_asmParser.T__14)
-                self.state = 156
+                self.state = 152
                 self.reg()
-                self.state = 157
+                self.state = 153
                 self.match(toy_asmParser.T__12)
-                self.state = 158
+                self.state = 154
                 self.reg()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 160
+                self.state = 156
                 self.match(toy_asmParser.T__14)
-                self.state = 161
+                self.state = 157
                 self.reg()
-                self.state = 162
+                self.state = 158
                 self.match(toy_asmParser.T__12)
-                self.state = 163
+                self.state = 159
                 self.mem()
                 pass
 
@@ -1179,30 +1164,30 @@ class toy_asmParser ( Parser ):
         localctx = toy_asmParser.MulContext(self, self._ctx, self.state)
         self.enterRule(localctx, 20, self.RULE_mul)
         try:
-            self.state = 173
+            self.state = 169
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,10,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,9,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 167
+                self.state = 163
                 self.match(toy_asmParser.T__15)
-                self.state = 168
+                self.state = 164
                 self.num()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 169
+                self.state = 165
                 self.match(toy_asmParser.T__15)
-                self.state = 170
+                self.state = 166
                 self.reg()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 171
+                self.state = 167
                 self.match(toy_asmParser.T__15)
-                self.state = 172
+                self.state = 168
                 self.mem()
                 pass
 
@@ -1260,30 +1245,30 @@ class toy_asmParser ( Parser ):
         localctx = toy_asmParser.DivContext(self, self._ctx, self.state)
         self.enterRule(localctx, 22, self.RULE_div)
         try:
-            self.state = 181
+            self.state = 177
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,11,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,10,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 175
+                self.state = 171
                 self.match(toy_asmParser.T__16)
-                self.state = 176
+                self.state = 172
                 self.num()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 177
+                self.state = 173
                 self.match(toy_asmParser.T__16)
-                self.state = 178
+                self.state = 174
                 self.reg()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 179
+                self.state = 175
                 self.match(toy_asmParser.T__16)
-                self.state = 180
+                self.state = 176
                 self.mem()
                 pass
 
@@ -1344,42 +1329,42 @@ class toy_asmParser ( Parser ):
         localctx = toy_asmParser.CmpContext(self, self._ctx, self.state)
         self.enterRule(localctx, 24, self.RULE_cmp)
         try:
-            self.state = 198
+            self.state = 194
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,12,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,11,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 183
+                self.state = 179
                 self.match(toy_asmParser.T__17)
-                self.state = 184
+                self.state = 180
                 self.reg()
-                self.state = 185
+                self.state = 181
                 self.match(toy_asmParser.T__12)
-                self.state = 186
+                self.state = 182
                 self.num()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 188
+                self.state = 184
                 self.match(toy_asmParser.T__17)
-                self.state = 189
+                self.state = 185
                 self.reg()
-                self.state = 190
+                self.state = 186
                 self.match(toy_asmParser.T__12)
-                self.state = 191
+                self.state = 187
                 self.reg()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 193
+                self.state = 189
                 self.match(toy_asmParser.T__17)
-                self.state = 194
+                self.state = 190
                 self.reg()
-                self.state = 195
+                self.state = 191
                 self.match(toy_asmParser.T__12)
-                self.state = 196
+                self.state = 192
                 self.mem()
                 pass
 
@@ -1428,56 +1413,56 @@ class toy_asmParser ( Parser ):
         localctx = toy_asmParser.JumpContext(self, self._ctx, self.state)
         self.enterRule(localctx, 26, self.RULE_jump)
         try:
-            self.state = 214
+            self.state = 210
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [19]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 200
+                self.state = 196
                 self.match(toy_asmParser.T__18)
-                self.state = 201
+                self.state = 197
                 self.match(toy_asmParser.Label)
                 pass
             elif token in [20]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 202
+                self.state = 198
                 self.match(toy_asmParser.T__19)
-                self.state = 203
+                self.state = 199
                 self.match(toy_asmParser.Label)
                 pass
             elif token in [21]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 204
+                self.state = 200
                 self.match(toy_asmParser.T__20)
-                self.state = 205
+                self.state = 201
                 self.match(toy_asmParser.Label)
                 pass
             elif token in [22]:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 206
+                self.state = 202
                 self.match(toy_asmParser.T__21)
-                self.state = 207
+                self.state = 203
                 self.match(toy_asmParser.Label)
                 pass
             elif token in [23]:
                 self.enterOuterAlt(localctx, 5)
-                self.state = 208
+                self.state = 204
                 self.match(toy_asmParser.T__22)
-                self.state = 209
+                self.state = 205
                 self.match(toy_asmParser.Label)
                 pass
             elif token in [24]:
                 self.enterOuterAlt(localctx, 6)
-                self.state = 210
+                self.state = 206
                 self.match(toy_asmParser.T__23)
-                self.state = 211
+                self.state = 207
                 self.match(toy_asmParser.Label)
                 pass
             elif token in [25]:
                 self.enterOuterAlt(localctx, 7)
-                self.state = 212
+                self.state = 208
                 self.match(toy_asmParser.T__24)
-                self.state = 213
+                self.state = 209
                 self.match(toy_asmParser.Label)
                 pass
             else:
@@ -1528,9 +1513,9 @@ class toy_asmParser ( Parser ):
         self.enterRule(localctx, 28, self.RULE_call)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 216
+            self.state = 212
             self.match(toy_asmParser.T__25)
-            self.state = 217
+            self.state = 213
             self.match(toy_asmParser.Label)
         except RecognitionException as re:
             localctx.exception = re
@@ -1575,7 +1560,7 @@ class toy_asmParser ( Parser ):
         self.enterRule(localctx, 30, self.RULE_ret)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 219
+            self.state = 215
             self.match(toy_asmParser.T__26)
         except RecognitionException as re:
             localctx.exception = re
@@ -1626,28 +1611,28 @@ class toy_asmParser ( Parser ):
         localctx = toy_asmParser.PushContext(self, self._ctx, self.state)
         self.enterRule(localctx, 32, self.RULE_push)
         try:
-            self.state = 226
+            self.state = 222
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,14,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,13,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 221
+                self.state = 217
                 self.match(toy_asmParser.T__27)
-                self.state = 222
+                self.state = 218
                 self.num()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 223
+                self.state = 219
                 self.match(toy_asmParser.T__27)
-                self.state = 224
+                self.state = 220
                 self.reg()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 225
+                self.state = 221
                 self.match(toy_asmParser.T__28)
                 pass
 
@@ -1697,26 +1682,26 @@ class toy_asmParser ( Parser ):
         localctx = toy_asmParser.PopContext(self, self._ctx, self.state)
         self.enterRule(localctx, 34, self.RULE_pop)
         try:
-            self.state = 232
+            self.state = 228
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,15,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,14,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 228
+                self.state = 224
                 self.match(toy_asmParser.T__29)
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 229
+                self.state = 225
                 self.match(toy_asmParser.T__29)
-                self.state = 230
+                self.state = 226
                 self.reg()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 231
+                self.state = 227
                 self.match(toy_asmParser.T__30)
                 pass
 
@@ -1770,22 +1755,22 @@ class toy_asmParser ( Parser ):
         localctx = toy_asmParser.InputContext(self, self._ctx, self.state)
         self.enterRule(localctx, 36, self.RULE_input)
         try:
-            self.state = 238
+            self.state = 234
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,16,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,15,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 234
+                self.state = 230
                 self.match(toy_asmParser.T__31)
-                self.state = 235
+                self.state = 231
                 self.reg()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 236
+                self.state = 232
                 self.match(toy_asmParser.T__31)
-                self.state = 237
+                self.state = 233
                 self.mem()
                 pass
 
@@ -1835,7 +1820,7 @@ class toy_asmParser ( Parser ):
         self.enterRule(localctx, 38, self.RULE_str)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 240
+            self.state = 236
             self.match(toy_asmParser.STR)
         except RecognitionException as re:
             localctx.exception = re
@@ -1894,76 +1879,76 @@ class toy_asmParser ( Parser ):
         localctx = toy_asmParser.PrintContext(self, self._ctx, self.state)
         self.enterRule(localctx, 40, self.RULE_print)
         try:
-            self.state = 259
+            self.state = 255
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,17,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,16,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 242
+                self.state = 238
                 self.match(toy_asmParser.T__32)
-                self.state = 243
+                self.state = 239
                 self.num()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 244
+                self.state = 240
                 self.match(toy_asmParser.T__32)
-                self.state = 245
+                self.state = 241
                 self.reg()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 246
+                self.state = 242
                 self.match(toy_asmParser.T__32)
-                self.state = 247
+                self.state = 243
                 self.mem()
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 248
+                self.state = 244
                 self.match(toy_asmParser.T__32)
-                self.state = 249
+                self.state = 245
                 self.str_()
                 pass
 
             elif la_ == 5:
                 self.enterOuterAlt(localctx, 5)
-                self.state = 250
+                self.state = 246
                 self.match(toy_asmParser.T__33)
-                self.state = 251
+                self.state = 247
                 self.num()
                 pass
 
             elif la_ == 6:
                 self.enterOuterAlt(localctx, 6)
-                self.state = 252
+                self.state = 248
                 self.match(toy_asmParser.T__33)
-                self.state = 253
+                self.state = 249
                 self.reg()
                 pass
 
             elif la_ == 7:
                 self.enterOuterAlt(localctx, 7)
-                self.state = 254
+                self.state = 250
                 self.match(toy_asmParser.T__33)
-                self.state = 255
+                self.state = 251
                 self.mem()
                 pass
 
             elif la_ == 8:
                 self.enterOuterAlt(localctx, 8)
-                self.state = 256
+                self.state = 252
                 self.match(toy_asmParser.T__33)
-                self.state = 257
+                self.state = 253
                 self.str_()
                 pass
 
             elif la_ == 9:
                 self.enterOuterAlt(localctx, 9)
-                self.state = 258
+                self.state = 254
                 self.match(toy_asmParser.T__33)
                 pass
 
@@ -2017,22 +2002,22 @@ class toy_asmParser ( Parser ):
         localctx = toy_asmParser.RandContext(self, self._ctx, self.state)
         self.enterRule(localctx, 42, self.RULE_rand)
         try:
-            self.state = 265
+            self.state = 261
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,18,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,17,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 261
+                self.state = 257
                 self.match(toy_asmParser.T__34)
-                self.state = 262
+                self.state = 258
                 self.reg()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 263
+                self.state = 259
                 self.match(toy_asmParser.T__34)
-                self.state = 264
+                self.state = 260
                 self.mem()
                 pass
 
@@ -2080,7 +2065,7 @@ class toy_asmParser ( Parser ):
         self.enterRule(localctx, 44, self.RULE_pause)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 267
+            self.state = 263
             self.match(toy_asmParser.T__35)
         except RecognitionException as re:
             localctx.exception = re
@@ -2125,7 +2110,7 @@ class toy_asmParser ( Parser ):
         self.enterRule(localctx, 46, self.RULE_halt)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 269
+            self.state = 265
             self.match(toy_asmParser.T__36)
         except RecognitionException as re:
             localctx.exception = re
@@ -2170,7 +2155,7 @@ class toy_asmParser ( Parser ):
         self.enterRule(localctx, 48, self.RULE_nop)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 271
+            self.state = 267
             self.match(toy_asmParser.T__37)
         except RecognitionException as re:
             localctx.exception = re

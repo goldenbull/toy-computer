@@ -144,9 +144,10 @@ class Cmp(OpBase):
 
 
 class Jump(OpBase):
-    def __init__(self, action: str, target: str):
+    def __init__(self, action: str, target: str, src_line: int):
         self.action = action
         self.target = target
+        self.src_line = src_line  # line no. of this op in source code, for compile error report
 
     def __repr__(self):
         try:
@@ -176,8 +177,9 @@ class Jump(OpBase):
 
 
 class Call(OpBase):
-    def __init__(self, target: str):
+    def __init__(self, target: str, src_line: int):
         self.target = target
+        self.src_line = src_line  # line no. of this op in source code, for compile error report
 
     def __repr__(self):
         try:

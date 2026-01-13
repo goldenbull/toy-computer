@@ -18,7 +18,8 @@ const config = {
             strict: true
         }),
         paths: {
-            base: '/toy-computer'
+            // base: '/toy-computer'
+            base: ''
         }
     },
 };

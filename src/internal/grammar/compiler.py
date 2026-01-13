@@ -6,6 +6,7 @@ from .toy_asmLexer import toy_asmLexer
 from .toy_asmParser import toy_asmParser
 from .visitor_impl import VisitorImpl
 from ..computer import OpBase
+from ..computer.op_base import OpLabel
 
 
 class MyErrorListener(ErrorListener):
@@ -46,7 +47,7 @@ class Compiler:
             source_code: Assembly source code as string
 
         Returns:
-            CompileResult containing operations and label table
+            CompileResult containing operations and label2addr table
 
         Raises:
             Exception: If there are syntax errors in the source code
@@ -69,33 +70,37 @@ class Compiler:
         for i, op in enumerate(ops):
             op.addr = i
 
-        # Assign labels to operations
-        cur_labels = []
+        # Assign labels to operations, each op may have multiple labels
+        cur_op_labels: list[OpLabel] = []
         for x in visitor.ops_and_labels:
-            if isinstance(x, str):
-                if x in cur_labels:
-                    raise SyntaxError(f"出现了重复的Label [{x}]")
-                cur_labels.append(x)
+            if isinstance(x, OpLabel):
+                if x.label in [l.label for l in cur_op_labels]:
+                    raise SyntaxError(f"第 {x.src_line} 行出现了重复的Label [{x.label}]")
+                cur_op_labels.append(x)
             elif isinstance(x, OpBase):
-                x.labels = cur_labels
-                cur_labels = []
+                x.op_labels = cur_op_labels
+                cur_op_labels = []
 
-        if len(cur_labels) > 0:
-            raise SyntaxError("Label at end of file has no corresponding instruction")
+        if len(cur_op_labels) > 0:
+            raise SyntaxError(f"第 {cur_op_labels[-1].src_line} 行的 Label [{cur_op_labels[-1].label}] 缺少指令")
 
-        # Build label table (mapping label names to instruction addresses)
-        labels_tbl = {}
+        # Build op_label table (mapping op_label.label to instruction addresses)
+        all_op_labels: list[OpLabel] = []
+        label2addr: dict[str, int] = {}
         for op in ops:
-            for label in op.labels:
-                if label in labels_tbl:
-                    raise SyntaxError(f"出现了重复的Label [{label}]")
-                labels_tbl[label] = op.addr
+            for op_label in op.op_labels:
+                if op_label.label in label2addr:
+                    prev_occurrance = [x for x in all_op_labels if x.label == op_label.label][0]
+                    raise SyntaxError(f"第 {op_label.src_line} 行出现了重复的Label [{op_label.label}]，"
+                                      f"已在第 {prev_occurrance.src_line} 行定义了同名Label")
+                all_op_labels.append(op_label)
+                label2addr[op_label.label] = op.addr
 
         # check all jmp and call labels
         for op in ops:
             from internal.computer.operations import Jump, Call
             if isinstance(op, (Jump, Call)):
-                if op.target not in labels_tbl:
-                    raise SyntaxError(f"{op.to_str()} [{op.target}]不存在")
+                if op.target not in label2addr:
+                    raise SyntaxError(f"第 {op.src_line} 行，{op.to_str()} [{op.target}]不存在")
 
-        return CompileResult(ops, labels_tbl)
+        return CompileResult(ops, label2addr)

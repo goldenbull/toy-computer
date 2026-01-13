@@ -2,13 +2,14 @@
 
 from .toy_asmParser import toy_asmParser
 from .toy_asmVisitor import toy_asmVisitor
+from ..computer.op_base import OpLabel
 from ..computer.operations import *
 from ..computer.operand import OperandType, Operand
 
 
 class VisitorImpl(toy_asmVisitor):
     def __init__(self):
-        self.ops_and_labels: list[OpBase | str] = []
+        self.ops_and_labels: list[OpBase | OpLabel] = []
 
     def visitNum(self, ctx: toy_asmParser.NumContext):
         """Visit a number and return an Imm operand."""
@@ -65,11 +66,11 @@ class VisitorImpl(toy_asmVisitor):
     def visitJump(self, ctx: toy_asmParser.JumpContext):
         action = ctx.children[0].getText()
         label = ctx.children[1].getText()
-        return Jump(action, label)
+        return Jump(action, label, ctx.stop.line)
 
     def visitCall(self, ctx: toy_asmParser.CallContext):
         label = ctx.children[1].getText()
-        return Call(label)
+        return Call(label, ctx.stop.line)
 
     def visitRet(self, ctx: toy_asmParser.RetContext):
         return Ret()
@@ -125,7 +126,7 @@ class VisitorImpl(toy_asmVisitor):
 
     def visitOpLabel(self, ctx: toy_asmParser.OpLabelContext):
         label = ctx.children[0].getText().strip()
-        self.ops_and_labels.append(label)
+        self.ops_and_labels.append(OpLabel(ctx.start.line, label))
 
     def visitOp(self, ctx: toy_asmParser.OpContext):
         op = self.visit(ctx.children[0])

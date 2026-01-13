@@ -88,8 +88,8 @@ class ConsoleExecutor(ExecutorBase):
             idx = self.state.ip + i
             if 0 <= idx < len(self.state.ops):
                 _op = self.state.ops[idx]
-                for label in _op.labels:
-                    print(label + ":")
+                for op_label in _op.op_labels:
+                    print(op_label.label + ":")
                 print("==> " if i == 0 else "    ", end="")
                 print(f"<{_op.addr}> {_op}")
 
