@@ -38,7 +38,7 @@ class VisitorImpl(toy_asmVisitor):
     def visitMove(self, ctx: toy_asmParser.MoveContext):
         p1 = self.visit(ctx.children[1])
         p2 = self.visit(ctx.children[3])
-        return Move(p1, p2)
+        return Mov(p1, p2)
 
     def visitAdd(self, ctx: toy_asmParser.AddContext):
         p1 = self.visit(ctx.children[1])

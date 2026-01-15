@@ -20,7 +20,7 @@ export class WebExecutor {
      */
     private executeOperation(op: Operation) {
         switch (op.type) {
-            case 'move':
+            case 'mov':
                 this.execMove(op);
                 break;
             case 'add':
@@ -230,7 +230,7 @@ export class WebExecutor {
         if (op.action === 'pop' && op.p1) {
             this.setOperandValue(op.p1, value);
         } else if (op.action === 'popf') {
-            this.status.registers.flg = value;
+            this.status.registers.flg = Math.sign(value);
         }
 
         this.status.registers.ip++;

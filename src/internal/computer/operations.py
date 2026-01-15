@@ -5,7 +5,7 @@ from . import ExecutionState, OpBase, DivZeroError, MemType
 from .operand import OperandType, Operand
 
 
-class Move(OpBase):
+class Mov(OpBase):
     def __init__(self, p1: Operand, p2: Operand):
         self.p1 = p1
         self.p2 = p2

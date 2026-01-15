@@ -153,7 +153,7 @@ nop
 
 Comment : ';' ~[\n]* '\n' ;
 INT : [0-9]+ ;
-Label : ([a-z]|'_') ([a-z0-9]|'_')* ;
+Label : ([a-zA-Z]|'_') ([a-zA-Z0-9]|'_')* ;
 STR : '"' ( EscapeSequence | ~('\\'|'"') )* '"' ;
 fragment EscapeSequence  :  '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') ;
 WS : [ \t\r\n]+ -> skip;
