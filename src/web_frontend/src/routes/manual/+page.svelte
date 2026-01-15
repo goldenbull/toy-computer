@@ -50,7 +50,10 @@
             ]
         },
         {
-            id: 'demos', title: '代码示例',
+            id: 'advanced', title: '向C语言进军', isParent: true,
+        },
+        {
+            id: 'demos', title: '代码示例', isParent: true,
         },
     ];
 </script>
@@ -799,6 +802,18 @@
                     </table>
                 </section>
 
+            </section>
+
+            <section id="advanced" class="mb-12">
+                <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">进阶：向C语言进军</h2>
+                <p class="mb-4"><a href="https://www.jyshare.com/compile/11/"
+                      class="text-green-700 hover:underline">一个在线写C语言的网站</a></p>
+                <p class="mb-4">从汇编语言的视角，看C语言的学习难点</p>
+                <ul class="list-disc list-inside space-y-3">
+                    <li> 指针，取地址 --> 寄存器，内存编号，内存操作 </li>
+                    <li> 局部变量和全局变量 --> bp/sp指针，栈的操作，固定地址的内存操作</li>
+                    <li> 递归函数 --> bp/sp指针，栈的增长和退出 </li>
+                </ul>
             </section>
 
             <section id="demos" class="mb-12">
