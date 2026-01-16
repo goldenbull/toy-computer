@@ -1,15 +1,29 @@
 grammar toy_asm;
 
-program
-    : (Comment|opLabel|op)* EOF
+options {
+    caseInsensitive=true;
+}
+
+// Source code is pre-processed before compiling:
+// 1. Split into lines
+// 2. Skip comments and blank lines
+// 3. Extract labels (lines ending with ':')
+// 4. Parse each remaining line as a single instruction
+
+line
+    : (label|label_and_op|op) EOF
     ;
 
-opLabel
+label
     : Label ':'
     ;
 
+label_and_op
+    : label ':' op
+    ;
+
 op
-    : move
+    : mov
     | add
     | sub
     | mul
@@ -23,9 +37,7 @@ op
     | input
     | print
     | rand
-    | pause
     | halt
-    | nop
     ;
 
 num
@@ -45,7 +57,7 @@ mem
     : '[' reg offset? ']'
     ;
 
-move
+mov
     : 'mov' reg ',' num
     | 'mov' reg ',' reg
     | 'mov' reg ',' mem
@@ -139,21 +151,13 @@ rand
     | 'rand' mem
     ;
 
-pause
-    : 'pause'
-    ;
-
 halt
     : 'halt'
     ;
 
-nop
-    : 'nop'
-    ;
 
-Comment : ';' ~[\n]* '\n' ;
 INT : [0-9]+ ;
-Label : ([a-zA-Z]|'_') ([a-zA-Z0-9]|'_')* ;
+Label : ([a-z]|'_') ([a-z0-9]|'_')* ;
 STR : '"' ( EscapeSequence | ~('\\'|'"') )* '"' ;
-fragment EscapeSequence  :  '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') ;
-WS : [ \t\r\n]+ -> skip;
+fragment EscapeSequence :  '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') ;
+WS : [ \t\r]+ -> skip;

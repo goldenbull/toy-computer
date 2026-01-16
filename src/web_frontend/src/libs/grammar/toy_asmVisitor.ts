@@ -3,14 +3,15 @@
 import {ParseTreeVisitor} from 'antlr4';
 
 
-import { ProgramContext } from "./toy_asmParser.js";
-import { OpLabelContext } from "./toy_asmParser.js";
+import { LineContext } from "./toy_asmParser.js";
+import { LabelContext } from "./toy_asmParser.js";
+import { Label_and_opContext } from "./toy_asmParser.js";
 import { OpContext } from "./toy_asmParser.js";
 import { NumContext } from "./toy_asmParser.js";
 import { RegContext } from "./toy_asmParser.js";
 import { OffsetContext } from "./toy_asmParser.js";
 import { MemContext } from "./toy_asmParser.js";
-import { MoveContext } from "./toy_asmParser.js";
+import { MovContext } from "./toy_asmParser.js";
 import { AddContext } from "./toy_asmParser.js";
 import { SubContext } from "./toy_asmParser.js";
 import { MulContext } from "./toy_asmParser.js";
@@ -25,9 +26,7 @@ import { InputContext } from "./toy_asmParser.js";
 import { StrContext } from "./toy_asmParser.js";
 import { PrintContext } from "./toy_asmParser.js";
 import { RandContext } from "./toy_asmParser.js";
-import { PauseContext } from "./toy_asmParser.js";
 import { HaltContext } from "./toy_asmParser.js";
-import { NopContext } from "./toy_asmParser.js";
 
 
 /**
@@ -39,17 +38,23 @@ import { NopContext } from "./toy_asmParser.js";
  */
 export default class toy_asmVisitor<Result> extends ParseTreeVisitor<Result> {
 	/**
-	 * Visit a parse tree produced by `toy_asmParser.program`.
+	 * Visit a parse tree produced by `toy_asmParser.line`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitProgram?: (ctx: ProgramContext) => Result;
+	visitLine?: (ctx: LineContext) => Result;
 	/**
-	 * Visit a parse tree produced by `toy_asmParser.opLabel`.
+	 * Visit a parse tree produced by `toy_asmParser.label`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitOpLabel?: (ctx: OpLabelContext) => Result;
+	visitLabel?: (ctx: LabelContext) => Result;
+	/**
+	 * Visit a parse tree produced by `toy_asmParser.label_and_op`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLabel_and_op?: (ctx: Label_and_opContext) => Result;
 	/**
 	 * Visit a parse tree produced by `toy_asmParser.op`.
 	 * @param ctx the parse tree
@@ -81,11 +86,11 @@ export default class toy_asmVisitor<Result> extends ParseTreeVisitor<Result> {
 	 */
 	visitMem?: (ctx: MemContext) => Result;
 	/**
-	 * Visit a parse tree produced by `toy_asmParser.move`.
+	 * Visit a parse tree produced by `toy_asmParser.mov`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitMove?: (ctx: MoveContext) => Result;
+	visitMov?: (ctx: MovContext) => Result;
 	/**
 	 * Visit a parse tree produced by `toy_asmParser.add`.
 	 * @param ctx the parse tree
@@ -171,22 +176,10 @@ export default class toy_asmVisitor<Result> extends ParseTreeVisitor<Result> {
 	 */
 	visitRand?: (ctx: RandContext) => Result;
 	/**
-	 * Visit a parse tree produced by `toy_asmParser.pause`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitPause?: (ctx: PauseContext) => Result;
-	/**
 	 * Visit a parse tree produced by `toy_asmParser.halt`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitHalt?: (ctx: HaltContext) => Result;
-	/**
-	 * Visit a parse tree produced by `toy_asmParser.nop`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitNop?: (ctx: NopContext) => Result;
 }
 
