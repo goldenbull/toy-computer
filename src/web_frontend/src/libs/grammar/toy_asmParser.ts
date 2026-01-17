@@ -52,16 +52,17 @@ export default class toy_asmParser extends Parser {
 	public static readonly T__31 = 32;
 	public static readonly T__32 = 33;
 	public static readonly T__33 = 34;
-	public static readonly T__34 = 35;
-	public static readonly T__35 = 36;
-	public static readonly INT = 37;
-	public static readonly Label = 38;
-	public static readonly STR = 39;
-	public static readonly WS = 40;
+	public static readonly Comma = 35;
+	public static readonly Colon = 36;
+	public static readonly Comment = 37;
+	public static readonly INT = 38;
+	public static readonly Label = 39;
+	public static readonly STR = 40;
+	public static readonly WS = 41;
 	public static override readonly EOF = Token.EOF;
 	public static readonly RULE_line = 0;
 	public static readonly RULE_label = 1;
-	public static readonly RULE_label_and_op = 2;
+	public static readonly RULE_comment = 2;
 	public static readonly RULE_op = 3;
 	public static readonly RULE_num = 4;
 	public static readonly RULE_reg = 5;
@@ -83,13 +84,12 @@ export default class toy_asmParser extends Parser {
 	public static readonly RULE_print = 21;
 	public static readonly RULE_rand = 22;
 	public static readonly RULE_halt = 23;
-	public static readonly literalNames: (string | null)[] = [ null, "':'", 
-                                                            "'+'", "'-'", 
-                                                            "'ax'", "'bx'", 
-                                                            "'cx'", "'dx'", 
-                                                            "'bp'", "'sp'", 
-                                                            "'['", "']'", 
-                                                            "'mov'", "','", 
+	public static readonly literalNames: (string | null)[] = [ null, "'+'", 
+                                                            "'-'", "'ax'", 
+                                                            "'bx'", "'cx'", 
+                                                            "'dx'", "'bp'", 
+                                                            "'sp'", "'['", 
+                                                            "']'", "'mov'", 
                                                             "'add'", "'sub'", 
                                                             "'mul'", "'div'", 
                                                             "'cmp'", "'jmp'", 
@@ -119,15 +119,15 @@ export default class toy_asmParser extends Parser {
                                                              null, null, 
                                                              null, null, 
                                                              null, null, 
-                                                             null, null, 
-                                                             null, "INT", 
-                                                             "Label", "STR", 
-                                                             "WS" ];
+                                                             null, "Comma", 
+                                                             "Colon", "Comment", 
+                                                             "INT", "Label", 
+                                                             "STR", "WS" ];
 	// tslint:disable:no-trailing-whitespace
 	public static readonly ruleNames: string[] = [
-		"line", "label", "label_and_op", "op", "num", "reg", "offset", "mem", 
-		"mov", "add", "sub", "mul", "div", "cmp", "jump", "call", "ret", "push", 
-		"pop", "input", "str", "print", "rand", "halt",
+		"line", "label", "comment", "op", "num", "reg", "offset", "mem", "mov", 
+		"add", "sub", "mul", "div", "cmp", "jump", "call", "ret", "push", "pop", 
+		"input", "str", "print", "rand", "halt",
 	];
 	public get grammarFileName(): string { return "toy_asm.g4"; }
 	public get literalNames(): (string | null)[] { return toy_asmParser.literalNames; }
@@ -147,32 +147,41 @@ export default class toy_asmParser extends Parser {
 	public line(): LineContext {
 		let localctx: LineContext = new LineContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 0, toy_asmParser.RULE_line);
+		let _la: number;
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 51;
+			this.state = 49;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 0, this._ctx) ) {
-			case 1:
+			_la = this._input.LA(1);
+			if (_la===39) {
 				{
 				this.state = 48;
 				this.label();
 				}
-				break;
-			case 2:
+			}
+
+			this.state = 52;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			if (((((_la - 11)) & ~0x1F) === 0 && ((1 << (_la - 11)) & 16777215) !== 0)) {
 				{
-				this.state = 49;
-				this.label_and_op();
-				}
-				break;
-			case 3:
-				{
-				this.state = 50;
+				this.state = 51;
 				this.op();
 				}
-				break;
 			}
-			this.state = 53;
+
+			this.state = 55;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			if (_la===37) {
+				{
+				this.state = 54;
+				this.comment();
+				}
+			}
+
+			this.state = 57;
 			this.match(toy_asmParser.EOF);
 			}
 		}
@@ -197,10 +206,10 @@ export default class toy_asmParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 55;
+			this.state = 59;
 			this.match(toy_asmParser.Label);
-			this.state = 56;
-			this.match(toy_asmParser.T__0);
+			this.state = 60;
+			this.match(toy_asmParser.Colon);
 			}
 		}
 		catch (re) {
@@ -218,18 +227,14 @@ export default class toy_asmParser extends Parser {
 		return localctx;
 	}
 	// @RuleVersion(0)
-	public label_and_op(): Label_and_opContext {
-		let localctx: Label_and_opContext = new Label_and_opContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 4, toy_asmParser.RULE_label_and_op);
+	public comment(): CommentContext {
+		let localctx: CommentContext = new CommentContext(this, this._ctx, this.state);
+		this.enterRule(localctx, 4, toy_asmParser.RULE_comment);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 58;
-			this.label();
-			this.state = 59;
-			this.match(toy_asmParser.T__0);
-			this.state = 60;
-			this.op();
+			this.state = 62;
+			this.match(toy_asmParser.Comment);
 			}
 		}
 		catch (re) {
@@ -251,120 +256,120 @@ export default class toy_asmParser extends Parser {
 		let localctx: OpContext = new OpContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 6, toy_asmParser.RULE_op);
 		try {
-			this.state = 77;
+			this.state = 79;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
-			case 12:
+			case 11:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 62;
+				this.state = 64;
 				this.mov();
 				}
 				break;
-			case 14:
+			case 12:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 63;
+				this.state = 65;
 				this.add();
 				}
 				break;
-			case 15:
+			case 13:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 64;
+				this.state = 66;
 				this.sub();
 				}
 				break;
-			case 16:
+			case 14:
 				this.enterOuterAlt(localctx, 4);
 				{
-				this.state = 65;
+				this.state = 67;
 				this.mul();
 				}
 				break;
-			case 17:
+			case 15:
 				this.enterOuterAlt(localctx, 5);
 				{
-				this.state = 66;
+				this.state = 68;
 				this.div();
 				}
 				break;
-			case 18:
+			case 16:
 				this.enterOuterAlt(localctx, 6);
 				{
-				this.state = 67;
+				this.state = 69;
 				this.cmp();
 				}
 				break;
+			case 17:
+			case 18:
 			case 19:
 			case 20:
 			case 21:
 			case 22:
 			case 23:
-			case 24:
-			case 25:
 				this.enterOuterAlt(localctx, 7);
 				{
-				this.state = 68;
+				this.state = 70;
 				this.jump();
 				}
 				break;
-			case 26:
+			case 24:
 				this.enterOuterAlt(localctx, 8);
 				{
-				this.state = 69;
+				this.state = 71;
 				this.call();
 				}
 				break;
-			case 27:
+			case 25:
 				this.enterOuterAlt(localctx, 9);
 				{
-				this.state = 70;
+				this.state = 72;
 				this.ret();
+				}
+				break;
+			case 26:
+			case 27:
+				this.enterOuterAlt(localctx, 10);
+				{
+				this.state = 73;
+				this.push();
 				}
 				break;
 			case 28:
 			case 29:
-				this.enterOuterAlt(localctx, 10);
-				{
-				this.state = 71;
-				this.push();
-				}
-				break;
-			case 30:
-			case 31:
 				this.enterOuterAlt(localctx, 11);
 				{
-				this.state = 72;
+				this.state = 74;
 				this.pop();
 				}
 				break;
-			case 32:
+			case 30:
 				this.enterOuterAlt(localctx, 12);
 				{
-				this.state = 73;
+				this.state = 75;
 				this.input();
 				}
 				break;
-			case 33:
-			case 34:
+			case 31:
+			case 32:
 				this.enterOuterAlt(localctx, 13);
 				{
-				this.state = 74;
+				this.state = 76;
 				this.print();
 				}
 				break;
-			case 35:
+			case 33:
 				this.enterOuterAlt(localctx, 14);
 				{
-				this.state = 75;
+				this.state = 77;
 				this.rand();
 				}
 				break;
-			case 36:
+			case 34:
 				this.enterOuterAlt(localctx, 15);
 				{
-				this.state = 76;
+				this.state = 78;
 				this.halt();
 				}
 				break;
@@ -392,33 +397,33 @@ export default class toy_asmParser extends Parser {
 		this.enterRule(localctx, 8, toy_asmParser.RULE_num);
 		let _la: number;
 		try {
-			this.state = 85;
+			this.state = 87;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
-			case 2:
-			case 37:
+			case 1:
+			case 38:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 80;
+				this.state = 82;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				if (_la===2) {
+				if (_la===1) {
 					{
-					this.state = 79;
-					this.match(toy_asmParser.T__1);
+					this.state = 81;
+					this.match(toy_asmParser.T__0);
 					}
 				}
 
-				this.state = 82;
+				this.state = 84;
 				this.match(toy_asmParser.INT);
 				}
 				break;
-			case 3:
+			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 83;
-				this.match(toy_asmParser.T__2);
-				this.state = 84;
+				this.state = 85;
+				this.match(toy_asmParser.T__1);
+				this.state = 86;
 				this.match(toy_asmParser.INT);
 				}
 				break;
@@ -448,9 +453,9 @@ export default class toy_asmParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 87;
+			this.state = 89;
 			_la = this._input.LA(1);
-			if(!((((_la) & ~0x1F) === 0 && ((1 << _la) & 1008) !== 0))) {
+			if(!((((_la) & ~0x1F) === 0 && ((1 << _la) & 504) !== 0))) {
 			this._errHandler.recoverInline(this);
 			}
 			else {
@@ -481,16 +486,16 @@ export default class toy_asmParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 89;
+			this.state = 91;
 			_la = this._input.LA(1);
-			if(!(_la===2 || _la===3)) {
+			if(!(_la===1 || _la===2)) {
 			this._errHandler.recoverInline(this);
 			}
 			else {
 				this._errHandler.reportMatch(this);
 			    this.consume();
 			}
-			this.state = 90;
+			this.state = 92;
 			this.match(toy_asmParser.INT);
 			}
 		}
@@ -516,22 +521,22 @@ export default class toy_asmParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 92;
-			this.match(toy_asmParser.T__9);
-			this.state = 93;
-			this.reg();
+			this.state = 94;
+			this.match(toy_asmParser.T__8);
 			this.state = 95;
+			this.reg();
+			this.state = 97;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if (_la===2 || _la===3) {
+			if (_la===1 || _la===2) {
 				{
-				this.state = 94;
+				this.state = 96;
 				this.offset();
 				}
 			}
 
-			this.state = 97;
-			this.match(toy_asmParser.T__10);
+			this.state = 99;
+			this.match(toy_asmParser.T__9);
 			}
 		}
 		catch (re) {
@@ -553,71 +558,71 @@ export default class toy_asmParser extends Parser {
 		let localctx: MovContext = new MovContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 16, toy_asmParser.RULE_mov);
 		try {
-			this.state = 124;
+			this.state = 126;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 5, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 7, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 99;
-				this.match(toy_asmParser.T__11);
-				this.state = 100;
-				this.reg();
 				this.state = 101;
-				this.match(toy_asmParser.T__12);
+				this.match(toy_asmParser.T__10);
 				this.state = 102;
+				this.reg();
+				this.state = 103;
+				this.match(toy_asmParser.Comma);
+				this.state = 104;
 				this.num();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 104;
-				this.match(toy_asmParser.T__11);
-				this.state = 105;
-				this.reg();
 				this.state = 106;
-				this.match(toy_asmParser.T__12);
+				this.match(toy_asmParser.T__10);
 				this.state = 107;
+				this.reg();
+				this.state = 108;
+				this.match(toy_asmParser.Comma);
+				this.state = 109;
 				this.reg();
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 109;
-				this.match(toy_asmParser.T__11);
-				this.state = 110;
-				this.reg();
 				this.state = 111;
-				this.match(toy_asmParser.T__12);
+				this.match(toy_asmParser.T__10);
 				this.state = 112;
+				this.reg();
+				this.state = 113;
+				this.match(toy_asmParser.Comma);
+				this.state = 114;
 				this.mem();
 				}
 				break;
 			case 4:
 				this.enterOuterAlt(localctx, 4);
 				{
-				this.state = 114;
-				this.match(toy_asmParser.T__11);
-				this.state = 115;
-				this.mem();
 				this.state = 116;
-				this.match(toy_asmParser.T__12);
+				this.match(toy_asmParser.T__10);
 				this.state = 117;
+				this.mem();
+				this.state = 118;
+				this.match(toy_asmParser.Comma);
+				this.state = 119;
 				this.num();
 				}
 				break;
 			case 5:
 				this.enterOuterAlt(localctx, 5);
 				{
-				this.state = 119;
-				this.match(toy_asmParser.T__11);
-				this.state = 120;
-				this.mem();
 				this.state = 121;
-				this.match(toy_asmParser.T__12);
+				this.match(toy_asmParser.T__10);
 				this.state = 122;
+				this.mem();
+				this.state = 123;
+				this.match(toy_asmParser.Comma);
+				this.state = 124;
 				this.reg();
 				}
 				break;
@@ -642,45 +647,45 @@ export default class toy_asmParser extends Parser {
 		let localctx: AddContext = new AddContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 18, toy_asmParser.RULE_add);
 		try {
-			this.state = 141;
+			this.state = 143;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 6, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 8, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 126;
-				this.match(toy_asmParser.T__13);
-				this.state = 127;
-				this.reg();
 				this.state = 128;
-				this.match(toy_asmParser.T__12);
+				this.match(toy_asmParser.T__11);
 				this.state = 129;
+				this.reg();
+				this.state = 130;
+				this.match(toy_asmParser.Comma);
+				this.state = 131;
 				this.num();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 131;
-				this.match(toy_asmParser.T__13);
-				this.state = 132;
-				this.reg();
 				this.state = 133;
-				this.match(toy_asmParser.T__12);
+				this.match(toy_asmParser.T__11);
 				this.state = 134;
+				this.reg();
+				this.state = 135;
+				this.match(toy_asmParser.Comma);
+				this.state = 136;
 				this.reg();
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 136;
-				this.match(toy_asmParser.T__13);
-				this.state = 137;
-				this.reg();
 				this.state = 138;
-				this.match(toy_asmParser.T__12);
+				this.match(toy_asmParser.T__11);
 				this.state = 139;
+				this.reg();
+				this.state = 140;
+				this.match(toy_asmParser.Comma);
+				this.state = 141;
 				this.mem();
 				}
 				break;
@@ -705,45 +710,45 @@ export default class toy_asmParser extends Parser {
 		let localctx: SubContext = new SubContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 20, toy_asmParser.RULE_sub);
 		try {
-			this.state = 158;
+			this.state = 160;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 7, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 9, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 143;
-				this.match(toy_asmParser.T__14);
-				this.state = 144;
-				this.reg();
 				this.state = 145;
 				this.match(toy_asmParser.T__12);
 				this.state = 146;
+				this.reg();
+				this.state = 147;
+				this.match(toy_asmParser.Comma);
+				this.state = 148;
 				this.num();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 148;
-				this.match(toy_asmParser.T__14);
-				this.state = 149;
-				this.reg();
 				this.state = 150;
 				this.match(toy_asmParser.T__12);
 				this.state = 151;
+				this.reg();
+				this.state = 152;
+				this.match(toy_asmParser.Comma);
+				this.state = 153;
 				this.reg();
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 153;
-				this.match(toy_asmParser.T__14);
-				this.state = 154;
-				this.reg();
 				this.state = 155;
 				this.match(toy_asmParser.T__12);
 				this.state = 156;
+				this.reg();
+				this.state = 157;
+				this.match(toy_asmParser.Comma);
+				this.state = 158;
 				this.mem();
 				}
 				break;
@@ -768,33 +773,33 @@ export default class toy_asmParser extends Parser {
 		let localctx: MulContext = new MulContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 22, toy_asmParser.RULE_mul);
 		try {
-			this.state = 166;
+			this.state = 168;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 8, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 10, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 160;
-				this.match(toy_asmParser.T__15);
-				this.state = 161;
+				this.state = 162;
+				this.match(toy_asmParser.T__13);
+				this.state = 163;
 				this.num();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 162;
-				this.match(toy_asmParser.T__15);
-				this.state = 163;
+				this.state = 164;
+				this.match(toy_asmParser.T__13);
+				this.state = 165;
 				this.reg();
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 164;
-				this.match(toy_asmParser.T__15);
-				this.state = 165;
+				this.state = 166;
+				this.match(toy_asmParser.T__13);
+				this.state = 167;
 				this.mem();
 				}
 				break;
@@ -819,33 +824,33 @@ export default class toy_asmParser extends Parser {
 		let localctx: DivContext = new DivContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 24, toy_asmParser.RULE_div);
 		try {
-			this.state = 174;
+			this.state = 176;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 9, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 11, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 168;
-				this.match(toy_asmParser.T__16);
-				this.state = 169;
+				this.state = 170;
+				this.match(toy_asmParser.T__14);
+				this.state = 171;
 				this.num();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 170;
-				this.match(toy_asmParser.T__16);
-				this.state = 171;
+				this.state = 172;
+				this.match(toy_asmParser.T__14);
+				this.state = 173;
 				this.reg();
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 172;
-				this.match(toy_asmParser.T__16);
-				this.state = 173;
+				this.state = 174;
+				this.match(toy_asmParser.T__14);
+				this.state = 175;
 				this.mem();
 				}
 				break;
@@ -870,45 +875,45 @@ export default class toy_asmParser extends Parser {
 		let localctx: CmpContext = new CmpContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 26, toy_asmParser.RULE_cmp);
 		try {
-			this.state = 191;
+			this.state = 193;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 10, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 12, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 176;
-				this.match(toy_asmParser.T__17);
-				this.state = 177;
-				this.reg();
 				this.state = 178;
-				this.match(toy_asmParser.T__12);
+				this.match(toy_asmParser.T__15);
 				this.state = 179;
+				this.reg();
+				this.state = 180;
+				this.match(toy_asmParser.Comma);
+				this.state = 181;
 				this.num();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 181;
-				this.match(toy_asmParser.T__17);
-				this.state = 182;
-				this.reg();
 				this.state = 183;
-				this.match(toy_asmParser.T__12);
+				this.match(toy_asmParser.T__15);
 				this.state = 184;
+				this.reg();
+				this.state = 185;
+				this.match(toy_asmParser.Comma);
+				this.state = 186;
 				this.reg();
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 186;
-				this.match(toy_asmParser.T__17);
-				this.state = 187;
-				this.reg();
 				this.state = 188;
-				this.match(toy_asmParser.T__12);
+				this.match(toy_asmParser.T__15);
 				this.state = 189;
+				this.reg();
+				this.state = 190;
+				this.match(toy_asmParser.Comma);
+				this.state = 191;
 				this.mem();
 				}
 				break;
@@ -933,69 +938,69 @@ export default class toy_asmParser extends Parser {
 		let localctx: JumpContext = new JumpContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 28, toy_asmParser.RULE_jump);
 		try {
-			this.state = 207;
+			this.state = 209;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
-			case 19:
+			case 17:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 193;
-				this.match(toy_asmParser.T__18);
-				this.state = 194;
-				this.match(toy_asmParser.Label);
-				}
-				break;
-			case 20:
-				this.enterOuterAlt(localctx, 2);
-				{
 				this.state = 195;
-				this.match(toy_asmParser.T__19);
+				this.match(toy_asmParser.T__16);
 				this.state = 196;
 				this.match(toy_asmParser.Label);
 				}
 				break;
-			case 21:
-				this.enterOuterAlt(localctx, 3);
+			case 18:
+				this.enterOuterAlt(localctx, 2);
 				{
 				this.state = 197;
-				this.match(toy_asmParser.T__20);
+				this.match(toy_asmParser.T__17);
 				this.state = 198;
 				this.match(toy_asmParser.Label);
 				}
 				break;
-			case 22:
-				this.enterOuterAlt(localctx, 4);
+			case 19:
+				this.enterOuterAlt(localctx, 3);
 				{
 				this.state = 199;
-				this.match(toy_asmParser.T__21);
+				this.match(toy_asmParser.T__18);
 				this.state = 200;
 				this.match(toy_asmParser.Label);
 				}
 				break;
-			case 23:
-				this.enterOuterAlt(localctx, 5);
+			case 20:
+				this.enterOuterAlt(localctx, 4);
 				{
 				this.state = 201;
-				this.match(toy_asmParser.T__22);
+				this.match(toy_asmParser.T__19);
 				this.state = 202;
 				this.match(toy_asmParser.Label);
 				}
 				break;
-			case 24:
-				this.enterOuterAlt(localctx, 6);
+			case 21:
+				this.enterOuterAlt(localctx, 5);
 				{
 				this.state = 203;
-				this.match(toy_asmParser.T__23);
+				this.match(toy_asmParser.T__20);
 				this.state = 204;
 				this.match(toy_asmParser.Label);
 				}
 				break;
-			case 25:
-				this.enterOuterAlt(localctx, 7);
+			case 22:
+				this.enterOuterAlt(localctx, 6);
 				{
 				this.state = 205;
-				this.match(toy_asmParser.T__24);
+				this.match(toy_asmParser.T__21);
 				this.state = 206;
+				this.match(toy_asmParser.Label);
+				}
+				break;
+			case 23:
+				this.enterOuterAlt(localctx, 7);
+				{
+				this.state = 207;
+				this.match(toy_asmParser.T__22);
+				this.state = 208;
 				this.match(toy_asmParser.Label);
 				}
 				break;
@@ -1024,9 +1029,9 @@ export default class toy_asmParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 209;
-			this.match(toy_asmParser.T__25);
-			this.state = 210;
+			this.state = 211;
+			this.match(toy_asmParser.T__23);
+			this.state = 212;
 			this.match(toy_asmParser.Label);
 			}
 		}
@@ -1051,8 +1056,8 @@ export default class toy_asmParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 212;
-			this.match(toy_asmParser.T__26);
+			this.state = 214;
+			this.match(toy_asmParser.T__24);
 			}
 		}
 		catch (re) {
@@ -1074,32 +1079,32 @@ export default class toy_asmParser extends Parser {
 		let localctx: PushContext = new PushContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 34, toy_asmParser.RULE_push);
 		try {
-			this.state = 219;
+			this.state = 221;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 12, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 14, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 214;
-				this.match(toy_asmParser.T__27);
-				this.state = 215;
+				this.state = 216;
+				this.match(toy_asmParser.T__25);
+				this.state = 217;
 				this.num();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 216;
-				this.match(toy_asmParser.T__27);
-				this.state = 217;
+				this.state = 218;
+				this.match(toy_asmParser.T__25);
+				this.state = 219;
 				this.reg();
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 218;
-				this.match(toy_asmParser.T__28);
+				this.state = 220;
+				this.match(toy_asmParser.T__26);
 				}
 				break;
 			}
@@ -1123,30 +1128,30 @@ export default class toy_asmParser extends Parser {
 		let localctx: PopContext = new PopContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 36, toy_asmParser.RULE_pop);
 		try {
-			this.state = 225;
+			this.state = 227;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 13, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 15, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 221;
-				this.match(toy_asmParser.T__29);
+				this.state = 223;
+				this.match(toy_asmParser.T__27);
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 222;
-				this.match(toy_asmParser.T__29);
-				this.state = 223;
+				this.state = 224;
+				this.match(toy_asmParser.T__27);
+				this.state = 225;
 				this.reg();
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 224;
-				this.match(toy_asmParser.T__30);
+				this.state = 226;
+				this.match(toy_asmParser.T__28);
 				}
 				break;
 			}
@@ -1170,24 +1175,24 @@ export default class toy_asmParser extends Parser {
 		let localctx: InputContext = new InputContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 38, toy_asmParser.RULE_input);
 		try {
-			this.state = 231;
+			this.state = 233;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 14, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 16, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 227;
-				this.match(toy_asmParser.T__31);
-				this.state = 228;
+				this.state = 229;
+				this.match(toy_asmParser.T__29);
+				this.state = 230;
 				this.reg();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 229;
-				this.match(toy_asmParser.T__31);
-				this.state = 230;
+				this.state = 231;
+				this.match(toy_asmParser.T__29);
+				this.state = 232;
 				this.mem();
 				}
 				break;
@@ -1214,7 +1219,7 @@ export default class toy_asmParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 233;
+			this.state = 235;
 			this.match(toy_asmParser.STR);
 			}
 		}
@@ -1237,86 +1242,86 @@ export default class toy_asmParser extends Parser {
 		let localctx: PrintContext = new PrintContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 42, toy_asmParser.RULE_print);
 		try {
-			this.state = 252;
+			this.state = 254;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 15, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 17, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 235;
-				this.match(toy_asmParser.T__32);
-				this.state = 236;
+				this.state = 237;
+				this.match(toy_asmParser.T__30);
+				this.state = 238;
 				this.num();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 237;
-				this.match(toy_asmParser.T__32);
-				this.state = 238;
+				this.state = 239;
+				this.match(toy_asmParser.T__30);
+				this.state = 240;
 				this.reg();
 				}
 				break;
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 239;
-				this.match(toy_asmParser.T__32);
-				this.state = 240;
+				this.state = 241;
+				this.match(toy_asmParser.T__30);
+				this.state = 242;
 				this.mem();
 				}
 				break;
 			case 4:
 				this.enterOuterAlt(localctx, 4);
 				{
-				this.state = 241;
-				this.match(toy_asmParser.T__32);
-				this.state = 242;
+				this.state = 243;
+				this.match(toy_asmParser.T__30);
+				this.state = 244;
 				this.str();
 				}
 				break;
 			case 5:
 				this.enterOuterAlt(localctx, 5);
 				{
-				this.state = 243;
-				this.match(toy_asmParser.T__33);
-				this.state = 244;
+				this.state = 245;
+				this.match(toy_asmParser.T__31);
+				this.state = 246;
 				this.num();
 				}
 				break;
 			case 6:
 				this.enterOuterAlt(localctx, 6);
 				{
-				this.state = 245;
-				this.match(toy_asmParser.T__33);
-				this.state = 246;
+				this.state = 247;
+				this.match(toy_asmParser.T__31);
+				this.state = 248;
 				this.reg();
 				}
 				break;
 			case 7:
 				this.enterOuterAlt(localctx, 7);
 				{
-				this.state = 247;
-				this.match(toy_asmParser.T__33);
-				this.state = 248;
+				this.state = 249;
+				this.match(toy_asmParser.T__31);
+				this.state = 250;
 				this.mem();
 				}
 				break;
 			case 8:
 				this.enterOuterAlt(localctx, 8);
 				{
-				this.state = 249;
-				this.match(toy_asmParser.T__33);
-				this.state = 250;
+				this.state = 251;
+				this.match(toy_asmParser.T__31);
+				this.state = 252;
 				this.str();
 				}
 				break;
 			case 9:
 				this.enterOuterAlt(localctx, 9);
 				{
-				this.state = 251;
-				this.match(toy_asmParser.T__33);
+				this.state = 253;
+				this.match(toy_asmParser.T__31);
 				}
 				break;
 			}
@@ -1340,24 +1345,24 @@ export default class toy_asmParser extends Parser {
 		let localctx: RandContext = new RandContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 44, toy_asmParser.RULE_rand);
 		try {
-			this.state = 258;
+			this.state = 260;
 			this._errHandler.sync(this);
-			switch ( this._interp.adaptivePredict(this._input, 16, this._ctx) ) {
+			switch ( this._interp.adaptivePredict(this._input, 18, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 254;
-				this.match(toy_asmParser.T__34);
-				this.state = 255;
+				this.state = 256;
+				this.match(toy_asmParser.T__32);
+				this.state = 257;
 				this.reg();
 				}
 				break;
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 256;
-				this.match(toy_asmParser.T__34);
-				this.state = 257;
+				this.state = 258;
+				this.match(toy_asmParser.T__32);
+				this.state = 259;
 				this.mem();
 				}
 				break;
@@ -1384,8 +1389,8 @@ export default class toy_asmParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 260;
-			this.match(toy_asmParser.T__35);
+			this.state = 262;
+			this.match(toy_asmParser.T__33);
 			}
 		}
 		catch (re) {
@@ -1403,91 +1408,92 @@ export default class toy_asmParser extends Parser {
 		return localctx;
 	}
 
-	public static readonly _serializedATN: number[] = [4,1,40,263,2,0,7,0,2,
+	public static readonly _serializedATN: number[] = [4,1,41,265,2,0,7,0,2,
 	1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,7,7,2,8,7,8,2,9,7,9,2,
 	10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,2,15,7,15,2,16,7,16,2,17,
-	7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,2,22,7,22,2,23,7,23,1,0,1,
-	0,1,0,3,0,52,8,0,1,0,1,0,1,1,1,1,1,1,1,2,1,2,1,2,1,2,1,3,1,3,1,3,1,3,1,
-	3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,78,8,3,1,4,3,4,81,8,4,1,4,
-	1,4,1,4,3,4,86,8,4,1,5,1,5,1,6,1,6,1,6,1,7,1,7,1,7,3,7,96,8,7,1,7,1,7,1,
-	8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,
-	8,1,8,1,8,1,8,1,8,1,8,1,8,3,8,125,8,8,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,
-	9,1,9,1,9,1,9,1,9,1,9,1,9,3,9,142,8,9,1,10,1,10,1,10,1,10,1,10,1,10,1,10,
-	1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,3,10,159,8,10,1,11,1,11,1,11,1,
-	11,1,11,1,11,3,11,167,8,11,1,12,1,12,1,12,1,12,1,12,1,12,3,12,175,8,12,
-	1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,
-	13,3,13,192,8,13,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,
-	1,14,1,14,1,14,3,14,208,8,14,1,15,1,15,1,15,1,16,1,16,1,17,1,17,1,17,1,
-	17,1,17,3,17,220,8,17,1,18,1,18,1,18,1,18,3,18,226,8,18,1,19,1,19,1,19,
-	1,19,3,19,232,8,19,1,20,1,20,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,
-	21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,3,21,253,8,21,1,22,1,22,1,22,
-	1,22,3,22,259,8,22,1,23,1,23,1,23,0,0,24,0,2,4,6,8,10,12,14,16,18,20,22,
-	24,26,28,30,32,34,36,38,40,42,44,46,0,2,1,0,4,9,1,0,2,3,291,0,51,1,0,0,
-	0,2,55,1,0,0,0,4,58,1,0,0,0,6,77,1,0,0,0,8,85,1,0,0,0,10,87,1,0,0,0,12,
-	89,1,0,0,0,14,92,1,0,0,0,16,124,1,0,0,0,18,141,1,0,0,0,20,158,1,0,0,0,22,
-	166,1,0,0,0,24,174,1,0,0,0,26,191,1,0,0,0,28,207,1,0,0,0,30,209,1,0,0,0,
-	32,212,1,0,0,0,34,219,1,0,0,0,36,225,1,0,0,0,38,231,1,0,0,0,40,233,1,0,
-	0,0,42,252,1,0,0,0,44,258,1,0,0,0,46,260,1,0,0,0,48,52,3,2,1,0,49,52,3,
-	4,2,0,50,52,3,6,3,0,51,48,1,0,0,0,51,49,1,0,0,0,51,50,1,0,0,0,52,53,1,0,
-	0,0,53,54,5,0,0,1,54,1,1,0,0,0,55,56,5,38,0,0,56,57,5,1,0,0,57,3,1,0,0,
-	0,58,59,3,2,1,0,59,60,5,1,0,0,60,61,3,6,3,0,61,5,1,0,0,0,62,78,3,16,8,0,
-	63,78,3,18,9,0,64,78,3,20,10,0,65,78,3,22,11,0,66,78,3,24,12,0,67,78,3,
-	26,13,0,68,78,3,28,14,0,69,78,3,30,15,0,70,78,3,32,16,0,71,78,3,34,17,0,
-	72,78,3,36,18,0,73,78,3,38,19,0,74,78,3,42,21,0,75,78,3,44,22,0,76,78,3,
-	46,23,0,77,62,1,0,0,0,77,63,1,0,0,0,77,64,1,0,0,0,77,65,1,0,0,0,77,66,1,
-	0,0,0,77,67,1,0,0,0,77,68,1,0,0,0,77,69,1,0,0,0,77,70,1,0,0,0,77,71,1,0,
-	0,0,77,72,1,0,0,0,77,73,1,0,0,0,77,74,1,0,0,0,77,75,1,0,0,0,77,76,1,0,0,
-	0,78,7,1,0,0,0,79,81,5,2,0,0,80,79,1,0,0,0,80,81,1,0,0,0,81,82,1,0,0,0,
-	82,86,5,37,0,0,83,84,5,3,0,0,84,86,5,37,0,0,85,80,1,0,0,0,85,83,1,0,0,0,
-	86,9,1,0,0,0,87,88,7,0,0,0,88,11,1,0,0,0,89,90,7,1,0,0,90,91,5,37,0,0,91,
-	13,1,0,0,0,92,93,5,10,0,0,93,95,3,10,5,0,94,96,3,12,6,0,95,94,1,0,0,0,95,
-	96,1,0,0,0,96,97,1,0,0,0,97,98,5,11,0,0,98,15,1,0,0,0,99,100,5,12,0,0,100,
-	101,3,10,5,0,101,102,5,13,0,0,102,103,3,8,4,0,103,125,1,0,0,0,104,105,5,
-	12,0,0,105,106,3,10,5,0,106,107,5,13,0,0,107,108,3,10,5,0,108,125,1,0,0,
-	0,109,110,5,12,0,0,110,111,3,10,5,0,111,112,5,13,0,0,112,113,3,14,7,0,113,
-	125,1,0,0,0,114,115,5,12,0,0,115,116,3,14,7,0,116,117,5,13,0,0,117,118,
-	3,8,4,0,118,125,1,0,0,0,119,120,5,12,0,0,120,121,3,14,7,0,121,122,5,13,
-	0,0,122,123,3,10,5,0,123,125,1,0,0,0,124,99,1,0,0,0,124,104,1,0,0,0,124,
-	109,1,0,0,0,124,114,1,0,0,0,124,119,1,0,0,0,125,17,1,0,0,0,126,127,5,14,
-	0,0,127,128,3,10,5,0,128,129,5,13,0,0,129,130,3,8,4,0,130,142,1,0,0,0,131,
-	132,5,14,0,0,132,133,3,10,5,0,133,134,5,13,0,0,134,135,3,10,5,0,135,142,
-	1,0,0,0,136,137,5,14,0,0,137,138,3,10,5,0,138,139,5,13,0,0,139,140,3,14,
-	7,0,140,142,1,0,0,0,141,126,1,0,0,0,141,131,1,0,0,0,141,136,1,0,0,0,142,
-	19,1,0,0,0,143,144,5,15,0,0,144,145,3,10,5,0,145,146,5,13,0,0,146,147,3,
-	8,4,0,147,159,1,0,0,0,148,149,5,15,0,0,149,150,3,10,5,0,150,151,5,13,0,
-	0,151,152,3,10,5,0,152,159,1,0,0,0,153,154,5,15,0,0,154,155,3,10,5,0,155,
-	156,5,13,0,0,156,157,3,14,7,0,157,159,1,0,0,0,158,143,1,0,0,0,158,148,1,
-	0,0,0,158,153,1,0,0,0,159,21,1,0,0,0,160,161,5,16,0,0,161,167,3,8,4,0,162,
-	163,5,16,0,0,163,167,3,10,5,0,164,165,5,16,0,0,165,167,3,14,7,0,166,160,
-	1,0,0,0,166,162,1,0,0,0,166,164,1,0,0,0,167,23,1,0,0,0,168,169,5,17,0,0,
-	169,175,3,8,4,0,170,171,5,17,0,0,171,175,3,10,5,0,172,173,5,17,0,0,173,
-	175,3,14,7,0,174,168,1,0,0,0,174,170,1,0,0,0,174,172,1,0,0,0,175,25,1,0,
-	0,0,176,177,5,18,0,0,177,178,3,10,5,0,178,179,5,13,0,0,179,180,3,8,4,0,
-	180,192,1,0,0,0,181,182,5,18,0,0,182,183,3,10,5,0,183,184,5,13,0,0,184,
-	185,3,10,5,0,185,192,1,0,0,0,186,187,5,18,0,0,187,188,3,10,5,0,188,189,
-	5,13,0,0,189,190,3,14,7,0,190,192,1,0,0,0,191,176,1,0,0,0,191,181,1,0,0,
-	0,191,186,1,0,0,0,192,27,1,0,0,0,193,194,5,19,0,0,194,208,5,38,0,0,195,
-	196,5,20,0,0,196,208,5,38,0,0,197,198,5,21,0,0,198,208,5,38,0,0,199,200,
-	5,22,0,0,200,208,5,38,0,0,201,202,5,23,0,0,202,208,5,38,0,0,203,204,5,24,
-	0,0,204,208,5,38,0,0,205,206,5,25,0,0,206,208,5,38,0,0,207,193,1,0,0,0,
-	207,195,1,0,0,0,207,197,1,0,0,0,207,199,1,0,0,0,207,201,1,0,0,0,207,203,
-	1,0,0,0,207,205,1,0,0,0,208,29,1,0,0,0,209,210,5,26,0,0,210,211,5,38,0,
-	0,211,31,1,0,0,0,212,213,5,27,0,0,213,33,1,0,0,0,214,215,5,28,0,0,215,220,
-	3,8,4,0,216,217,5,28,0,0,217,220,3,10,5,0,218,220,5,29,0,0,219,214,1,0,
-	0,0,219,216,1,0,0,0,219,218,1,0,0,0,220,35,1,0,0,0,221,226,5,30,0,0,222,
-	223,5,30,0,0,223,226,3,10,5,0,224,226,5,31,0,0,225,221,1,0,0,0,225,222,
-	1,0,0,0,225,224,1,0,0,0,226,37,1,0,0,0,227,228,5,32,0,0,228,232,3,10,5,
-	0,229,230,5,32,0,0,230,232,3,14,7,0,231,227,1,0,0,0,231,229,1,0,0,0,232,
-	39,1,0,0,0,233,234,5,39,0,0,234,41,1,0,0,0,235,236,5,33,0,0,236,253,3,8,
-	4,0,237,238,5,33,0,0,238,253,3,10,5,0,239,240,5,33,0,0,240,253,3,14,7,0,
-	241,242,5,33,0,0,242,253,3,40,20,0,243,244,5,34,0,0,244,253,3,8,4,0,245,
-	246,5,34,0,0,246,253,3,10,5,0,247,248,5,34,0,0,248,253,3,14,7,0,249,250,
-	5,34,0,0,250,253,3,40,20,0,251,253,5,34,0,0,252,235,1,0,0,0,252,237,1,0,
-	0,0,252,239,1,0,0,0,252,241,1,0,0,0,252,243,1,0,0,0,252,245,1,0,0,0,252,
-	247,1,0,0,0,252,249,1,0,0,0,252,251,1,0,0,0,253,43,1,0,0,0,254,255,5,35,
-	0,0,255,259,3,10,5,0,256,257,5,35,0,0,257,259,3,14,7,0,258,254,1,0,0,0,
-	258,256,1,0,0,0,259,45,1,0,0,0,260,261,5,36,0,0,261,47,1,0,0,0,17,51,77,
-	80,85,95,124,141,158,166,174,191,207,219,225,231,252,258];
+	7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,2,22,7,22,2,23,7,23,1,0,3,
+	0,50,8,0,1,0,3,0,53,8,0,1,0,3,0,56,8,0,1,0,1,0,1,1,1,1,1,1,1,2,1,2,1,3,
+	1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,80,8,3,1,4,
+	3,4,83,8,4,1,4,1,4,1,4,3,4,88,8,4,1,5,1,5,1,6,1,6,1,6,1,7,1,7,1,7,3,7,98,
+	8,7,1,7,1,7,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,
+	1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,3,8,127,8,8,1,9,1,9,1,9,1,9,1,9,
+	1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,3,9,144,8,9,1,10,1,10,1,10,1,10,
+	1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,3,10,161,8,10,1,
+	11,1,11,1,11,1,11,1,11,1,11,3,11,169,8,11,1,12,1,12,1,12,1,12,1,12,1,12,
+	3,12,177,8,12,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,
+	13,1,13,1,13,1,13,3,13,194,8,13,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,
+	1,14,1,14,1,14,1,14,1,14,1,14,3,14,210,8,14,1,15,1,15,1,15,1,16,1,16,1,
+	17,1,17,1,17,1,17,1,17,3,17,222,8,17,1,18,1,18,1,18,1,18,3,18,228,8,18,
+	1,19,1,19,1,19,1,19,3,19,234,8,19,1,20,1,20,1,21,1,21,1,21,1,21,1,21,1,
+	21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,3,21,255,8,21,
+	1,22,1,22,1,22,1,22,3,22,261,8,22,1,23,1,23,1,23,0,0,24,0,2,4,6,8,10,12,
+	14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,0,2,1,0,3,8,1,0,1,2,
+	294,0,49,1,0,0,0,2,59,1,0,0,0,4,62,1,0,0,0,6,79,1,0,0,0,8,87,1,0,0,0,10,
+	89,1,0,0,0,12,91,1,0,0,0,14,94,1,0,0,0,16,126,1,0,0,0,18,143,1,0,0,0,20,
+	160,1,0,0,0,22,168,1,0,0,0,24,176,1,0,0,0,26,193,1,0,0,0,28,209,1,0,0,0,
+	30,211,1,0,0,0,32,214,1,0,0,0,34,221,1,0,0,0,36,227,1,0,0,0,38,233,1,0,
+	0,0,40,235,1,0,0,0,42,254,1,0,0,0,44,260,1,0,0,0,46,262,1,0,0,0,48,50,3,
+	2,1,0,49,48,1,0,0,0,49,50,1,0,0,0,50,52,1,0,0,0,51,53,3,6,3,0,52,51,1,0,
+	0,0,52,53,1,0,0,0,53,55,1,0,0,0,54,56,3,4,2,0,55,54,1,0,0,0,55,56,1,0,0,
+	0,56,57,1,0,0,0,57,58,5,0,0,1,58,1,1,0,0,0,59,60,5,39,0,0,60,61,5,36,0,
+	0,61,3,1,0,0,0,62,63,5,37,0,0,63,5,1,0,0,0,64,80,3,16,8,0,65,80,3,18,9,
+	0,66,80,3,20,10,0,67,80,3,22,11,0,68,80,3,24,12,0,69,80,3,26,13,0,70,80,
+	3,28,14,0,71,80,3,30,15,0,72,80,3,32,16,0,73,80,3,34,17,0,74,80,3,36,18,
+	0,75,80,3,38,19,0,76,80,3,42,21,0,77,80,3,44,22,0,78,80,3,46,23,0,79,64,
+	1,0,0,0,79,65,1,0,0,0,79,66,1,0,0,0,79,67,1,0,0,0,79,68,1,0,0,0,79,69,1,
+	0,0,0,79,70,1,0,0,0,79,71,1,0,0,0,79,72,1,0,0,0,79,73,1,0,0,0,79,74,1,0,
+	0,0,79,75,1,0,0,0,79,76,1,0,0,0,79,77,1,0,0,0,79,78,1,0,0,0,80,7,1,0,0,
+	0,81,83,5,1,0,0,82,81,1,0,0,0,82,83,1,0,0,0,83,84,1,0,0,0,84,88,5,38,0,
+	0,85,86,5,2,0,0,86,88,5,38,0,0,87,82,1,0,0,0,87,85,1,0,0,0,88,9,1,0,0,0,
+	89,90,7,0,0,0,90,11,1,0,0,0,91,92,7,1,0,0,92,93,5,38,0,0,93,13,1,0,0,0,
+	94,95,5,9,0,0,95,97,3,10,5,0,96,98,3,12,6,0,97,96,1,0,0,0,97,98,1,0,0,0,
+	98,99,1,0,0,0,99,100,5,10,0,0,100,15,1,0,0,0,101,102,5,11,0,0,102,103,3,
+	10,5,0,103,104,5,35,0,0,104,105,3,8,4,0,105,127,1,0,0,0,106,107,5,11,0,
+	0,107,108,3,10,5,0,108,109,5,35,0,0,109,110,3,10,5,0,110,127,1,0,0,0,111,
+	112,5,11,0,0,112,113,3,10,5,0,113,114,5,35,0,0,114,115,3,14,7,0,115,127,
+	1,0,0,0,116,117,5,11,0,0,117,118,3,14,7,0,118,119,5,35,0,0,119,120,3,8,
+	4,0,120,127,1,0,0,0,121,122,5,11,0,0,122,123,3,14,7,0,123,124,5,35,0,0,
+	124,125,3,10,5,0,125,127,1,0,0,0,126,101,1,0,0,0,126,106,1,0,0,0,126,111,
+	1,0,0,0,126,116,1,0,0,0,126,121,1,0,0,0,127,17,1,0,0,0,128,129,5,12,0,0,
+	129,130,3,10,5,0,130,131,5,35,0,0,131,132,3,8,4,0,132,144,1,0,0,0,133,134,
+	5,12,0,0,134,135,3,10,5,0,135,136,5,35,0,0,136,137,3,10,5,0,137,144,1,0,
+	0,0,138,139,5,12,0,0,139,140,3,10,5,0,140,141,5,35,0,0,141,142,3,14,7,0,
+	142,144,1,0,0,0,143,128,1,0,0,0,143,133,1,0,0,0,143,138,1,0,0,0,144,19,
+	1,0,0,0,145,146,5,13,0,0,146,147,3,10,5,0,147,148,5,35,0,0,148,149,3,8,
+	4,0,149,161,1,0,0,0,150,151,5,13,0,0,151,152,3,10,5,0,152,153,5,35,0,0,
+	153,154,3,10,5,0,154,161,1,0,0,0,155,156,5,13,0,0,156,157,3,10,5,0,157,
+	158,5,35,0,0,158,159,3,14,7,0,159,161,1,0,0,0,160,145,1,0,0,0,160,150,1,
+	0,0,0,160,155,1,0,0,0,161,21,1,0,0,0,162,163,5,14,0,0,163,169,3,8,4,0,164,
+	165,5,14,0,0,165,169,3,10,5,0,166,167,5,14,0,0,167,169,3,14,7,0,168,162,
+	1,0,0,0,168,164,1,0,0,0,168,166,1,0,0,0,169,23,1,0,0,0,170,171,5,15,0,0,
+	171,177,3,8,4,0,172,173,5,15,0,0,173,177,3,10,5,0,174,175,5,15,0,0,175,
+	177,3,14,7,0,176,170,1,0,0,0,176,172,1,0,0,0,176,174,1,0,0,0,177,25,1,0,
+	0,0,178,179,5,16,0,0,179,180,3,10,5,0,180,181,5,35,0,0,181,182,3,8,4,0,
+	182,194,1,0,0,0,183,184,5,16,0,0,184,185,3,10,5,0,185,186,5,35,0,0,186,
+	187,3,10,5,0,187,194,1,0,0,0,188,189,5,16,0,0,189,190,3,10,5,0,190,191,
+	5,35,0,0,191,192,3,14,7,0,192,194,1,0,0,0,193,178,1,0,0,0,193,183,1,0,0,
+	0,193,188,1,0,0,0,194,27,1,0,0,0,195,196,5,17,0,0,196,210,5,39,0,0,197,
+	198,5,18,0,0,198,210,5,39,0,0,199,200,5,19,0,0,200,210,5,39,0,0,201,202,
+	5,20,0,0,202,210,5,39,0,0,203,204,5,21,0,0,204,210,5,39,0,0,205,206,5,22,
+	0,0,206,210,5,39,0,0,207,208,5,23,0,0,208,210,5,39,0,0,209,195,1,0,0,0,
+	209,197,1,0,0,0,209,199,1,0,0,0,209,201,1,0,0,0,209,203,1,0,0,0,209,205,
+	1,0,0,0,209,207,1,0,0,0,210,29,1,0,0,0,211,212,5,24,0,0,212,213,5,39,0,
+	0,213,31,1,0,0,0,214,215,5,25,0,0,215,33,1,0,0,0,216,217,5,26,0,0,217,222,
+	3,8,4,0,218,219,5,26,0,0,219,222,3,10,5,0,220,222,5,27,0,0,221,216,1,0,
+	0,0,221,218,1,0,0,0,221,220,1,0,0,0,222,35,1,0,0,0,223,228,5,28,0,0,224,
+	225,5,28,0,0,225,228,3,10,5,0,226,228,5,29,0,0,227,223,1,0,0,0,227,224,
+	1,0,0,0,227,226,1,0,0,0,228,37,1,0,0,0,229,230,5,30,0,0,230,234,3,10,5,
+	0,231,232,5,30,0,0,232,234,3,14,7,0,233,229,1,0,0,0,233,231,1,0,0,0,234,
+	39,1,0,0,0,235,236,5,40,0,0,236,41,1,0,0,0,237,238,5,31,0,0,238,255,3,8,
+	4,0,239,240,5,31,0,0,240,255,3,10,5,0,241,242,5,31,0,0,242,255,3,14,7,0,
+	243,244,5,31,0,0,244,255,3,40,20,0,245,246,5,32,0,0,246,255,3,8,4,0,247,
+	248,5,32,0,0,248,255,3,10,5,0,249,250,5,32,0,0,250,255,3,14,7,0,251,252,
+	5,32,0,0,252,255,3,40,20,0,253,255,5,32,0,0,254,237,1,0,0,0,254,239,1,0,
+	0,0,254,241,1,0,0,0,254,243,1,0,0,0,254,245,1,0,0,0,254,247,1,0,0,0,254,
+	249,1,0,0,0,254,251,1,0,0,0,254,253,1,0,0,0,255,43,1,0,0,0,256,257,5,33,
+	0,0,257,261,3,10,5,0,258,259,5,33,0,0,259,261,3,14,7,0,260,256,1,0,0,0,
+	260,258,1,0,0,0,261,45,1,0,0,0,262,263,5,34,0,0,263,47,1,0,0,0,19,49,52,
+	55,79,82,87,97,126,143,160,168,176,193,209,221,227,233,254,260];
 
 	private static __ATN: ATN;
 	public static get _ATN(): ATN {
@@ -1514,11 +1520,11 @@ export class LineContext extends ParserRuleContext {
 	public label(): LabelContext {
 		return this.getTypedRuleContext(LabelContext, 0) as LabelContext;
 	}
-	public label_and_op(): Label_and_opContext {
-		return this.getTypedRuleContext(Label_and_opContext, 0) as Label_and_opContext;
-	}
 	public op(): OpContext {
 		return this.getTypedRuleContext(OpContext, 0) as OpContext;
+	}
+	public comment(): CommentContext {
+		return this.getTypedRuleContext(CommentContext, 0) as CommentContext;
 	}
     public get ruleIndex(): number {
     	return toy_asmParser.RULE_line;
@@ -1542,6 +1548,9 @@ export class LabelContext extends ParserRuleContext {
 	public Label(): TerminalNode {
 		return this.getToken(toy_asmParser.Label, 0);
 	}
+	public Colon(): TerminalNode {
+		return this.getToken(toy_asmParser.Colon, 0);
+	}
     public get ruleIndex(): number {
     	return toy_asmParser.RULE_label;
 	}
@@ -1556,24 +1565,21 @@ export class LabelContext extends ParserRuleContext {
 }
 
 
-export class Label_and_opContext extends ParserRuleContext {
+export class CommentContext extends ParserRuleContext {
 	constructor(parser?: toy_asmParser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
-	public label(): LabelContext {
-		return this.getTypedRuleContext(LabelContext, 0) as LabelContext;
-	}
-	public op(): OpContext {
-		return this.getTypedRuleContext(OpContext, 0) as OpContext;
+	public Comment(): TerminalNode {
+		return this.getToken(toy_asmParser.Comment, 0);
 	}
     public get ruleIndex(): number {
-    	return toy_asmParser.RULE_label_and_op;
+    	return toy_asmParser.RULE_comment;
 	}
 	// @Override
 	public accept<Result>(visitor: toy_asmVisitor<Result>): Result {
-		if (visitor.visitLabel_and_op) {
-			return visitor.visitLabel_and_op(this);
+		if (visitor.visitComment) {
+			return visitor.visitComment(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
@@ -1744,6 +1750,9 @@ export class MovContext extends ParserRuleContext {
 	public reg(i: number): RegContext {
 		return this.getTypedRuleContext(RegContext, i) as RegContext;
 	}
+	public Comma(): TerminalNode {
+		return this.getToken(toy_asmParser.Comma, 0);
+	}
 	public num(): NumContext {
 		return this.getTypedRuleContext(NumContext, 0) as NumContext;
 	}
@@ -1775,6 +1784,9 @@ export class AddContext extends ParserRuleContext {
 	public reg(i: number): RegContext {
 		return this.getTypedRuleContext(RegContext, i) as RegContext;
 	}
+	public Comma(): TerminalNode {
+		return this.getToken(toy_asmParser.Comma, 0);
+	}
 	public num(): NumContext {
 		return this.getTypedRuleContext(NumContext, 0) as NumContext;
 	}
@@ -1805,6 +1817,9 @@ export class SubContext extends ParserRuleContext {
 	}
 	public reg(i: number): RegContext {
 		return this.getTypedRuleContext(RegContext, i) as RegContext;
+	}
+	public Comma(): TerminalNode {
+		return this.getToken(toy_asmParser.Comma, 0);
 	}
 	public num(): NumContext {
 		return this.getTypedRuleContext(NumContext, 0) as NumContext;
@@ -1892,6 +1907,9 @@ export class CmpContext extends ParserRuleContext {
 	}
 	public reg(i: number): RegContext {
 		return this.getTypedRuleContext(RegContext, i) as RegContext;
+	}
+	public Comma(): TerminalNode {
+		return this.getToken(toy_asmParser.Comma, 0);
 	}
 	public num(): NumContext {
 		return this.getTypedRuleContext(NumContext, 0) as NumContext;

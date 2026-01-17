@@ -1,12 +1,12 @@
-import { CharStream, CommonTokenStream, ErrorListener, RecognitionException, type Recognizer } from 'antlr4';
+import {CharStream, CommonTokenStream, ErrorListener, RecognitionException, type Recognizer} from 'antlr4';
 import toy_asmLexer from './grammar/toy_asmLexer';
 import toy_asmParser from './grammar/toy_asmParser';
-import { VisitorImpl, type ParsedLine, type SourcePosition } from './VisitorImpl';
-import { Operation } from './Operation';
+import {VisitorImpl} from './VisitorImpl';
+import {Operation} from './Operation';
 
 export interface CompileError {
-    line: number;
-    column: number;
+    line: number; // 1-based line number
+    column: number; // 1-based column number
     message: string;
 }
 
@@ -17,14 +17,11 @@ export interface CompileResult {
     errors: CompileError[];
 }
 
-interface PreprocessedLine {
-    lineNum: number;
-    content: string;
-}
-
-interface ParseResult {
-    parsed: ParsedLine | null;
-    errors: CompileError[];
+// Stores parsed result for each line
+interface ParsedLineInfo {
+    lineNum: number; // 1-based
+    label: string | null;
+    op: Partial<Operation> | null;
 }
 
 // Custom error listener to capture ANTLR parse errors
@@ -54,118 +51,80 @@ class CompileErrorListener extends ErrorListener<any> {
 }
 
 export class Compiler {
-    private preprocess(source: string): { lines: PreprocessedLine[], errors: CompileError[] } {
+    compile(source: string): CompileResult {
         const rawLines = source.split('\n');
-        const result: PreprocessedLine[] = [];
-        const errors: CompileError[] = [];
+        const compileErrors: CompileError[] = [];
+        const parsedLines: ParsedLineInfo[] = [];
 
-        for (let i = 0; i < rawLines.length; i++) {
-            const lineNum = i + 1;
-            const line = rawLines[i];
-            const trimmed = line.trim();
-
-            // Skip empty lines
-            if (trimmed === '') continue;
-
-            // Skip comment lines
-            if (trimmed.startsWith(';')) continue;
-
-            // Remove inline comments (but keep original indentation)
-            const commentIdx = line.indexOf(';');
-            const content = commentIdx !== -1 ? line.substring(0, commentIdx) : line;
-
-            // Skip if line is only whitespace after removing comment
-            if (content.trim() === '') continue;
-
-            result.push({ lineNum, content });
-        }
-
-        return { lines: result, errors };
-    }
-
-    private parseLine(line: string, lineNum: number): ParseResult {
-        const inputStream = new CharStream(line);
-        const lexer = new toy_asmLexer(inputStream);
+        // Create reusable lexer, token stream, parser, and visitor
+        const lexer = new toy_asmLexer(new CharStream(''));
         const tokenStream = new CommonTokenStream(lexer);
         const parser = new toy_asmParser(tokenStream);
+        const visitor = new VisitorImpl();
 
-        // Set up custom error listener
-        const errorListener = new CompileErrorListener(lineNum);
+        // Set up error listener (will update lineNum for each line)
+        const errorListener = new CompileErrorListener(0);
         lexer.removeErrorListeners();
         lexer.addErrorListener(errorListener);
         parser.removeErrorListeners();
         parser.addErrorListener(errorListener);
 
-        const tree = parser.line();
+        // Stage 1: Parse each line
+        for (let i = 0; i < rawLines.length; i++) {
+            const lineNum = i + 1;
+            const line = rawLines[i];
 
-        // If there were parse errors, return them
-        if (errorListener.errors.length > 0) {
-            return { parsed: null, errors: errorListener.errors };
+            // Reset lexer and parser for new input
+            errorListener.lineNum = lineNum;
+            errorListener.errors = [];
+            lexer.inputStream = new CharStream(line);
+            tokenStream.setTokenSource(lexer);
+            parser.reset();
+
+            const tree = parser.line();
+
+            if (errorListener.errors.length > 0) {
+                compileErrors.push(...errorListener.errors);
+                continue;
+            }
+
+            const {label, op} = visitor.visitLine(tree);
+            if (label || op) {
+                parsedLines.push({lineNum, label, op});
+            }
         }
 
-        const visitor = new VisitorImpl();
-        const parsed = visitor.visitLine(tree);
-        return { parsed, errors: [] };
-    }
-
-    compile(source: string): CompileResult {
-        const { lines, errors } = this.preprocess(source);
-
-        if (errors.length > 0) {
-            return { success: false, operations: [], labels: {}, errors };
+        if (compileErrors.length > 0) {
+            return {success: false, operations: [], labels: {}, errors: compileErrors};
         }
 
+        // Stage 2: Build operations and collect labels
         const operations: Operation[] = [];
         const labels: Record<string, number> = {};
-        const labelPositions: Record<string, { line: number, column: number }> = {};  // Track where labels are defined
-        const compileErrors: CompileError[] = [];
+        let pendingLabels: {name: string, line: number}[] = [];
 
-        // Track pending labels (standalone labels waiting for an instruction)
-        let pendingLabels: { name: string, line: number, column: number }[] = [];
-
-        // Track operation positions for error reporting
         interface OpInfo {
             op: Operation;
             line: number;
-            column: number;
-            targetPosition?: SourcePosition;  // Position of the target label reference
         }
         const opInfos: OpInfo[] = [];
 
-        // First pass: parse all lines and build operations
-        for (const preprocessed of lines) {
-            const { parsed, errors: parseErrors } = this.parseLine(preprocessed.content, preprocessed.lineNum);
-
-            if (parseErrors.length > 0) {
-                compileErrors.push(...parseErrors);
-                continue;
-            }
-
-            if (!parsed) {
-                continue;
-            }
-
+        for (const {lineNum, label, op} of parsedLines) {
             // Collect label if present
-            if (parsed.label) {
-                const labelName = parsed.label.name;
-                if (labelName in labels) {
-                    const existingPos = labelPositions[labelName];
+            if (label) {
+                if (label in labels) {
                     compileErrors.push({
-                        line: preprocessed.lineNum,
-                        column: parsed.label.position.column,
-                        message: `Duplicate label '${labelName}' (first defined at line ${existingPos.line}, column ${existingPos.column})`
+                        line: lineNum,
+                        column: 1,
+                        message: `Duplicate label '${label}'`
                     });
                 } else {
-                    pendingLabels.push({
-                        name: labelName,
-                        line: preprocessed.lineNum,
-                        column: parsed.label.position.column
-                    });
+                    pendingLabels.push({name: label, line: lineNum});
                 }
             }
 
             // If there's an operation, create it
-            if (parsed.op) {
+            if (op) {
                 const addr = operations.length;
 
                 // Register all pending labels for this instruction
@@ -173,66 +132,58 @@ export class Compiler {
                 for (const pending of pendingLabels) {
                     if (!(pending.name in labels)) {
                         labels[pending.name] = addr;
-                        labelPositions[pending.name] = { line: pending.line, column: pending.column };
                         opLabels.push(pending.name);
                     }
                 }
                 pendingLabels = [];
 
-                const op = new Operation({
+                const operation = new Operation({
                     addr,
-                    type: parsed.op.op.type,
+                    type: op.type,
                     labels: opLabels,
-                    p1: parsed.op.op.p1 || null,
-                    p2: parsed.op.op.p2 || null,
-                    action: parsed.op.op.action || null,
-                    target: parsed.op.op.target || null,
-                    cnt: parsed.op.op.cnt || null
+                    p1: op.p1 || null,
+                    p2: op.p2 || null,
+                    action: op.action || null,
+                    target: op.target || null,
+                    cnt: op.cnt || null
                 });
-                operations.push(op);
-                opInfos.push({
-                    op,
-                    line: preprocessed.lineNum,
-                    column: parsed.op.position.column
-                });
+                operations.push(operation);
+                opInfos.push({op: operation, line: lineNum});
             }
         }
 
         // Check for dangling labels (labels without following instruction)
-        if (pendingLabels.length > 0) {
-            for (const pending of pendingLabels) {
-                compileErrors.push({
-                    line: pending.line,
-                    column: pending.column,
-                    message: `Label '${pending.name}' has no instruction following it`
-                });
-            }
+        for (const pending of pendingLabels) {
+            compileErrors.push({
+                line: pending.line,
+                column: 1,
+                message: `Label '${pending.name}' has no instruction following it`
+            });
         }
 
         if (compileErrors.length > 0) {
-            return { success: false, operations: [], labels: {}, errors: compileErrors };
+            return {success: false, operations: [], labels: {}, errors: compileErrors};
         }
 
-        // Second pass: validate label references
+        // Stage 3: Validate label references
         for (const opInfo of opInfos) {
             const op = opInfo.op;
             if (op.target !== null && !(op.target in labels)) {
                 compileErrors.push({
                     line: opInfo.line,
-                    column: opInfo.column,
+                    column: 1,
                     message: `Undefined label '${op.target}'`
                 });
             }
         }
 
         if (compileErrors.length > 0) {
-            return { success: false, operations: [], labels: {}, errors: compileErrors };
+            return {success: false, operations: [], labels: {}, errors: compileErrors};
         }
 
-        return { success: true, operations, labels, errors: [] };
+        return {success: true, operations, labels, errors: []};
     }
 
-    // Helper to format error message with line and column
     static formatError(error: CompileError): string {
         return `Line ${error.line}, Column ${error.column}: ${error.message}`;
     }

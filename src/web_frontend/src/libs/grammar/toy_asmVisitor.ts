@@ -5,7 +5,7 @@ import {ParseTreeVisitor} from 'antlr4';
 
 import { LineContext } from "./toy_asmParser.js";
 import { LabelContext } from "./toy_asmParser.js";
-import { Label_and_opContext } from "./toy_asmParser.js";
+import { CommentContext } from "./toy_asmParser.js";
 import { OpContext } from "./toy_asmParser.js";
 import { NumContext } from "./toy_asmParser.js";
 import { RegContext } from "./toy_asmParser.js";
@@ -50,11 +50,11 @@ export default class toy_asmVisitor<Result> extends ParseTreeVisitor<Result> {
 	 */
 	visitLabel?: (ctx: LabelContext) => Result;
 	/**
-	 * Visit a parse tree produced by `toy_asmParser.label_and_op`.
+	 * Visit a parse tree produced by `toy_asmParser.comment`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitLabel_and_op?: (ctx: Label_and_opContext) => Result;
+	visitComment?: (ctx: CommentContext) => Result;
 	/**
 	 * Visit a parse tree produced by `toy_asmParser.op`.
 	 * @param ctx the parse tree

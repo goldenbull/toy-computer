@@ -11,15 +11,15 @@ options {
 // 4. Parse each remaining line as a single instruction
 
 line
-    : (label|label_and_op|op) EOF
+    : label? op? comment? EOF
     ;
 
 label
-    : Label ':'
+    : Label Colon
     ;
 
-label_and_op
-    : label ':' op
+comment
+    : Comment
     ;
 
 op
@@ -58,23 +58,23 @@ mem
     ;
 
 mov
-    : 'mov' reg ',' num
-    | 'mov' reg ',' reg
-    | 'mov' reg ',' mem
-    | 'mov' mem ',' num
-    | 'mov' mem ',' reg
+    : 'mov' reg Comma num
+    | 'mov' reg Comma reg
+    | 'mov' reg Comma mem
+    | 'mov' mem Comma num
+    | 'mov' mem Comma reg
     ;
 
 add
-    : 'add' reg ',' num
-    | 'add' reg ',' reg
-    | 'add' reg ',' mem
+    : 'add' reg Comma num
+    | 'add' reg Comma reg
+    | 'add' reg Comma mem
     ;
 
 sub
-    : 'sub' reg ',' num
-    | 'sub' reg ',' reg
-    | 'sub' reg ',' mem
+    : 'sub' reg Comma num
+    | 'sub' reg Comma reg
+    | 'sub' reg Comma mem
     ;
 
 mul
@@ -90,9 +90,9 @@ div
     ;
 
 cmp
-    : 'cmp' reg ',' num
-    | 'cmp' reg ',' reg
-    | 'cmp' reg ',' mem
+    : 'cmp' reg Comma num
+    | 'cmp' reg Comma reg
+    | 'cmp' reg Comma mem
     ;
 
 jump
@@ -155,7 +155,9 @@ halt
     : 'halt'
     ;
 
-
+Comma : [,，] ;
+Colon : [:：] ;
+Comment : [;；] ~[\n]* '\n' ;
 INT : [0-9]+ ;
 Label : ([a-z]|'_') ([a-z0-9]|'_')* ;
 STR : '"' ( EscapeSequence | ~('\\'|'"') )* '"' ;

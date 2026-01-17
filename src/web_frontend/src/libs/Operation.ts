@@ -8,6 +8,7 @@ export class Operation {
     p2: Operand | null;
     action: string | null;
     target: string | null;
+    targetAddr: number | null; // for jump and call
     cnt: number | null;
 
     constructor(data: any) {
@@ -18,6 +19,7 @@ export class Operation {
         this.p2 = data.p2 ? new Operand(data.p2) : null;
         this.action = data.action || null;
         this.target = data.target || null;
+        this.targetAddr = data.targetAddr || null;
         this.cnt = data.cnt || null;
     }
 
