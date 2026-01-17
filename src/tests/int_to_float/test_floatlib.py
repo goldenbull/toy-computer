@@ -231,3 +231,5 @@ if __name__ == "__main__":
     for i in range(100):
         a = a.multiply(b)
         print(a)
+    x = BigFloat(123456789)
+    print(x.sign, x.exponent, x.values)
