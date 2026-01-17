@@ -131,7 +131,7 @@ export class WebExecutor {
         const v1 = this.status.registers.ax;
         const v2 = this.getOperandValue(op.p1!) as number;
 
-        if (v2 === 0) throw new Error('Divide by zero');
+        if (v2 === 0) throw new Error('除0错误');
 
         // Truncate toward zero (C-style division)
         const quotient = Math.trunc(v1 / v2);
@@ -158,7 +158,7 @@ export class WebExecutor {
 
     private execJump(op: Operation) {
         const targetAddr = this.status.labels[op.target!];
-        if (targetAddr === undefined) throw new Error(`Unknown label: ${op.target}`);
+        if (targetAddr === undefined) throw new Error(`非法标签: ${op.target}`);
 
         const flg = this.status.registers.flg;
         let shouldJump = false;
@@ -196,7 +196,7 @@ export class WebExecutor {
 
     private execCall(op: Operation) {
         const targetAddr = this.status.labels[op.target!];
-        if (targetAddr === undefined) throw new Error(`Unknown label: ${op.target}`);
+        if (targetAddr === undefined) throw new Error(`非法标签: ${op.target}`);
 
         // Push return address
         this.status.pushStack(this.status.registers.ip + 1, MemType.IP);
@@ -315,7 +315,7 @@ export class WebExecutor {
             this.status.execStatus = ExecStatus.Halted;
             // check if all operations executed, gracefully stop
             if (ip !== this.status.operations.length) {
-                this.appendOutput(`\nError: IP out of bounds (${ip})\n`);
+                this.appendOutput(`\n运行时出错: IP越界 (${ip})\n`);
             }
             return false;
         }
@@ -325,9 +325,9 @@ export class WebExecutor {
         try {
             this.executeOperation(operation);
             return true;
-        } catch (e) {
+        } catch (e: any) {
             this.status.execStatus = ExecStatus.Halted;
-            this.appendOutput(`\nError: ${e}\n`);
+            this.appendOutput(`\n运行时出错：${e.message}\n`);
             return false;
         }
     }

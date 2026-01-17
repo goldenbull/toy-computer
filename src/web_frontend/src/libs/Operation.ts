@@ -34,9 +34,11 @@ export class Operation {
 
         // operands
         if (this.p1 !== null) {
-            parts.push(this.p1.toString());
             if (this.p2 !== null) {
-                parts.push(", " + this.p2.toString());
+                parts.push(this.p1.toString() + ",");
+                parts.push(this.p2.toString());
+            } else {
+                parts.push(this.p1.toString());
             }
         }
 

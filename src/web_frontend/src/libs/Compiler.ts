@@ -7,6 +7,7 @@ import {Operation} from './Operation';
 // if parse error
 export class CompileError {
     constructor(
+        public line: string,
         public lineNum: number,
         public column: number,
         public message: string
@@ -14,7 +15,9 @@ export class CompileError {
     }
 
     toString(): string {
-        return `Line ${this.lineNum + 1}, Column ${this.column + 1}: ${this.message}`;
+        return `第 ${this.lineNum + 1} 行:\n`
+            + `${this.line}\n`
+            + `${' '.repeat(this.column)}^ ${this.message}`;
     }
 }
 
@@ -45,9 +48,9 @@ class CompileErrorListener extends ErrorListener<any> {
         msg: string,
         _e: RecognitionException | undefined
     ): void {
-        // set lineNum later
+        // set source and lineNum later
         // and we do not use antlr professional message
-        this.errors.push(new CompileError(0, column, "语法错误，请检查"));
+        this.errors.push(new CompileError("", 0, column, "语法错误，请检查"));
     }
 }
 
@@ -76,6 +79,7 @@ export class Compiler {
             // error
             if (errorListener.errors.length > 0) {
                 firstError = errorListener.errors[0];
+                firstError.line = line;
                 firstError.lineNum = i;
                 break;
             }
@@ -109,7 +113,7 @@ export class Compiler {
             if (label) {
                 if (label in labelLines) {
                     const firstLine = labelLines[label] + 1; // 1-based for display
-                    firstError = new CompileError(lineNum, 0, `重复的标签 '${label}'，首次出现在第 ${firstLine} 行`);
+                    firstError = new CompileError(rawLines[lineNum], lineNum, 0, `重复的标签 '${label}'，首次出现在第 ${firstLine} 行`);
                     break;
                 }
                 labelLines[label] = lineNum;
@@ -152,7 +156,7 @@ export class Compiler {
         // Check for dangling labels (labels without following instruction)
         if (pendingLabels.length > 0) {
             const pending = pendingLabels[0];
-            firstError = new CompileError(pending.line, 0, `标签 '${pending.name}' 后面没有指令`);
+            firstError = new CompileError(rawLines[pending.line], pending.line, 0, `标签 '${pending.name}' 后面没有指令`);
             return {success: false, operations: [], labels: {}, firstError};
         }
 
@@ -160,7 +164,7 @@ export class Compiler {
         for (const opInfo of opInfos) {
             const op = opInfo.op;
             if (op.target !== null && !(op.target in labels)) {
-                firstError = new CompileError(opInfo.line, 0, `Undefined label '${op.target}'`);
+                firstError = new CompileError(rawLines[opInfo.line], opInfo.line, 0, `没有定义标签: '${op.target}'`);
             }
         }
 

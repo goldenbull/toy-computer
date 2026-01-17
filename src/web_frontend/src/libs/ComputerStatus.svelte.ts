@@ -109,7 +109,7 @@ export class ComputerStatus {
      */
     pushStack(value: number, type: MemType = MemType.Data) {
         if (this.registers.sp < 0) {
-            throw new Error('Stack overflow');
+            throw new Error('栈顶部越界');
         }
         this.setMemValue(this.registers.sp, value, type);
         this.registers.sp--;
@@ -120,7 +120,7 @@ export class ComputerStatus {
      */
     popStack(): number {
         if (this.registers.sp >= 1023) {
-            throw new Error('Stack underflow');
+            throw new Error('栈底部越界');
         }
         this.registers.sp++;
         delete this.memoryTypes[this.registers.sp];
