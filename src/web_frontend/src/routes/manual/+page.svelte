@@ -791,6 +791,9 @@
                     </li>
                     <li><a href="demo-qsort.asm" class="text-green-700 hover:underline"> 快速排序 </a>
                     </li>
+                    <li><a href="demo-pi.asm" class="text-green-700 hover:underline">
+                        一个显示真实威力的例子：计算圆周率小数点后100位 </a>
+                    </li>
                 </ul>
             </section>
 
