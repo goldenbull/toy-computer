@@ -157,7 +157,7 @@ halt
 
 Comma : [,，] ;
 Colon : [:：] ;
-Comment : [;；] ~[\n]* '\n' ;
+Comment : [;；] ~[\n]* ;
 INT : [0-9]+ ;
 Label : ([a-z]|'_') ([a-z0-9]|'_')* ;
 STR : '"' ( EscapeSequence | ~('\\'|'"') )* '"' ;

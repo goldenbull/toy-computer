@@ -10,7 +10,8 @@ export class CompileError {
         public lineNum: number,
         public column: number,
         public message: string
-    ) {}
+    ) {
+    }
 
     toString(): string {
         return `Line ${this.lineNum + 1}, Column ${this.column + 1}: ${this.message}`;
@@ -44,7 +45,9 @@ class CompileErrorListener extends ErrorListener<any> {
         msg: string,
         _e: RecognitionException | undefined
     ): void {
-        this.errors.push(new CompileError(0, column, msg)); // lineNum set later
+        // set lineNum later
+        // and we do not use antlr professional message
+        this.errors.push(new CompileError(0, column, "语法错误，请检查"));
     }
 }
 
@@ -90,7 +93,8 @@ export class Compiler {
 
         // Stage 2: Build operations and collect labels
         const operations: Operation[] = [];
-        const labels: Record<string, number> = {};
+        const labels: Record<string, number> = {}; // label --> op addr
+        const labelLines: Record<string, number> = {}; // label --> first defined lineNum
         let pendingLabels: { name: string, line: number }[] = [];
 
         interface OpInfo {
@@ -103,11 +107,13 @@ export class Compiler {
         for (const {lineNum, label, op} of parsedLines) {
             // Collect label if present
             if (label) {
-                if (label in labels) {
-                    firstError = new CompileError(lineNum, 0, `Duplicate label '${label}'`);
-                } else {
-                    pendingLabels.push({name: label, line: lineNum});
+                if (label in labelLines) {
+                    const firstLine = labelLines[label] + 1; // 1-based for display
+                    firstError = new CompileError(lineNum, 0, `重复的标签 '${label}'，首次出现在第 ${firstLine} 行`);
+                    break;
                 }
+                labelLines[label] = lineNum;
+                pendingLabels.push({name: label, line: lineNum});
             }
 
             // If there's an operation, create it
@@ -139,12 +145,14 @@ export class Compiler {
             }
         }
 
-        // Check for dangling labels (labels without following instruction)
-        for (const pending of pendingLabels) {
-            firstError = new CompileError(pending.line, 0, `Label '${pending.name}' has no instruction following it`);
+        if (firstError != null) {
+            return {success: false, operations: [], labels: {}, firstError};
         }
 
-        if (firstError != null) {
+        // Check for dangling labels (labels without following instruction)
+        if (pendingLabels.length > 0) {
+            const pending = pendingLabels[0];
+            firstError = new CompileError(pending.line, 0, `标签 '${pending.name}' 后面没有指令`);
             return {success: false, operations: [], labels: {}, firstError};
         }
 

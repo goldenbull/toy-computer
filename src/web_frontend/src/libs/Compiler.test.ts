@@ -5,7 +5,8 @@ const compiler = new Compiler();
 const source = `
 ; test program
 mov ax, 10 ;:err1
-        2loop:
+  loop:
+  loop:
     add ax, 1
     cmp ax, 20
     jl loop

@@ -34,25 +34,14 @@ export class Operation {
 
         // operands
         if (this.p1 !== null) {
+            parts.push(this.p1.toString());
             if (this.p2 !== null) {
-                parts.push(this.p1.toString() + ",");
-                parts.push(this.p2.toString());
-            } else {
-                parts.push(this.p1.toString());
+                parts.push(", " + this.p2.toString());
             }
         }
 
         if (this.target !== null) {
             parts.push(this.target);
-        }
-
-        // special for dump
-        if (this.type == 'dump') {
-            parts.length = 1;
-            if (this.p1) {
-                parts.push(this.p1.toString() + ",");
-                parts.push(String(this.cnt));
-            }
         }
 
         return parts.join(' ');

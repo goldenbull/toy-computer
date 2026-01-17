@@ -205,8 +205,16 @@
 
         <!-- Control buttons -->
         <div class="flex flex-col gap-2">
-            <!-- First row: Run, Run Animation, Step -->
+            <!-- First row: Run, Run Animation, Animation speed -->
             <div class="flex gap-2">
+                <button
+                        class="flex-1 p-2 bg-green-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        onclick={() => runContinue()}
+                        disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
+                >
+                    {globalStatus.execStatus === ExecStatus.Ready ? "启动" : "继续"}
+                </button>
+
                 <button
                         class="flex-1 p-2 bg-teal-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                         onclick={() => runAnimation()}
@@ -214,24 +222,8 @@
                 >
                     {globalStatus.execStatus === ExecStatus.Ready ? "动画-启动" : "动画-继续"}
                 </button>
-                <button
-                        class="flex-1 p-2 bg-green-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
-                        onclick={() => runContinue()}
-                        disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
-                >
-                    {globalStatus.execStatus === ExecStatus.Ready ? "后台-启动" : "后台-继续"}
-                </button>
-                <button
-                        class="flex-1 p-2 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
-                        onclick={() => runOneStep()}
-                        disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
-                >
-                    逐步
-                </button>
-            </div>
-            <!-- Second row: Animation Speed, Break, Reset -->
-            <div class="flex gap-2 items-center">
-                <div class="flex-1 flex flex-col gap-1">
+
+                <div class="flex-1 flex p-2 flex-col gap-1">
                     <div class="flex justify-between text-xs text-gray-600">
                         <span>Slow</span>
                         <span>Fast</span>
@@ -246,15 +238,27 @@
                             class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600"
                     />
                 </div>
+            </div>
+            <!-- Second row: Break, Step, Reset -->
+            <div class="flex gap-2 items-center">
                 <button
-                        class="flex-1 py-2 bg-orange-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        class="flex-1 p-2 bg-orange-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                         onclick={() => runBreak()}
                         disabled={globalStatus.execStatus!==ExecStatus.Running&&globalStatus.execStatus!==ExecStatus.RunningAnimation}
                 >
                     中断
                 </button>
+
                 <button
-                        class="flex-1 py-2 bg-red-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        class="flex-1 p-2 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        onclick={() => runOneStep()}
+                        disabled={globalStatus.execStatus!==ExecStatus.Ready&&globalStatus.execStatus!==ExecStatus.Paused}
+                >
+                    逐步
+                </button>
+
+                <button
+                        class="flex-1 p-2 bg-red-500 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
                         onclick={() => runReset()}
                         disabled={globalStatus.execStatus===ExecStatus.Running||globalStatus.execStatus===ExecStatus.RunningAnimation}
                 >

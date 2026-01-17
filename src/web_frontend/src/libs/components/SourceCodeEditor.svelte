@@ -1,7 +1,7 @@
 <script lang="ts">
     import CodeMirror from "svelte-codemirror-editor";
     import {globalStatus} from '../store.svelte';
-    import {buildApiUrl} from '../utils/url';
+    import {Compiler} from '../Compiler';
 
     let {switchTab}: {
         switchTab: (tab: string) => void
@@ -54,38 +54,22 @@
         URL.revokeObjectURL(url);
     };
 
-    async function compileCode() {
-        // Compile the source code by calling the backend API
-        try {
-            const apiUrl = buildApiUrl('api/compile');
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    sourceCode: globalStatus.sourceCode
-                })
-            });
+    function compileCode() {
+        const compiler = new Compiler();
+        const result = compiler.compile(globalStatus.sourceCode);
 
-            const result = await response.json();
-
-            if (!result.success) {
-                // Compilation error - show in modal
-                errorMessage = result.error;
-                showErrorModal = true;
-                return;
-            }
-
-            // Load the compiled operations
-            globalStatus.loadCompiledCode(result.operations, result.labels);
-
-            // Switch to execution panel
-            switchTab('execution');
-        } catch (error) {
-            errorMessage = `Error: ${error}`;
+        if (!result.success) {
+            // Compilation error - show in modal
+            errorMessage = result.firstError?.toString() ?? '未知错误';
             showErrorModal = true;
+            return;
         }
+
+        // Load the compiled operations
+        globalStatus.loadCompiledCode(result.operations, result.labels);
+
+        // Switch to execution panel
+        switchTab('execution');
     }
 
     function closeErrorModal() {
