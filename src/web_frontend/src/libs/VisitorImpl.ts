@@ -21,7 +21,7 @@ export class VisitorImpl extends toy_asmVisitor<any> {
     };
 
     visitReg = (ctx: RegContext): Operand => {
-        const regName = ctx.getText();
+        const regName = ctx.getText().toLowerCase();
         return new Operand({tp: OperandType.Reg, reg: regName});
     };
 
@@ -32,10 +32,10 @@ export class VisitorImpl extends toy_asmVisitor<any> {
 
     visitMem = (ctx: MemContext): Operand => {
         const regCtx = ctx.reg();
-        const reg = regCtx.getText();
+        const regName = regCtx.getText().toLowerCase();
         const offsetCtx = ctx.offset();
         const offset = offsetCtx ? this.visitOffset(offsetCtx) : 0;
-        return new Operand({tp: OperandType.Mem, reg, offset});
+        return new Operand({tp: OperandType.Mem, reg: regName, offset});
     };
 
     visitStr = (ctx: StrContext): Operand => {
@@ -86,7 +86,7 @@ export class VisitorImpl extends toy_asmVisitor<any> {
 
     visitJump = (ctx: JumpContext): Partial<Operation> => {
         const label = ctx.Label().getText();
-        const action = ctx.getChild(0)!.getText();
+        const action = ctx.getChild(0)!.getText().toLowerCase();
         return {type: 'jump', action, target: label};
     };
 
@@ -100,7 +100,7 @@ export class VisitorImpl extends toy_asmVisitor<any> {
     };
 
     visitPush = (ctx: PushContext): Partial<Operation> => {
-        const action = ctx.getChild(0)!.getText();
+        const action = ctx.getChild(0)!.getText().toLowerCase();
         if (action === 'pushf') {
             return {type: 'push', action: 'pushf'};
         }
@@ -109,7 +109,7 @@ export class VisitorImpl extends toy_asmVisitor<any> {
     };
 
     visitPop = (ctx: PopContext): Partial<Operation> => {
-        const action = ctx.getChild(0)!.getText();
+        const action = ctx.getChild(0)!.getText().toLowerCase();
         if (action === 'popf') {
             return {type: 'pop', action: 'popf'};
         }
@@ -126,7 +126,7 @@ export class VisitorImpl extends toy_asmVisitor<any> {
     };
 
     visitPrint = (ctx: PrintContext): Partial<Operation> => {
-        const action = ctx.getChild(0)!.getText() as 'print' | 'println';
+        const action = ctx.getChild(0)!.getText().toLowerCase() as 'print' | 'println';
         if (ctx.getChildCount() === 1) {
             return {type: 'print', action, p1: null};
         }
