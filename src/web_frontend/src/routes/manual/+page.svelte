@@ -11,9 +11,9 @@
             const headerHeight = 72; // Height of sticky header
             const offsetTop = element.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
             window.scrollTo({
-                top: offsetTop,
-                behavior: 'smooth'
-            });
+                                top: offsetTop,
+                                behavior: 'smooth'
+                            });
         }
     };
 
@@ -41,11 +41,9 @@
                 {id: "op-ret", title: "ret"},
                 {id: "op-push", title: "push pushf"},
                 {id: "op-pop", title: "pop popf"},
-                {id: "op-nop", title: "nop"},
                 {id: "op-input", title: "input"},
                 {id: "op-print", title: "print println"},
                 {id: "op-rand", title: "rand"},
-                {id: "op-pause", title: "pause"},
                 {id: "op-halt", title: "halt"},
             ]
         },
@@ -143,7 +141,7 @@
                 <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">语法规则</h2>
 
                 <section id="register" class="mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">寄存器</h3>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">寄存器 Register</h3>
                     <ol class="list-decimal list-inside space-y-3">
                         <li>通用寄存器：ax, bx, cx, dx</li>
                         <li>符号寄存器：flg</li>
@@ -153,7 +151,7 @@
                 </section>
 
                 <section id="memory" class="mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">内存</h3>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">内存 Memory</h3>
                     <p>内存有 1024 个单元，地址是从 0 到 1023 每个单元可以存一个数字，栈从 1023
                         开始从后往前生长，见示例中的斐波那契数列程序的执行过程</p>
                     <p class="m-6">“1024个单元够用么？”</p>
@@ -161,29 +159,26 @@
                 </section>
 
                 <section id="instruction" class="mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">指令</h3>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">指令 Instruction</h3>
                     <p>每条指令执行一个非常简单且明确的操作，具体见每条指令的详细说明</p>
                 </section>
 
                 <section id="code" class="mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">代码</h3>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">代码 Source Code</h3>
                     <p class="mb-4">一个程序由若干条代码构成，代码的编写和执行规则如下：</p>
                     <ol class="list-decimal list-inside space-y-3">
-                        <li> 所有指令和寄存器都使用小写字母，大写字母无法通过编译</li>
-                        <li>
-                            每个寄存器和每个内存单元可以类比为一个小盒子，里面只能放一个数，后放进去的数会覆盖之前的数。本系统只处理有符号整数，不处理浮点数，也不考虑字节长度等细节
-                        </li>
+                        <li> 本系统只处理有符号整数，不处理浮点数，也不考虑字节长度等细节</li>
+                        <li>每行可以是一个标签(label)、一条指令或一个标签加一条指令</li>
                         <li>
                             每条指令可以有一个或多个label，作为跳转和函数调用的目标，label以字母和下划线(_)开头，可以包含字母、数字和下划线，以冒号结束
                         </li>
-                        <li> 代码中可以有注释，以分号;开始注释，分号之后直到一行结束，都属于注释</li>
+                        <li> 代码中可以有注释，以分号;开始注释，分号之后直到一行结束，都属于注释。注释也可以独占一行</li>
                         <li> 字符串首尾使用双引号，支持C风格的\转义</li>
                         <li> 系统执行代码时，永远从第一条指令开始，逐条往后执行，根据相应指令（jmp、call、ret）执行跳转，直到执行完最后一条指令，进入停机状态
                         </li>
-                        <li> 代码需要首先经过Compile操作，Compile成功后才会加载到Execution面板，如果代码格式有错，Compile环节就会报错
+                        <li> 代码需要首先在编辑器中经过编译操作，编译成功后才会加载到模拟器面板，如果代码格式有错，编译环节就会报错
                         </li>
-                        <li>Compile成功后，系统进入初始状态，ip寄存器为0（即准备从第一条指令开始执行），栈寄存器初始化为1023，其他寄存器和内存都初始化为特殊值，方便观察和调试。（知道Visual
-                            Studio “烫烫烫烫烫烫”的故事么？）
+                        <li>编译成功后，系统进入初始状态，ip寄存器为0（即准备从第一条指令开始执行），栈寄存器初始化为1023，其他寄存器和内存都初始化为随机值
                         </li>
                         <li>可以通过Reset按钮重置系统，恢复初始状态</li>
                     </ol>
@@ -640,26 +635,6 @@
                     </table>
                 </section>
 
-                <section id="op-nop" class="mt-8 mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">nop</h3>
-                    <p class="mb-4"><span class="text-red-700 font-bold">N</span>o <span class="text-red-700 font-bold">Op</span>reation,
-                        空操作指令，不执行任何操作，只是简单的执行ip+1</p>
-                    <table class="manual-table">
-                        <thead>
-                        <tr>
-                            <td>格式</td>
-                            <td>说明</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>nop</td>
-                            <td>不做任何操作，仅用于占位或调试</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </section>
-
                 <section id="op-input" class="mt-8 mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">input</h3>
                     <p>输入操作，用户输入一个整数，存入指定位置。</p>
@@ -764,25 +739,6 @@
                     </table>
                 </section>
 
-                <section id="op-pause" class="mt-8 mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">pause</h3>
-                    <p class="mb-4">暂停执行，切换到暂停状态</p>
-                    <table class="manual-table">
-                        <thead>
-                        <tr>
-                            <td>格式</td>
-                            <td>说明</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>pause</td>
-                            <td>暂停程序执行，可以通过 Continue 或 Step 按钮继续</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </section>
-
                 <section id="op-halt" class="mt-8 mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">halt</h3>
                     <p class="mb-4">停机指令，终止程序执行</p>
@@ -806,13 +762,15 @@
 
             <section id="advanced" class="mb-12">
                 <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">进阶：向C语言进军</h2>
-                <p class="mb-4"><a href="https://www.jyshare.com/compile/11/"
-                      class="text-green-700 hover:underline">一个在线写C语言的网站</a></p>
+                <p class="mb-4">
+                    <a href="https://www.jyshare.com/compile/11/"
+                       class="text-green-700 hover:underline">一个在线写C语言的网站</a>
+                </p>
                 <p class="mb-4">从汇编语言的视角，看C语言的学习难点</p>
                 <ul class="list-disc list-inside space-y-3">
-                    <li> 指针，取地址 --> 寄存器，内存编号，内存操作 </li>
+                    <li> 指针，取地址 --> 寄存器，内存编号，内存操作</li>
                     <li> 局部变量和全局变量 --> bp/sp指针，栈的操作，固定地址的内存操作</li>
-                    <li> 递归函数 --> bp/sp指针，栈的增长和退出 </li>
+                    <li> 递归函数 --> bp/sp指针，栈的增长和退出</li>
                 </ul>
             </section>
 
@@ -834,7 +792,6 @@
                     <li><a href="demo-qsort.asm" class="text-green-700 hover:underline"> 快速排序 </a>
                     </li>
                 </ul>
-
             </section>
 
         </main>
