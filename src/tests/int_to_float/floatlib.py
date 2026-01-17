@@ -1,6 +1,9 @@
 class BigFloat:
-    BASE = 10**7  # Each element holds a digit in base 10^7
-    PRECISION = 6  # Number of elements in the values array
+    DIGITS_PER_ELEMENT = 7  # because 99999999**2 > 2**53
+    BASE = 10 ** DIGITS_PER_ELEMENT  # Each element holds a digit in base 10^7
+    PRECISION = 16  # Number of elements in the values array
+
+    # Each element contributes 6 digits (since BASE = 10^6)
 
     def __init__(self, init: int):
         self.sign = 1 if init >= 0 else -1
@@ -53,7 +56,7 @@ class BigFloat:
         result.exponent = self.exponent
         return result
 
-    def add(self, other):
+    def add(self, other: 'BigFloat'):
         """Add two BigFloat numbers"""
         result = BigFloat(0)
 
@@ -103,12 +106,28 @@ class BigFloat:
         result.normalize()
         return result
 
+    def __add__(self, other):
+        if isinstance(other, int):
+            return self.add(BigFloat(other))
+        elif isinstance(other, BigFloat):
+            return self.add(other)
+        else:
+            raise NotImplementedError()
+
     def subtract(self, other):
         """Subtract two BigFloat numbers"""
         # Create a negated copy of other
         neg_other = other.copy()
         neg_other.sign *= -1
         return self.add(neg_other)
+
+    def __sub__(self, other):
+        if isinstance(other, int):
+            return self.subtract(BigFloat(other))
+        elif isinstance(other, BigFloat):
+            return self.subtract(other)
+        else:
+            raise NotImplementedError()
 
     def multiply(self, other):
         """Multiply two BigFloat numbers"""
@@ -139,6 +158,14 @@ class BigFloat:
         result.normalize()
         return result
 
+    def __mul__(self, other):
+        if isinstance(other, int):
+            return self.multiply(BigFloat(other))
+        elif isinstance(other, BigFloat):
+            return self.multiply(other)
+        else:
+            raise NotImplementedError()
+
     def divide(self, other):
         """Divide two BigFloat numbers with proper precision"""
         if all(v == 0 for v in other.values):
@@ -168,6 +195,115 @@ class BigFloat:
         result.normalize()
         return result
 
+    def __truediv__(self, other):
+        if isinstance(other, int):
+            return self.divide(BigFloat(other))
+        elif isinstance(other, BigFloat):
+            return self.divide(other)
+        else:
+            raise NotImplementedError()
+
+    def truncate(self):
+        """Truncate to integer (remove fractional part, round toward zero)"""
+        result = self.copy()
+
+        if result.exponent < 0:
+            # Number is purely fractional, truncate to zero
+            return BigFloat(0)
+
+        # Elements 0 through exponent are the integer part
+        # Elements after exponent are fractional
+        int_elements = result.exponent + 1
+
+        for i in range(int_elements, self.PRECISION):
+            result.values[i] = 0
+
+        result.normalize()
+        return result
+
+    def mod(self, other):
+        """Modulo operation: self % other"""
+        if all(v == 0 for v in other.values):
+            raise ZeroDivisionError("Modulo by zero")
+
+        # Compute quotient and truncate toward zero
+        quotient = self.divide(other).truncate()
+
+        # remainder = self - quotient * other
+        return self.subtract(quotient.multiply(other))
+
+    def __mod__(self, other):
+        if isinstance(other, int):
+            return self.mod(BigFloat(other))
+        elif isinstance(other, BigFloat):
+            return self.mod(other)
+        else:
+            raise NotImplementedError()
+
+    def compare(self, other):
+        """Compare two BigFloat numbers. Returns -1 if self < other, 0 if equal, 1 if self > other"""
+        # Handle zero cases
+        self_is_zero = all(v == 0 for v in self.values)
+        other_is_zero = all(v == 0 for v in other.values)
+
+        if self_is_zero and other_is_zero:
+            return 0
+        if self_is_zero:
+            return 1 if other.sign < 0 else -1
+        if other_is_zero:
+            return self.sign
+
+        # Different signs
+        if self.sign != other.sign:
+            return self.sign
+
+        # Same sign - compare magnitudes (result flipped if both negative)
+        sign_multiplier = self.sign
+
+        # Compare exponents first
+        if self.exponent != other.exponent:
+            return sign_multiplier if self.exponent > other.exponent else -sign_multiplier
+
+        # Same exponent - compare values element by element
+        for i in range(self.PRECISION):
+            if self.values[i] != other.values[i]:
+                return sign_multiplier if self.values[i] > other.values[i] else -sign_multiplier
+
+        return 0
+
+    def _compare_with(self, other):
+        """Helper to convert other to BigFloat if needed and compare"""
+        if isinstance(other, int):
+            return self.compare(BigFloat(other))
+        elif isinstance(other, BigFloat):
+            return self.compare(other)
+        else:
+            return NotImplemented
+
+    def __eq__(self, other):
+        result = self._compare_with(other)
+        return result == 0 if result is not NotImplemented else NotImplemented
+
+    def __ne__(self, other):
+        result = self._compare_with(other)
+        return result != 0 if result is not NotImplemented else NotImplemented
+
+    def __lt__(self, other):
+        result = self._compare_with(other)
+        return result < 0 if result is not NotImplemented else NotImplemented
+
+    def __le__(self, other):
+        result = self._compare_with(other)
+        return result <= 0 if result is not NotImplemented else NotImplemented
+
+    def __gt__(self, other):
+        result = self._compare_with(other)
+        return result > 0 if result is not NotImplemented else NotImplemented
+
+    def __ge__(self, other):
+        result = self._compare_with(other)
+        return result >= 0 if result is not NotImplemented else NotImplemented
+
     def __str__(self):
         """String representation in human-readable decimal format"""
         if all(v == 0 for v in self.values):
@@ -176,8 +312,6 @@ class BigFloat:
         sign_str = "-" if self.sign < 0 else ""
 
         # Build the full digit string from the mantissa
-        # Each element contributes 6 digits (since BASE = 10^6)
-        digits_per_element = 6  # log10(BASE) = log10(10^6) = 6
 
         # Convert values to a continuous string of digits
         digit_string = ""
@@ -187,12 +321,12 @@ class BigFloat:
                 digit_string += str(v)
             else:
                 # Subsequent elements need padding to maintain place value
-                digit_string += f"{v:0{digits_per_element}d}"
+                digit_string += f"{v:0{self.DIGITS_PER_ELEMENT}d}"
 
         # Calculate where the decimal point should go
         # exponent tells us how many BASE positions to shift
         # Each BASE position = 6 decimal digits
-        decimal_shift = self.exponent * digits_per_element
+        decimal_shift = self.exponent * self.DIGITS_PER_ELEMENT
 
         # The decimal point starts after the first element's natural length
         natural_decimal_pos = len(str(self.values[0]))
