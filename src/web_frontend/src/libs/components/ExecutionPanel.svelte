@@ -30,9 +30,25 @@
             useSmoothScroll = false;
 
             requestAnimationFrame(() => {
-                const currentRow = operationsContainer.querySelector(`tr[data-addr="${ip}"]`);
+                const currentRow = operationsContainer.querySelector(`tr[data-addr="${ip}"]`) as HTMLElement;
                 if (currentRow) {
-                    currentRow.scrollIntoView({behavior: smooth ? 'smooth' : 'instant', block: 'center'});
+                    const containerRect = operationsContainer.getBoundingClientRect();
+                    const rowRect = currentRow.getBoundingClientRect();
+
+                    // Calculate row's position relative to the visible container
+                    const rowCenter = rowRect.top + rowRect.height / 2 - containerRect.top;
+                    const containerHeight = containerRect.height;
+                    const relativePosition = rowCenter / containerHeight;
+
+                    // Only scroll if outside the [0.25, 0.75] range
+                    if (relativePosition < 0.25 || relativePosition > 0.75) {
+                        // Scroll to position the row at 0.25 of the container (better for forward execution)
+                        const targetScrollTop = currentRow.offsetTop - containerHeight * 0.25 + rowRect.height / 2;
+                        operationsContainer.scrollTo({
+                            top: targetScrollTop,
+                            behavior: smooth ? 'smooth' : 'instant'
+                        });
+                    }
                 }
             });
         }
