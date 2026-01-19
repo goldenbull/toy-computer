@@ -1,7 +1,7 @@
 <script lang="ts">
     import {ExecStatus} from '../ComputerStatus.svelte.ts';
     import {globalStatus, globalExecutor, setOutputScrollCallback} from '../store.svelte';
-    import {onMount} from 'svelte';
+    import {onMount, untrack} from 'svelte';
 
     let outputTextarea: HTMLTextAreaElement;
     let operationsContainer: HTMLDivElement;
@@ -18,14 +18,33 @@
         });
     });
 
-    // Auto-scroll operations table to current IP (disabled during animation mode)
+    // Auto-scroll operations table to current IP
+    let scrollRafId: number | null = null;
+
     $effect(() => {
         const ip = globalStatus.registers.ip;
         if (operationsContainer && globalStatus.operations.length > 0) {
-            requestAnimationFrame(() => {
+            // Cancel any pending scroll to avoid race conditions
+            if (scrollRafId !== null) {
+                cancelAnimationFrame(scrollRafId);
+            }
+
+            // Read and clear brokenFromRunning synchronously without tracking
+            // This avoids re-triggering the effect and ensures we capture the value
+            // before any subsequent effect clears it
+            const wasBroken = untrack(() => {
+                const val = globalStatus.brokenFromRunning;
+                if (val) globalStatus.brokenFromRunning = false;
+                return val;
+            });
+
+            scrollRafId = requestAnimationFrame(() => {
+                scrollRafId = null;
                 const currentRow = operationsContainer.querySelector(`tr[data-addr="${ip}"]`);
                 if (currentRow) {
-                    const behavior = globalStatus.execStatus === ExecStatus.RunningAnimation ? 'instant' : 'smooth';
+                    // Use instant scroll for animation mode or when broken from running
+                    const useInstant = globalStatus.execStatus === ExecStatus.RunningAnimation || wasBroken;
+                    const behavior = useInstant ? 'instant' : 'smooth';
                     currentRow.scrollIntoView({behavior, block: 'center'});
                 }
             });

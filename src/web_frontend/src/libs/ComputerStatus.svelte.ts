@@ -35,6 +35,9 @@ export class ComputerStatus {
     // Store the execution state before waiting for input (to resume properly)
     previousExecStatus = $state<ExecStatus | null>(null);
 
+    // Flag to track if we just broke from running (for instant scroll behavior)
+    brokenFromRunning = $state(false);
+
     /**
      * Load compiled operations from backend response
      */
@@ -79,6 +82,7 @@ export class ComputerStatus {
         this.registers = this.initRandomRegisters();
         this.execStatus = ExecStatus.Ready;
         this.output = '';
+        this.brokenFromRunning = false;
     }
 
     /**

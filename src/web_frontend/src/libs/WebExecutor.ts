@@ -265,6 +265,7 @@ export class WebExecutor {
     private execBreak(op: Operation) {
         // Pause switches to paused state
         this.status.execStatus = ExecStatus.Paused;
+        this.status.brokenFromRunning = true;
         this.status.registers.ip++;
     }
 
@@ -375,6 +376,7 @@ export class WebExecutor {
     breakExecution() {
         if (this.status.execStatus === ExecStatus.Running || this.status.execStatus === ExecStatus.RunningAnimation) {
             this.status.execStatus = ExecStatus.Paused;
+            this.status.brokenFromRunning = true;
         }
     }
 

@@ -44,6 +44,7 @@
                 {id: "op-input", title: "input"},
                 {id: "op-print", title: "print println"},
                 {id: "op-rand", title: "rand"},
+                {id: "op-break", title: "break"},
                 {id: "op-halt", title: "halt"},
             ]
         },
@@ -734,6 +735,26 @@
                             <td>rand [r1+N]</td>
                             <td>生成随机数，存入内存 [r1+N]</td>
                             <td>rand [bp-2]</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-break" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">break</h3>
+                    <p class="mb-4">中断执行，切换到暂停状态，主要用于调试程序</p>
+                    <p class="mb-4">各种操作系统都会提供类似的功能，中断当前进程，将控制权交回给操作系统</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>break</td>
+                            <td>暂停程序执行，可以通过 ‘继续’ 或 ‘逐步’ 按钮继续运行</td>
                         </tr>
                         </tbody>
                     </table>
