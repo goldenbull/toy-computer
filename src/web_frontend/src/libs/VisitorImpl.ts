@@ -3,7 +3,7 @@ import {
     LineContext, LabelContext, OpContext, NumContext, RegContext, MemContext, OffsetContext, StrContext,
     MovContext, AddContext, SubContext, MulContext, DivContext, CmpContext,
     JumpContext, CallContext, RetContext, PushContext, PopContext,
-    InputContext, PrintContext, RandContext, HaltContext
+    InputContext, PrintContext, RandContext, HaltContext, BreakContext
 } from './grammar/toy_asmParser';
 import {Operation} from './Operation';
 import {Operand, OperandType} from './Operand';
@@ -138,6 +138,10 @@ export class VisitorImpl extends toy_asmVisitor<any> {
         const p1 = this.visit(ctx.getChild(1)) as Operand;
         return {type: 'rand', p1};
     };
+
+    visitBreak = (ctx: BreakContext): Partial<Operation> => {
+        return {type: 'break'};
+    }
 
     visitHalt = (_ctx: HaltContext): Partial<Operation> => {
         return {type: 'halt'};

@@ -62,17 +62,11 @@ export class WebExecutor {
             case 'rand':
                 this.execRand(op);
                 break;
-            case 'dump':
-                this.execDump(op);
-                break;
-            case 'pause':
-                this.execPause(op);
+            case 'break':
+                this.execBreak(op);
                 break;
             case 'halt':
                 this.execHalt(op);
-                break;
-            case 'nop':
-                this.execNop(op);
                 break;
             default:
                 throw new Error(`Unknown operation type: ${op.type}`);
@@ -268,12 +262,7 @@ export class WebExecutor {
         this.status.registers.ip++;
     }
 
-    private execDump(op: Operation) {
-        // Dump is a no-op in web executor - the UI already shows all state
-        this.status.registers.ip++;
-    }
-
-    private execPause(op: Operation) {
+    private execBreak(op: Operation) {
         // Pause switches to paused state
         this.status.execStatus = ExecStatus.Paused;
         this.status.registers.ip++;
@@ -284,9 +273,9 @@ export class WebExecutor {
         // Don't increment IP on halt
     }
 
-    private execNop(op: Operation) {
-        this.status.registers.ip++;
-    }
+    // private execNop(op: Operation) {
+    //     this.status.registers.ip++;
+    // }
 
     /**
      * Append text to output

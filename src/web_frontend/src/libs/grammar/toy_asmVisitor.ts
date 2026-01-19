@@ -26,6 +26,7 @@ import { InputContext } from "./toy_asmParser.js";
 import { StrContext } from "./toy_asmParser.js";
 import { PrintContext } from "./toy_asmParser.js";
 import { RandContext } from "./toy_asmParser.js";
+import { BreakContext } from "./toy_asmParser.js";
 import { HaltContext } from "./toy_asmParser.js";
 
 
@@ -175,6 +176,12 @@ export default class toy_asmVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitRand?: (ctx: RandContext) => Result;
+	/**
+	 * Visit a parse tree produced by `toy_asmParser.break`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitBreak?: (ctx: BreakContext) => Result;
 	/**
 	 * Visit a parse tree produced by `toy_asmParser.halt`.
 	 * @param ctx the parse tree

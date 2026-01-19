@@ -18,14 +18,15 @@
         });
     });
 
-    // Auto-scroll operations table to current IP
+    // Auto-scroll operations table to current IP (disabled during animation mode)
     $effect(() => {
         const ip = globalStatus.registers.ip;
         if (operationsContainer && globalStatus.operations.length > 0) {
             requestAnimationFrame(() => {
                 const currentRow = operationsContainer.querySelector(`tr[data-addr="${ip}"]`);
                 if (currentRow) {
-                    currentRow.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    const behavior = globalStatus.execStatus === ExecStatus.RunningAnimation ? 'instant' : 'smooth';
+                    currentRow.scrollIntoView({behavior, block: 'center'});
                 }
             });
         }

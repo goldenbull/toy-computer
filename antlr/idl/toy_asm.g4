@@ -37,6 +37,7 @@ op
     | input
     | print
     | rand
+    | break
     | halt
     ;
 
@@ -149,6 +150,10 @@ print
 rand
     : 'rand' reg
     | 'rand' mem
+    ;
+
+break
+    : 'break'
     ;
 
 halt
