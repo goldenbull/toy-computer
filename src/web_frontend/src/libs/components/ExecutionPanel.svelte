@@ -40,10 +40,10 @@
                     const containerHeight = containerRect.height;
                     const relativePosition = rowCenter / containerHeight;
 
-                    // Only scroll if outside the [0.25, 0.75] range
-                    if (relativePosition < 0.25 || relativePosition > 0.75) {
-                        // Scroll to position the row at 0.25 of the container (better for forward execution)
-                        const targetScrollTop = currentRow.offsetTop - containerHeight * 0.25 + rowRect.height / 2;
+                    // Only scroll if outside the [0.1, 0.9] range
+                    if (relativePosition < 0.1 || relativePosition > 0.9) {
+                        // Scroll to position the row at 0.1 of the container (better for forward execution)
+                        const targetScrollTop = currentRow.offsetTop - containerHeight * 0.1 + rowRect.height / 2;
                         operationsContainer.scrollTo({
                             top: targetScrollTop,
                             behavior: smooth ? 'smooth' : 'instant'
