@@ -798,21 +798,21 @@
             <section id="demos" class="mb-12">
                 <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">代码示例</h2>
                 <ul class="list-disc list-inside space-y-3 mb-4">
-                    <li><a href="demo-basic.asm" class="text-green-700 hover:underline"> 基本运算和输入输出 </a>
+                    <li><a href="demo-basic.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 基本运算和输入输出 </a>
                     </li>
-                    <li><a href="demo-jmp.asm" class="text-green-700 hover:underline"> 判断，跳转，循环 </a>
+                    <li><a href="demo-jmp.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 判断，跳转，循环 </a>
                     </li>
-                    <li><a href="demo-call.asm" class="text-green-700 hover:underline"> 函数调用 </a>
+                    <li><a href="demo-call.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 函数调用 </a>
                     </li>
-                    <li><a href="demo-prime.asm" class="text-green-700 hover:underline"> 找质数 </a>
+                    <li><a href="demo-prime.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 找质数 </a>
                     </li>
-                    <li><a href="demo-fib.asm" class="text-green-700 hover:underline"> 斐波那契数列 </a>
+                    <li><a href="demo-fib.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 斐波那契数列 </a>
                     </li>
-                    <li><a href="demo-bsort.asm" class="text-green-700 hover:underline"> 冒泡排序 </a>
+                    <li><a href="demo-bsort.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 冒泡排序 </a>
                     </li>
-                    <li><a href="demo-qsort.asm" class="text-green-700 hover:underline"> 快速排序 </a>
+                    <li><a href="demo-qsort.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 快速排序 </a>
                     </li>
-                    <li><a href="demo-pi.asm" class="text-green-700 hover:underline">
+                    <li><a href="demo-pi.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
                         一个显示真实威力的例子：计算圆周率小数点后100位 </a>
                     </li>
                 </ul>
