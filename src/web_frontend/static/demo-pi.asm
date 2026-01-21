@@ -1,5 +1,6 @@
 ; BigFloat implementation in Toy Assembly
 ; Translated from Python floatlib.py
+; see https://github.com/goldenbull/toy-computer/blob/main/src/tests/int_to_float/floatlib.py
 ;
 ; Global configuration (stored in memory starting at address 0):
 ;   [bx+0] = DIGITS_PER_ELEMENT = 7  (where bx=0)
