@@ -813,7 +813,8 @@
                     <li><a href="demo-qsort.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 快速排序 </a>
                     </li>
                     <li><a href="demo-pi.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
-                        一个显示真实威力的例子：计算圆周率小数点后100位 </a>
+                        一个显示真实威力的例子：计算圆周率小数点后100位。这些代码是由python的原型实现翻译而成，python代码和翻译工作都主要由AI完成，既展示了几条简单的汇编语句所蕴含的巨大的计算能力，也展示了AI技术的巨大潜力。
+                    </a>
                     </li>
                 </ul>
             </section>

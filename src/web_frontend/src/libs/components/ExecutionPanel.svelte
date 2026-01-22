@@ -181,7 +181,7 @@
                 <div class="flex items-center justify-center h-full">
                     <div class="text-center">
                         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                        <p class="text-sm font-semibold text-gray-700">后台运行中...</p>
+                        <p class="text-sm font-semibold text-gray-700">运行中...</p>
                     </div>
                 </div>
             {:else}
@@ -301,7 +301,7 @@
                 <div class="flex items-center justify-center w-full">
                     <div class="text-center">
                         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                        <p class="text-sm font-semibold text-gray-700">后台运行中...</p>
+                        <p class="text-sm font-semibold text-gray-700">运行中...</p>
                     </div>
                 </div>
             {:else}

@@ -2,6 +2,9 @@
 ; Translated from Python floatlib.py
 ; see https://github.com/goldenbull/toy-computer/blob/main/src/tests/int_to_float/floatlib.py
 ;
+; Created with the help of Claude Code
+; A good example demonstrating the power of both toycomputer and AI
+;
 ; Global configuration (stored in memory starting at address 0):
 ;   [bx+0] = DIGITS_PER_ELEMENT = 7  (where bx=0)
 ;   [bx+1] = BASE = 10^7 = 10,000,000
