@@ -3,6 +3,10 @@
     import {globalStatus, globalExecutor, setOutputScrollCallback} from '../store.svelte';
     import {onMount} from 'svelte';
 
+    let {isDarkMode}: {
+        isDarkMode: boolean
+    } = $props();
+
     let outputTextarea: HTMLTextAreaElement;
     let operationsContainer: HTMLDivElement;
     let inputTextbox = $state<HTMLInputElement | null>(null);
@@ -134,6 +138,10 @@
         padding: 0.25rem 0.5rem;
     }
 
+    .dark-reg-table .reg-cell {
+        border-color: #4b5563;
+    }
+
     .reg-name {
         font-weight: 500;
         width: 3rem;
@@ -172,40 +180,49 @@
 </style>
 
 <!-- Main Layout: Two columns -->
-<div class="flex gap-2 h-full">
+<div class="flex gap-2 h-full {isDarkMode ? 'bg-gray-900' : ''} rounded">
     <!-- Left Column: Operations -->
     <div class="flex flex-col gap-2 w-1/4">
         <!-- Operations (flexible height with scroll) -->
-        <div bind:this={operationsContainer} class="flex-1 bg-white overflow-auto p-2">
+        <div bind:this={operationsContainer}
+             class="flex-1 overflow-auto p-2 rounded {isDarkMode ? 'bg-gray-800' : 'bg-white'}">
             {#if globalStatus.execStatus === ExecStatus.Running}
                 <div class="flex items-center justify-center h-full">
                     <div class="text-center">
-                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                        <p class="text-sm font-semibold text-gray-700">运行中...</p>
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-2"></div>
+                        <p class="text-sm font-semibold {isDarkMode ? 'text-gray-300' : 'text-gray-700'}">运行中...</p>
                     </div>
                 </div>
             {:else}
                 {#if globalStatus.operations.length > 0}
-                    <table class="w-full text-xs border-collapse font-mono">
+                    <table class="w-full text-xs border-collapse font-mono {isDarkMode ? 'text-gray-200' : ''}">
                         <thead>
-                        <tr class="bg-gray-100 sticky top-0 z-10">
-                            <th class="border border-gray-300 px-1 py-1 text-center w-12">Addr</th>
-                            <th class="border border-gray-300 px-1 py-1 text-center">Code</th>
-                            <th class="border border-gray-300 px-1 py-1 text-center w-16">Offset</th>
+                        <tr class="sticky top-0 z-10 {isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}">
+                            <th class="border px-1 py-1 text-center w-12 {isDarkMode ? 'border-gray-600' : 'border-gray-300'}">
+                                Addr
+                            </th>
+                            <th class="border px-1 py-1 text-center {isDarkMode ? 'border-gray-600' : 'border-gray-300'}">
+                                Code
+                            </th>
+                            <th class="border px-1 py-1 text-center w-16 {isDarkMode ? 'border-gray-600' : 'border-gray-300'}">
+                                Offset
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
                         {#each globalStatus.operations as op}
                             {@const opString = op.toString()}
-                            <tr data-addr={op.addr} class={op.addr === globalStatus.registers.ip ? 'bg-amber-200' : ''}>
-                                <td class="border border-gray-300 px-1 py-1 text-right">{op.addr}</td>
-                                <td class="border border-gray-300 px-1 py-1">
+                            <tr data-addr={op.addr}
+                                class={op.addr === globalStatus.registers.ip ? (isDarkMode ? 'bg-amber-700' : 'bg-amber-200') : ''}>
+                                <td class="border px-1 py-1 text-right {isDarkMode ? 'border-gray-600' : 'border-gray-300'}">{op.addr}</td>
+                                <td class="border px-1 py-1 {isDarkMode ? 'border-gray-600' : 'border-gray-300'}">
                                     {#each op.labels as label}
-                                        <p class="text-blue-600 font-semibold">{label}:</p>
+                                        <p class="font-semibold {isDarkMode ? 'text-blue-400' : 'text-blue-600'}">{label}
+                                            :</p>
                                     {/each}
                                     <p class="px-4">{opString}</p>
                                 </td>
-                                <td class="border border-gray-300 px-1 py-1 text-center">
+                                <td class="border px-1 py-1 text-center {isDarkMode ? 'border-gray-600' : 'border-gray-300'}">
                                     {#if op.target && globalStatus.labels[op.target] !== undefined}
                                         {globalStatus.labels[op.target] - op.addr > 0 ? '+' : ''}{globalStatus.labels[op.target] - op.addr}
                                     {:else}
@@ -220,7 +237,7 @@
                     <!-- no source code -->
                     <div class="flex items-center justify-center h-full">
                         <div class="text-center">
-                            <p class="text-xl">代码尚未编译</p>
+                            <p class="text-xl {isDarkMode ? 'text-gray-300' : ''}">代码尚未编译</p>
                         </div>
                     </div>
                 {/if}
@@ -229,7 +246,7 @@
         </div>
 
         <!-- Control buttons -->
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2 m-2">
             <!-- First row: Run, Run Animation, Animation speed -->
             <div class="flex gap-2">
                 <button
@@ -249,7 +266,7 @@
                 </button>
 
                 <div class="flex-1 flex p-2 flex-col gap-1">
-                    <div class="flex justify-between text-xs text-gray-600">
+                    <div class="flex justify-between text-xs {isDarkMode ? 'text-gray-400' : 'text-gray-600'}">
                         <span>Slow</span>
                         <span>Fast</span>
                     </div>
@@ -260,7 +277,7 @@
                             max="100"
                             step="1"
                             bind:value={globalExecutor.animationSpeed}
-                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600"
+                            class="w-full h-2 rounded-lg appearance-none cursor-pointer accent-teal-600 {isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}"
                     />
                 </div>
             </div>
@@ -300,56 +317,56 @@
             {#if globalStatus.execStatus === ExecStatus.Running}
                 <div class="flex items-center justify-center w-full">
                     <div class="text-center">
-                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                        <p class="text-sm font-semibold text-gray-700">运行中...</p>
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-2"></div>
+                        <p class="text-sm font-semibold {isDarkMode ? 'text-gray-300' : 'text-gray-700'}">运行中...</p>
                     </div>
                 </div>
             {:else}
                 <!-- Registers -->
-                <div class="flex flex-col p-2">
+                <div class="flex flex-col p-2 {isDarkMode ? 'text-gray-200' : ''}">
 
-                    <table class="reg-table font-mono">
+                    <table class="reg-table font-mono {isDarkMode ? 'dark-reg-table' : ''}">
                         <tbody>
                         <tr>
-                            <td class="reg-cell reg-name bg-amber-200">ip</td>
+                            <td class="reg-cell reg-name {isDarkMode ? 'bg-amber-700' : 'bg-amber-200'}">ip</td>
                             <td class="reg-cell reg-value">{globalStatus.registers.ip}</td>
                         </tr>
                         </tbody>
                     </table>
 
-                    <table class="mt-4 reg-table font-mono">
+                    <table class="mt-4 reg-table font-mono {isDarkMode ? 'dark-reg-table' : ''}">
                         <tbody>
                         <tr>
-                            <td class="reg-cell reg-name">ax</td>
-                            <td class="reg-cell reg-value bg-gray-100">{globalStatus.registers.ax}</td>
+                            <td class="reg-cell reg-name {isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}">ax</td>
+                            <td class="reg-cell reg-value">{globalStatus.registers.ax}</td>
                         </tr>
                         <tr>
-                            <td class="reg-cell reg-name">bx</td>
-                            <td class="reg-cell reg-value bg-gray-100">{globalStatus.registers.bx}</td>
+                            <td class="reg-cell reg-name {isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}">bx</td>
+                            <td class="reg-cell reg-value">{globalStatus.registers.bx}</td>
                         </tr>
                         <tr>
-                            <td class="reg-cell reg-name">cx</td>
-                            <td class="reg-cell reg-value bg-gray-100">{globalStatus.registers.cx}</td>
+                            <td class="reg-cell reg-name {isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}">cx</td>
+                            <td class="reg-cell reg-value">{globalStatus.registers.cx}</td>
                         </tr>
                         <tr>
-                            <td class="reg-cell reg-name">dx</td>
-                            <td class="reg-cell reg-value bg-gray-100">{globalStatus.registers.dx}</td>
+                            <td class="reg-cell reg-name {isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}">dx</td>
+                            <td class="reg-cell reg-value">{globalStatus.registers.dx}</td>
                         </tr>
                         <tr>
-                            <td class="reg-cell reg-name">flg</td>
-                            <td class="reg-cell reg-value bg-gray-100">{globalStatus.registers.flg}</td>
+                            <td class="reg-cell reg-name {isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}">flg</td>
+                            <td class="reg-cell reg-value">{globalStatus.registers.flg}</td>
                         </tr>
                         </tbody>
                     </table>
 
-                    <table class="mt-4 reg-table font-mono">
+                    <table class="mt-4 reg-table font-mono {isDarkMode ? 'dark-reg-table' : ''}">
                         <tbody>
                         <tr>
-                            <td class="reg-cell reg-name bg-green-200">bp</td>
+                            <td class="reg-cell reg-name {isDarkMode ? 'bg-teal-700' : 'bg-green-200'}">bp</td>
                             <td class="reg-cell reg-value">{globalStatus.registers.bp}</td>
                         </tr>
                         <tr>
-                            <td class="reg-cell reg-name bg-purple-200">sp</td>
+                            <td class="reg-cell reg-name {isDarkMode ? 'bg-purple-700' : 'bg-purple-200'}">sp</td>
                             <td class="reg-cell reg-value">{globalStatus.registers.sp}</td>
                         </tr>
                         </tbody>
@@ -358,30 +375,34 @@
                 </div>
 
                 <!-- Memory (flexible width with scroll) -->
-                <div class="flex-1 border border-gray-300 rounded p-2 bg-white overflow-auto">
-                    <div class="text-xs font-mono">
+                <div class="flex-1 border rounded p-2 overflow-auto {isDarkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-white'}">
+                    <div class="text-xs font-mono {isDarkMode ? 'text-gray-200' : ''}">
                         <table class="text-xs border-collapse">
                             <thead>
-                            <tr class="bg-gray-100 sticky top-0 z-10">
-                                <th class="border border-gray-300 px-1 py-1 text-center">Addr</th>
+                            <tr class="sticky top-0 z-10 {isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}">
+                                <th class="border px-1 py-1 text-center {isDarkMode ? 'border-gray-600' : 'border-gray-300'}">
+                                    Addr
+                                </th>
                                 {#each Array(16) as _, col}
-                                    <th class="border border-gray-300 px-1 py-1 text-center w-16">+{col}</th>
+                                    <th class="border px-1 py-1 text-center w-16 {isDarkMode ? 'border-gray-600' : 'border-gray-300'}">
+                                        +{col}</th>
                                 {/each}
                             </tr>
                             </thead>
                             <tbody>
                             {#each Array(1024 / 16) as _, row}
                                 <tr>
-                                    <td class="border border-gray-300 px-1 py-1 text-center bg-gray-100 font-semibold">{row * 16}</td>
+                                    <td class="border px-1 py-1 text-center font-semibold {isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-gray-100'}">{row * 16}</td>
                                     {#each Array(16) as _, col}
                                         {@const addr = row * 16 + col}
                                         {@const value = globalStatus.memory[addr]}
                                         {@const memType = globalStatus.getMemType(addr)}
                                         {@const isBpPointer = addr === globalStatus.registers.bp}
                                         {@const isSpPointer = addr === globalStatus.registers.sp}
-                                        <td class="border border-gray-300 px-1 py-1 text-right mem-cell
-                                    {memType === 'BP' ? 'bg-green-200' : ''}
-                                    {memType === 'IP' ? 'bg-amber-200' : ''}">
+                                        <td class="border px-1 py-1 text-right mem-cell
+                                    {isDarkMode ? 'border-gray-600' : 'border-gray-300'}
+                                    {memType === 'BP' ? (isDarkMode ? 'bg-teal-800' : 'bg-green-200') : ''}
+                                    {memType === 'IP' ? (isDarkMode ? 'bg-amber-800' : 'bg-amber-200') : ''}">
                                             {#if isBpPointer}
                                                 <span class="mem-cell-dot-bp"></span>
                                             {/if}
@@ -401,11 +422,12 @@
         </div>
 
         <!-- Output (flexible height) -->
-        <div class="flex-1 border border-gray-300 rounded p-2 bg-white flex flex-col">
-            <h3 class="font-bold mb-2 text-sm">Output</h3>
+        <div class="flex-1 border rounded p-2 flex flex-col {isDarkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-white'}">
+            <h3 class="font-bold mb-2 text-sm {isDarkMode ? 'text-gray-200' : ''}">Output</h3>
             <textarea
                     bind:this={outputTextarea}
-                    class="flex-grow w-full p-2 font-mono text-xs resize-none focus:outline-none border border-gray-200 rounded"
+                    class="grow w-full p-2 font-mono text-xs resize-none focus:outline-none border rounded
+                           {isDarkMode ? 'bg-gray-900 text-gray-200 border-gray-600' : 'border-gray-200'}"
                     bind:value={globalStatus.output}
                     placeholder="Execution output appears here..."
                     readonly

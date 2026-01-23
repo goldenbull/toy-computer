@@ -5,6 +5,8 @@
     import {buildPath} from '../libs/utils/url';
 
     let activeTab = $state('editor');
+    let isDarkMode = $state(true);
+
     const switchTab = (tab: string) => {
         activeTab = tab;
     };
@@ -41,10 +43,10 @@
         </div>
     </header>
 
-    <main class="container-fluid p-2 flex-grow">
+    <main class="container-fluid p-2 grow">
         <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full">
             <!-- Tab Navigation -->
-            <div class="flex border-b">
+            <div class="flex border-b items-center">
                 <button
                         class={`p-3 text-xl ${activeTab === 'editor' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}`}
                         onclick={() => switchTab('editor')}
@@ -57,18 +59,37 @@
                 >
                     模拟器
                 </button>
+
+                <!-- Theme toggle buttons (right side) -->
+                <div class="ml-auto flex items-center gap-2 pr-4">
+                    <span class="text-sm text-gray-500">主题:</span>
+                    <div class="flex space-x-1">
+                        <button
+                                class="px-3 py-1 text-sm rounded transition-colors {isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500 hover:bg-gray-300'}"
+                                onclick={() => isDarkMode = true}
+                        >
+                            Dark
+                        </button>
+                        <button
+                                class="px-3 py-1 text-sm rounded transition-colors {!isDarkMode ? 'bg-amber-100 text-amber-800' : 'bg-gray-200 text-gray-500 hover:bg-gray-300'}"
+                                onclick={() => isDarkMode = false}
+                        >
+                            Light
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Tab Content -->
-            <div class="p-2 flex-grow h-[calc(100vh-150px)]">
+            <div class="p-2 grow h-[calc(100vh-150px)]">
                 <!-- Editor Tab -->
                 {#if activeTab === 'editor'}
-                    <SourceCodeEditor switchTab={switchTab}/>
+                    <SourceCodeEditor switchTab={switchTab} {isDarkMode}/>
                 {/if}
 
                 <!-- Execution Panel Tab -->
                 {#if activeTab === 'execution'}
-                    <ExecutionPanel/>
+                    <ExecutionPanel {isDarkMode}/>
                 {/if}
             </div>
         </div>

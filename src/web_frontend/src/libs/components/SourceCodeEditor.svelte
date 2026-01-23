@@ -22,13 +22,13 @@
         {tag: tags.variableName, color: '#40b030'},
     ])));
 
-    let {switchTab}: {
-        switchTab: (tab: string) => void
+    let {switchTab, isDarkMode}: {
+        switchTab: (tab: string) => void,
+        isDarkMode: boolean
     } = $props();
 
     let errorMessage = $state<string>('');
     let showErrorModal = $state(false);
-    let isDarkMode = $state(true);
     let editorView = $state<EditorView | null>(null);
     let errorInfo = $state<CompileError | null>(null);
 
@@ -119,7 +119,7 @@
 
 </script>
 
-<div class="flex flex-col h-full flex-grow">
+<div class="flex flex-col h-full grow">
     <!-- Hidden file input -->
     <input
             type="file"
@@ -129,7 +129,7 @@
             class="hidden"
     />
 
-    <div class="flex-grow border border-gray-300 rounded-lg overflow-hidden relative">
+    <div class="grow border border-gray-300 rounded-lg overflow-hidden relative">
         <CodeMirror bind:value={globalStatus.sourceCode}
                     class="w-full h-full p-4 font-mono text-sm resize-none focus:outline-none absolute inset-0"
                     placeholder="Enter your assembly code here..."
@@ -140,34 +140,16 @@
         />
     </div>
 
-    <div class="mt-4 flex">
-        <div class="flex space-x-2">
-            <button class="px-4 py-2 w-40 bg-green-600 text-white rounded hover:bg-green-700" onclick={compileCode}>
-                编译
-            </button>
-            <button class="px-4 py-2 w-40 bg-blue-600 text-white rounded hover:bg-blue-700" onclick={saveSourceCode}>
-                保存到文件
-            </button>
-            <button class="px-4 py-2 bg-sky-600 text-white rounded hover:bg-gray-700" onclick={loadSourceCode}>
-                读入asm或txt文件
-            </button>
-        </div>
-
-        <!-- Theme toggle buttons -->
-        <div class="ml-auto flex space-x-1">
-            <button
-                    class="px-3 py-1 text-sm rounded transition-colors {isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500 hover:bg-gray-300'}"
-                    onclick={() => isDarkMode = true}
-            >
-                Dark
-            </button>
-            <button
-                    class="px-3 py-1 text-sm rounded transition-colors {!isDarkMode ? 'bg-amber-100 text-amber-800' : 'bg-gray-200 text-gray-500 hover:bg-gray-300'}"
-                    onclick={() => isDarkMode = false}
-            >
-                Light
-            </button>
-        </div>
+    <div class="mt-4 flex space-x-2">
+        <button class="px-4 py-2 w-40 bg-green-600 text-white rounded hover:bg-green-700" onclick={compileCode}>
+            编译
+        </button>
+        <button class="px-4 py-2 w-40 bg-blue-600 text-white rounded hover:bg-blue-700" onclick={saveSourceCode}>
+            保存到文件
+        </button>
+        <button class="px-4 py-2 bg-sky-600 text-white rounded hover:bg-gray-700" onclick={loadSourceCode}>
+            读入asm或txt文件
+        </button>
     </div>
 </div>
 
@@ -194,7 +176,7 @@
                 <h3 id="error-modal-title" class="text-lg font-bold">Compilation Error</h3>
             </div>
             <div class="p-6">
-                <pre class="bg-gray-100 p-4 rounded text-sm font-mono whitespace-pre-wrap break-words">{errorMessage}</pre>
+                <pre class="bg-gray-100 p-4 rounded text-sm font-mono whitespace-pre-wrap wrap-break-word">{errorMessage}</pre>
             </div>
             <div class="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end">
                 <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onclick={closeErrorModal}>

@@ -113,7 +113,7 @@
 
     <div class="flex">
         <!-- Sidebar Navigation -->
-        <aside class="w-64 bg-white shadow-lg h-[calc(100vh-72px)] sticky top-[72px] overflow-y-auto">
+        <aside class="w-64 bg-white shadow-lg h-[calc(100vh-72px)] sticky top-18 overflow-y-auto">
             <nav class="p-4">
                 <ul class="space-y-1">
                     {#each navigationTree as item}
