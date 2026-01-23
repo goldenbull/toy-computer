@@ -131,7 +131,7 @@
 
     <div class="grow border border-gray-300 rounded-lg overflow-hidden relative">
         <CodeMirror bind:value={globalStatus.sourceCode}
-                    class="w-full h-full p-4 font-mono text-sm resize-none focus:outline-none absolute inset-0"
+                    class="w-full h-full p-2 font-mono text-sm resize-none focus:outline-none absolute inset-0"
                     placeholder="Enter your assembly code here..."
                     styles={{"&": {height: "100%", overflow: "auto"}}}
                     lang={toyAsm}
@@ -140,7 +140,7 @@
         />
     </div>
 
-    <div class="mt-4 flex space-x-2">
+    <div class="mt-2 ml-6 flex space-x-4">
         <button class="px-4 py-2 w-40 bg-green-600 text-white rounded hover:bg-green-700" onclick={compileCode}>
             编译
         </button>
