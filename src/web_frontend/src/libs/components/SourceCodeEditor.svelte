@@ -2,6 +2,8 @@
     import CodeMirror from "svelte-codemirror-editor";
     import {globalStatus} from '../store.svelte';
     import {Compiler} from '../Compiler';
+    import {toyAsm} from '../toyAsmLanguage';
+    import {coolGlow, ayuLight} from 'thememirror';
 
     let {switchTab}: {
         switchTab: (tab: string) => void
@@ -9,6 +11,9 @@
 
     let errorMessage = $state<string>('');
     let showErrorModal = $state(false);
+    let isDarkMode = $state(true);
+
+    const currentTheme = $derived(isDarkMode ? coolGlow : ayuLight);
     let fileInput: HTMLInputElement;
 
     const loadSourceCode = () => {
@@ -93,19 +98,39 @@
                     class="w-full h-full p-4 font-mono text-sm resize-none focus:outline-none absolute inset-0"
                     placeholder="Enter your assembly code here..."
                     styles={{"&": {height: "100%", overflow: "auto"}}}
+                    lang={toyAsm}
+                    theme={currentTheme}
         />
     </div>
 
-    <div class="mt-4 flex space-x-2">
-        <button class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700" onclick={loadSourceCode}>
-            从本地加载
-        </button>
-        <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onclick={saveSourceCode}>
-            保存到本地
-        </button>
-        <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" onclick={compileCode}>
-            编译
-        </button>
+    <div class="mt-4 flex">
+        <div class="flex space-x-2">
+            <button class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700" onclick={loadSourceCode}>
+                从本地加载
+            </button>
+            <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onclick={saveSourceCode}>
+                保存到本地
+            </button>
+            <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" onclick={compileCode}>
+                编译
+            </button>
+        </div>
+
+        <!-- Theme toggle buttons -->
+        <div class="ml-auto flex space-x-1">
+            <button
+                class="px-3 py-1 text-sm rounded transition-colors {isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500 hover:bg-gray-300'}"
+                onclick={() => isDarkMode = true}
+            >
+                Dark
+            </button>
+            <button
+                class="px-3 py-1 text-sm rounded transition-colors {!isDarkMode ? 'bg-amber-100 text-amber-800' : 'bg-gray-200 text-gray-500 hover:bg-gray-300'}"
+                onclick={() => isDarkMode = false}
+            >
+                Light
+            </button>
+        </div>
     </div>
 </div>
 
