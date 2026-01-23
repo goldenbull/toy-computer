@@ -105,14 +105,14 @@
 
     <div class="mt-4 flex">
         <div class="flex space-x-2">
-            <button class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700" onclick={loadSourceCode}>
-                从本地加载
-            </button>
-            <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onclick={saveSourceCode}>
-                保存到本地
-            </button>
-            <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" onclick={compileCode}>
+            <button class="px-4 py-2 w-40 bg-green-600 text-white rounded hover:bg-green-700" onclick={compileCode}>
                 编译
+            </button>
+            <button class="px-4 py-2 w-40 bg-blue-600 text-white rounded hover:bg-blue-700" onclick={saveSourceCode}>
+                保存到文件
+            </button>
+            <button class="px-4 py-2 bg-sky-600 text-white rounded hover:bg-gray-700" onclick={loadSourceCode}>
+                读入asm或txt文件
             </button>
         </div>
 
