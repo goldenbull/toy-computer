@@ -1,10 +1,26 @@
 <script lang="ts">
     import CodeMirror from "svelte-codemirror-editor";
     import {EditorView} from '@codemirror/view';
+    import {HighlightStyle, syntaxHighlighting} from '@codemirror/language';
+    import {Prec} from '@codemirror/state';
+    import {tags} from '@lezer/highlight';
     import {globalStatus} from '../store.svelte';
     import {Compiler, CompileError} from '../Compiler';
     import {toyAsm} from '../toyAsmLanguage';
     import {coolGlow, ayuLight} from 'thememirror';
+
+    // Custom highlight for dark mode - numbers in yellow
+    const darkNumberHighlight = Prec.highest(syntaxHighlighting(HighlightStyle.define([
+        {tag: tags.number, color: '#facc15'}
+    ])));
+
+    // Custom highlight for light mode - numbers in green
+    const lightNumberHighlight = Prec.highest(syntaxHighlighting(HighlightStyle.define([
+        {tag: tags.number, color: '#0533eb'},
+        {tag: tags.labelName, color: '#303030'},
+        {tag: tags.keyword, color: '#d060d0'},
+        {tag: tags.variableName, color: '#40b030'},
+    ])));
 
     let {switchTab}: {
         switchTab: (tab: string) => void
@@ -16,7 +32,11 @@
     let editorView = $state<EditorView | null>(null);
     let errorInfo = $state<CompileError | null>(null);
 
-    const currentTheme = $derived(isDarkMode ? coolGlow : ayuLight);
+    const currentTheme = $derived(
+        isDarkMode
+            ? [coolGlow, darkNumberHighlight]
+            : [ayuLight, lightNumberHighlight]
+    );
     let fileInput: HTMLInputElement;
 
     const loadSourceCode = () => {
@@ -45,7 +65,7 @@
 
     const saveSourceCode = () => {
         // Create a blob with the source code content
-        const blob = new Blob([globalStatus.sourceCode], { type: 'text/plain' });
+        const blob = new Blob([globalStatus.sourceCode], {type: 'text/plain'});
 
         // Create a temporary URL for the blob
         const url = URL.createObjectURL(blob);
@@ -136,14 +156,14 @@
         <!-- Theme toggle buttons -->
         <div class="ml-auto flex space-x-1">
             <button
-                class="px-3 py-1 text-sm rounded transition-colors {isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500 hover:bg-gray-300'}"
-                onclick={() => isDarkMode = true}
+                    class="px-3 py-1 text-sm rounded transition-colors {isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-500 hover:bg-gray-300'}"
+                    onclick={() => isDarkMode = true}
             >
                 Dark
             </button>
             <button
-                class="px-3 py-1 text-sm rounded transition-colors {!isDarkMode ? 'bg-amber-100 text-amber-800' : 'bg-gray-200 text-gray-500 hover:bg-gray-300'}"
-                onclick={() => isDarkMode = false}
+                    class="px-3 py-1 text-sm rounded transition-colors {!isDarkMode ? 'bg-amber-100 text-amber-800' : 'bg-gray-200 text-gray-500 hover:bg-gray-300'}"
+                    onclick={() => isDarkMode = false}
             >
                 Light
             </button>
