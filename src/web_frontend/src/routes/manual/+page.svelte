@@ -11,9 +11,9 @@
             const headerHeight = 72; // Height of sticky header
             const offsetTop = element.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
             window.scrollTo({
-                                top: offsetTop,
-                                behavior: 'smooth'
-                            });
+                top: offsetTop,
+                behavior: 'smooth'
+            });
         }
     };
 
@@ -50,6 +50,10 @@
         },
         {
             id: 'advanced', title: '向C语言进军', isParent: true,
+            children: [
+                {id: 'c-problems', title: 'C语言的难点'},
+                {id: 'real-x64dbg', title: '真实的二进制调试器'},
+            ]
         },
         {
             id: 'demos', title: '代码示例', isParent: true,
@@ -783,38 +787,61 @@
 
             <section id="advanced" class="mb-12">
                 <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">进阶：向C语言进军</h2>
-                <p class="mb-4">
-                    <a href="https://www.jyshare.com/compile/11/"
-                       class="text-green-700 hover:underline">一个在线写C语言的网站</a>
-                </p>
-                <p class="mb-4">从汇编语言的视角，看C语言的学习难点</p>
-                <ul class="list-disc list-inside space-y-3">
-                    <li> 指针，取地址 --> 寄存器，内存编号，内存操作</li>
-                    <li> 局部变量和全局变量 --> bp/sp指针，栈的操作，固定地址的内存操作</li>
-                    <li> 递归函数 --> bp/sp指针，栈的增长和退出</li>
-                </ul>
+                <section id="c-problems" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">从汇编语言的视角，看C语言的学习难点</h3>
+                    <ul class="list-disc list-inside space-y-3 mb-4">
+                        <li> 数组，指针，地址，到底是什么？ --> 寄存器，内存编号，内存操作</li>
+                        <li> 什么是变量？变量到底在哪里？ --> bp/sp指针，栈的操作</li>
+                        <li> 递归函数中同一个变量如何能同时有不同的值？ --> bp/sp指针，栈的增长和退出</li>
+                        <li><a href="https://www.jyshare.com/compile/11/" target="_blank" rel="noopener noreferrer"
+                               class="text-green-700 hover:underline">一个在线写C语言的网站</a>
+                        </li>
+                    </ul>
+
+                </section>
+
+                <section id="real-x64dbg" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">真实的二进制调试器</h3>
+                    <p class="mb-4">
+                        <a href="https://github.com/x64dbg/x64dbg" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline">x64dbg</a>
+                        可以找找和toycomputer中的各个部分的对应关系（小提示：右下角的部分就是栈）
+                    </p>
+                    <p class="mb-4">
+                        <img src="x64dbg-snapshot.png" alt=""/>
+                    </p>
+                </section>
+
             </section>
 
             <section id="demos" class="mb-12">
                 <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">代码示例</h2>
                 <ul class="list-disc list-inside space-y-3 mb-4">
-                    <li><a href="demo-basic.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 基本运算和输入输出 </a>
+                    <li><a href="demo-basic.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 基本运算和输入输出 </a>
                     </li>
-                    <li><a href="demo-jmp.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 判断，跳转，循环 </a>
+                    <li><a href="demo-jmp.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 判断，跳转，循环 </a>
                     </li>
-                    <li><a href="demo-call.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 函数调用 </a>
+                    <li><a href="demo-call.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 函数调用 </a>
                     </li>
-                    <li><a href="demo-prime.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 找质数 </a>
+                    <li><a href="demo-prime.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 找质数 </a>
                     </li>
-                    <li><a href="demo-fib.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 斐波那契数列 </a>
+                    <li><a href="demo-fib.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 斐波那契数列 </a>
                     </li>
-                    <li><a href="demo-bsort.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 冒泡排序 </a>
+                    <li><a href="demo-bsort.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 冒泡排序 </a>
                     </li>
-                    <li><a href="demo-qsort.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"> 快速排序 </a>
+                    <li><a href="demo-qsort.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 快速排序 </a>
                     </li>
-                    <li><a href="demo-pi.asm" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
-                        一个显示真实威力的例子：计算圆周率小数点后100位。这些代码是由python的原型实现翻译而成，python代码和翻译工作都主要由AI完成，既展示了几条简单的汇编语句所蕴含的巨大的计算能力，也展示了AI技术的巨大潜力。
-                    </a>
+                    <li><a href="demo-pi.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline">
+                        一个显示真实威力的例子：计算圆周率小数点后100位。</a>
+                        先使用AI生成python代码，进行原型开发和测试，然后再使用AI将python代码翻译为汇编代码。这个过程形象的说明了这几条简单的汇编语句是所有高级语言的基础，展示了“简单”所蕴含的巨大能力，也展示了AI技术的巨大潜力。
                     </li>
                 </ul>
             </section>

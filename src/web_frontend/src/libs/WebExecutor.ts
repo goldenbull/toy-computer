@@ -179,6 +179,8 @@ export class WebExecutor {
             case 'jle':
                 shouldJump = (flg <= 0);
                 break;
+            default:
+                throw new Error("invalid action"); // should be impossible, can not compile.
         }
 
         if (shouldJump) {
