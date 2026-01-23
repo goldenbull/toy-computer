@@ -2,6 +2,20 @@ import {ComputerStatus, ExecStatus, MemType} from './ComputerStatus.svelte';
 import {Operation} from './Operation';
 import {Operand, OperandType} from './Operand';
 
+// JavaScript's Number.MAX_SAFE_INTEGER = 2^53 - 1
+const MAX_SAFE_INTEGER = 9007199254740991;
+const MIN_SAFE_INTEGER = -9007199254740991;
+
+function checkOverflow(value: number): number {
+    if (value > MAX_SAFE_INTEGER) {
+        throw new Error(`整数溢出: ${value} > ${MAX_SAFE_INTEGER}`);
+    }
+    if (value < MIN_SAFE_INTEGER) {
+        throw new Error(`整数溢出: ${value} < ${MIN_SAFE_INTEGER}`);
+    }
+    return value;
+}
+
 /**
  * WebExecutor - executes operations on the ComputerStatus
  */
@@ -103,21 +117,21 @@ export class WebExecutor {
     private execAdd(op: Operation) {
         const v1 = this.status.registers[op.p1!.reg as keyof typeof this.status.registers];
         const v2 = this.getOperandValue(op.p2!) as number;
-        this.status.registers[op.p1!.reg as keyof typeof this.status.registers] = v1 + v2;
+        this.status.registers[op.p1!.reg as keyof typeof this.status.registers] = checkOverflow(v1 + v2);
         this.status.registers.ip++;
     }
 
     private execSub(op: Operation) {
         const v1 = this.status.registers[op.p1!.reg as keyof typeof this.status.registers];
         const v2 = this.getOperandValue(op.p2!) as number;
-        this.status.registers[op.p1!.reg as keyof typeof this.status.registers] = v1 - v2;
+        this.status.registers[op.p1!.reg as keyof typeof this.status.registers] = checkOverflow(v1 - v2);
         this.status.registers.ip++;
     }
 
     private execMul(op: Operation) {
         const v1 = this.status.registers.ax;
         const v2 = this.getOperandValue(op.p1!) as number;
-        this.status.registers.ax = v1 * v2;
+        this.status.registers.ax = checkOverflow(v1 * v2);
         this.status.registers.ip++;
     }
 

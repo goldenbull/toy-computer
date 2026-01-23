@@ -150,11 +150,17 @@
 
     .reg-value {
         min-width: 4rem;
+        max-width: 6rem;
         text-align: right;
+        overflow-x: auto;
+        white-space: nowrap;
     }
 
     .mem-cell {
         position: relative;
+        max-width: 5rem;
+        overflow-x: auto;
+        white-space: nowrap;
     }
 
     .mem-cell-dot-bp {
@@ -399,8 +405,7 @@
                                         {@const memType = globalStatus.getMemType(addr)}
                                         {@const isBpPointer = addr === globalStatus.registers.bp}
                                         {@const isSpPointer = addr === globalStatus.registers.sp}
-                                        <td class="border px-1 py-1 text-right mem-cell
-                                    {isDarkMode ? 'border-gray-600' : 'border-gray-300'}
+                                        <td class="border px-1 py-1 text-right mem-cell {isDarkMode ? 'border-gray-600' : 'border-gray-300'}
                                     {memType === 'BP' ? (isDarkMode ? 'bg-teal-800' : 'bg-green-200') : ''}
                                     {memType === 'IP' ? (isDarkMode ? 'bg-amber-800' : 'bg-amber-200') : ''}">
                                             {#if isBpPointer}
