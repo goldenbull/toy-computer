@@ -1,7 +1,8 @@
 <script lang="ts">
     import CodeMirror from "svelte-codemirror-editor";
+    import {EditorView} from '@codemirror/view';
     import {globalStatus} from '../store.svelte';
-    import {Compiler} from '../Compiler';
+    import {Compiler, CompileError} from '../Compiler';
     import {toyAsm} from '../toyAsmLanguage';
     import {coolGlow, ayuLight} from 'thememirror';
 
@@ -12,6 +13,8 @@
     let errorMessage = $state<string>('');
     let showErrorModal = $state(false);
     let isDarkMode = $state(true);
+    let editorView = $state<EditorView | null>(null);
+    let errorInfo = $state<CompileError | null>(null);
 
     const currentTheme = $derived(isDarkMode ? coolGlow : ayuLight);
     let fileInput: HTMLInputElement;
@@ -66,6 +69,7 @@
         if (!result.success) {
             // Compilation error - show in modal
             errorMessage = result.firstError?.toString() ?? '未知错误';
+            errorInfo = result.firstError;
             showErrorModal = true;
             return;
         }
@@ -79,6 +83,18 @@
 
     function closeErrorModal() {
         showErrorModal = false;
+
+        // Move cursor to error position
+        if (editorView && errorInfo) {
+            const doc = editorView.state.doc;
+            const line = doc.line(errorInfo.lineNum + 1); // lineNum is 0-based, doc.line is 1-based
+            const pos = line.from + errorInfo.column;
+            editorView.dispatch({
+                selection: {anchor: pos},
+                effects: EditorView.scrollIntoView(pos, {y: 'center'})
+            });
+            editorView.focus();
+        }
     }
 
 </script>
@@ -100,6 +116,7 @@
                     styles={{"&": {height: "100%", overflow: "auto"}}}
                     lang={toyAsm}
                     theme={currentTheme}
+                    onready={(view) => editorView = view}
         />
     </div>
 
