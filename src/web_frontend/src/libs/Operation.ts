@@ -1,38 +1,36 @@
 import {Operand} from './Operand';
 
 export class Operation {
-    addr: number;
-    type: string;
-    labels: string[];
-    p1: Operand | null;
-    p2: Operand | null;
-    action: string | null;
-    target: string | null;
-    targetAddr: number | null; // for jump and call
-    cnt: number | null;
+    // Pre-computed strings for rendering performance
+    displayStr: string;
+    offsetStr: string = '';
 
-    constructor(data: any) {
-        this.addr = data.addr;
-        this.type = data.type;
-        this.labels = data.labels || [];
-        this.p1 = data.p1 ? new Operand(data.p1) : null;
-        this.p2 = data.p2 ? new Operand(data.p2) : null;
-        this.action = data.action || null;
-        this.target = data.target || null;
-        this.targetAddr = data.targetAddr || null;
-        this.cnt = data.cnt || null;
+    constructor(
+        public addr: number,
+        public type: string,
+        public labels: string[] = [],
+        public p1: Operand | null = null,
+        public p2: Operand | null = null,
+        public action: string | null = null,
+        public target: string | null = null,
+    ) {
+        this.displayStr = this.buildDisplayStr();
     }
 
-    /**
-     * Returns a string representation of this operation
-     */
-    toString(): string {
+    // Called by Compiler after resolving label references
+    resolveTarget(targetAddr: number) {
+        this.targetAddr = targetAddr;
+        this.targetOffset = targetAddr - this.addr;
+        this.offsetStr = this.targetOffset.toLocaleString("en", { signDisplay: 'always', useGrouping: false });
+    }
+
+    targetAddr: number | null = null;
+    targetOffset: number | null = null;
+
+    private buildDisplayStr(): string {
         const parts: string[] = [];
+        parts.push(this.action ?? this.type);
 
-        // type or action
-        parts.push(this.action === null ? this.type : this.action);
-
-        // operands
         if (this.p1 !== null) {
             if (this.p2 !== null) {
                 parts.push(this.p1.toString() + ",");
@@ -48,4 +46,5 @@ export class Operation {
 
         return parts.join(' ');
     }
+
 }

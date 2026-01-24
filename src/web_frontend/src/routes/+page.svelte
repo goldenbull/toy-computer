@@ -11,10 +11,15 @@
         activeTab = tab;
     };
 
-    // Save source code to localStorage whenever it changes
+    // Debounced save to localStorage
+    let saveTimeout: ReturnType<typeof setTimeout> | null = null;
     $effect(() => {
-        if (globalStatus.sourceCode) {
-            localStorage.setItem(STORAGE_KEY, globalStatus.sourceCode);
+        const code = globalStatus.sourceCode;
+        if (code) {
+            if (saveTimeout) clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                localStorage.setItem(STORAGE_KEY, code);
+            }, 500);
         }
     });
 </script>

@@ -6,19 +6,13 @@ export enum OperandType {
 }
 
 export class Operand {
-    tp: OperandType;
-    reg: string;
-    offset: number;
-    immVal: number;
-    text: string[];
-
-    constructor(data: any) {
-        this.tp = data.tp as OperandType;
-        this.reg = data.reg || "";
-        this.offset = data.offset || 0;
-        this.immVal = data.immVal || 0;
-        this.text = data.text || [];
-    }
+    constructor(
+        public tp: OperandType,
+        public reg: string = "",
+        public offset: number = 0,
+        public immVal: number = 0,
+        public text: string[] = [],
+    ) {}
 
     /**
      * Get the memory address for a memory operand

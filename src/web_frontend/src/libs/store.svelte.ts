@@ -31,7 +31,7 @@ export const globalExecutor = new WebExecutor(globalStatus, () => {
 });
 
 // Allow ExecutionPanel to register its scroll callback
-export function setOutputScrollCallback(callback: () => void) {
+export function setOutputScrollCallback(callback: (() => void) | null) {
     outputScrollCallback = callback;
 }
 

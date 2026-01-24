@@ -165,8 +165,7 @@ export class WebExecutor {
     }
 
     private execJump(op: Operation) {
-        const targetAddr = this.status.labels[op.target!];
-        if (targetAddr === undefined) throw new Error(`非法标签: ${op.target}`);
+        const targetAddr = op.targetAddr!;
 
         const flg = this.status.registers.flg;
         let shouldJump = false;
@@ -205,12 +204,9 @@ export class WebExecutor {
     }
 
     private execCall(op: Operation) {
-        const targetAddr = this.status.labels[op.target!];
-        if (targetAddr === undefined) throw new Error(`非法标签: ${op.target}`);
-
         // Push return address
         this.status.pushStack(this.status.registers.ip + 1, MemType.IP);
-        this.status.registers.ip = targetAddr;
+        this.status.registers.ip = op.targetAddr!;
     }
 
     private execRet(op: Operation) {
@@ -288,10 +284,6 @@ export class WebExecutor {
         this.status.execStatus = ExecStatus.Halted;
         // Don't increment IP on halt
     }
-
-    // private execNop(op: Operation) {
-    //     this.status.registers.ip++;
-    // }
 
     private static readonly MAX_OUTPUT_CHARS = 2200000;
     private static readonly TRIM_OUTPUT_CHARS = 200000;

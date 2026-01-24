@@ -5,37 +5,42 @@ import {
     JumpContext, CallContext, RetContext, PushContext, PopContext,
     InputContext, PrintContext, RandContext, HaltContext, BreakContext
 } from './grammar/toy_asmParser';
-import {Operation} from './Operation';
 import {Operand, OperandType} from './Operand';
+
+// Parsed operation data (before full Operation is created)
+export interface ParsedOp {
+    type: string;
+    p1?: Operand | null;
+    p2?: Operand | null;
+    action?: string | null;
+    target?: string | null;
+}
 
 export interface ParseResult {
     label: string | null;
-    op: Partial<Operation> | null;
+    op: ParsedOp | null;
 }
 
 export class VisitorImpl extends toy_asmVisitor<any> {
     visitNum = (ctx: NumContext): Operand => {
-        const text = ctx.getText();
-        const val = parseInt(text, 10);
-        return new Operand({tp: OperandType.Imm, immVal: val});
+        const val = parseInt(ctx.getText(), 10);
+        return new Operand(OperandType.Imm, "", 0, val);
     };
 
     visitReg = (ctx: RegContext): Operand => {
         const regName = ctx.getText().toLowerCase();
-        return new Operand({tp: OperandType.Reg, reg: regName});
+        return new Operand(OperandType.Reg, regName);
     };
 
     visitOffset = (ctx: OffsetContext): number => {
-        const text = ctx.getText();
-        return parseInt(text, 10);
+        return parseInt(ctx.getText(), 10);
     };
 
     visitMem = (ctx: MemContext): Operand => {
-        const regCtx = ctx.reg();
-        const regName = regCtx.getText().toLowerCase();
+        const regName = ctx.reg().getText().toLowerCase();
         const offsetCtx = ctx.offset();
         const offset = offsetCtx ? this.visitOffset(offsetCtx) : 0;
-        return new Operand({tp: OperandType.Mem, reg: regName, offset});
+        return new Operand(OperandType.Mem, regName, offset);
     };
 
     visitStr = (ctx: StrContext): Operand => {
@@ -47,59 +52,59 @@ export class VisitorImpl extends toy_asmVisitor<any> {
                              .replace(/\\r/g, '\r')
                              .replace(/\\"/g, '"')
                              .replace(/\\\\/g, '\\');
-        return new Operand({tp: OperandType.Str, text: [raw, evaluated]});
+        return new Operand(OperandType.Str, "", 0, 0, [raw, evaluated]);
     };
 
-    visitMov = (ctx: MovContext): Partial<Operation> => {
+    visitMov = (ctx: MovContext): ParsedOp => {
         const p1 = this.visit(ctx.getChild(1)) as Operand;
         const p2 = this.visit(ctx.getChild(3)) as Operand;
         return {type: 'mov', p1, p2};
     };
 
-    visitAdd = (ctx: AddContext): Partial<Operation> => {
+    visitAdd = (ctx: AddContext): ParsedOp => {
         const p1 = this.visit(ctx.getChild(1)) as Operand;
         const p2 = this.visit(ctx.getChild(3)) as Operand;
         return {type: 'add', p1, p2};
     };
 
-    visitSub = (ctx: SubContext): Partial<Operation> => {
+    visitSub = (ctx: SubContext): ParsedOp => {
         const p1 = this.visit(ctx.getChild(1)) as Operand;
         const p2 = this.visit(ctx.getChild(3)) as Operand;
         return {type: 'sub', p1, p2};
     };
 
-    visitMul = (ctx: MulContext): Partial<Operation> => {
+    visitMul = (ctx: MulContext): ParsedOp => {
         const p1 = this.visit(ctx.getChild(1)) as Operand;
         return {type: 'mul', p1};
     };
 
-    visitDiv = (ctx: DivContext): Partial<Operation> => {
+    visitDiv = (ctx: DivContext): ParsedOp => {
         const p1 = this.visit(ctx.getChild(1)) as Operand;
         return {type: 'div', p1};
     };
 
-    visitCmp = (ctx: CmpContext): Partial<Operation> => {
+    visitCmp = (ctx: CmpContext): ParsedOp => {
         const p1 = this.visit(ctx.getChild(1)) as Operand;
         const p2 = this.visit(ctx.getChild(3)) as Operand;
         return {type: 'cmp', p1, p2};
     };
 
-    visitJump = (ctx: JumpContext): Partial<Operation> => {
+    visitJump = (ctx: JumpContext): ParsedOp => {
         const label = ctx.Label().getText();
         const action = ctx.getChild(0)!.getText().toLowerCase();
         return {type: 'jump', action, target: label};
     };
 
-    visitCall = (ctx: CallContext): Partial<Operation> => {
+    visitCall = (ctx: CallContext): ParsedOp => {
         const label = ctx.Label().getText();
         return {type: 'call', target: label};
     };
 
-    visitRet = (_ctx: RetContext): Partial<Operation> => {
+    visitRet = (_ctx: RetContext): ParsedOp => {
         return {type: 'ret'};
     };
 
-    visitPush = (ctx: PushContext): Partial<Operation> => {
+    visitPush = (ctx: PushContext): ParsedOp => {
         const action = ctx.getChild(0)!.getText().toLowerCase();
         if (action === 'pushf') {
             return {type: 'push', action: 'pushf'};
@@ -108,7 +113,7 @@ export class VisitorImpl extends toy_asmVisitor<any> {
         return {type: 'push', action: 'push', p1};
     };
 
-    visitPop = (ctx: PopContext): Partial<Operation> => {
+    visitPop = (ctx: PopContext): ParsedOp => {
         const action = ctx.getChild(0)!.getText().toLowerCase();
         if (action === 'popf') {
             return {type: 'pop', action: 'popf'};
@@ -120,12 +125,12 @@ export class VisitorImpl extends toy_asmVisitor<any> {
         return {type: 'pop', action: 'pop', p1};
     };
 
-    visitInput = (ctx: InputContext): Partial<Operation> => {
+    visitInput = (ctx: InputContext): ParsedOp => {
         const p1 = this.visit(ctx.getChild(1)) as Operand;
         return {type: 'input', p1};
     };
 
-    visitPrint = (ctx: PrintContext): Partial<Operation> => {
+    visitPrint = (ctx: PrintContext): ParsedOp => {
         const action = ctx.getChild(0)!.getText().toLowerCase() as 'print' | 'println';
         if (ctx.getChildCount() === 1) {
             return {type: 'print', action, p1: null};
@@ -134,16 +139,16 @@ export class VisitorImpl extends toy_asmVisitor<any> {
         return {type: 'print', action, p1};
     };
 
-    visitRand = (ctx: RandContext): Partial<Operation> => {
+    visitRand = (ctx: RandContext): ParsedOp => {
         const p1 = this.visit(ctx.getChild(1)) as Operand;
         return {type: 'rand', p1};
     };
 
-    visitBreak = (ctx: BreakContext): Partial<Operation> => {
+    visitBreak = (ctx: BreakContext): ParsedOp => {
         return {type: 'break'};
     }
 
-    visitHalt = (_ctx: HaltContext): Partial<Operation> => {
+    visitHalt = (_ctx: HaltContext): ParsedOp => {
         return {type: 'halt'};
     };
 
@@ -153,11 +158,11 @@ export class VisitorImpl extends toy_asmVisitor<any> {
 
         const label = labelCtx ? labelCtx.Label().getText() : null;
 
-        let op: Partial<Operation> | null = null;
+        let op: ParsedOp | null = null;
         if (opCtx) {
             const child = opCtx.getChild(0);
             if (child) {
-                op = this.visit(child) as Partial<Operation>;
+                op = this.visit(child) as ParsedOp;
             }
         }
 

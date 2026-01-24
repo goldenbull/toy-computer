@@ -1,6 +1,8 @@
 import {Operation} from './Operation';
 import type {Operand} from "./Operand.ts";
 
+export const MEMORY_SIZE = 1024;
+
 export enum MemType {
     Data = "Data",
     BP = "BP",
@@ -19,9 +21,8 @@ export enum ExecStatus {
 export class ComputerStatus {
     sourceCode = $state(`; 请开始你的表演 :)\n`);
 
-    // Compiled operations and labels from backend
+    // Compiled operations
     operations = $state<Operation[]>([]);
-    labels = $state<{ [key: string]: number }>({});
 
     memory = $state<number[]>(this.initRandomMemory());
     memoryTypes = $state<{ [addr: number]: MemType }>({});
@@ -37,12 +38,10 @@ export class ComputerStatus {
 
 
     /**
-     * Load compiled operations from backend response
+     * Load compiled operations
      */
-    loadCompiledCode(operations: any[], labels: { [key: string]: number }) {
-        // Convert plain objects to Operation instances
-        this.operations = operations.map(op => new Operation(op));
-        this.labels = labels;
+    loadCompiledCode(operations: Operation[]) {
+        this.operations = operations;
         this.reset();
     }
 
@@ -51,7 +50,7 @@ export class ComputerStatus {
     }
 
     initRandomMemory() {
-        let mem = new Array(1024);
+        let mem = new Array(MEMORY_SIZE);
         for (let i = 0; i < mem.length; i++) {
             mem[i] = this.initRandVal();
         }
@@ -65,8 +64,8 @@ export class ComputerStatus {
             cx: this.initRandVal(),
             dx: this.initRandVal(),
             flg: Math.floor(Math.random() * 3 - 1),
-            sp: 1023,
-            bp: 1023,
+            sp: MEMORY_SIZE - 1,
+            bp: MEMORY_SIZE - 1,
             ip: 0,
         };
     }
@@ -120,7 +119,7 @@ export class ComputerStatus {
      * Pop value from stack
      */
     popStack(): number {
-        if (this.registers.sp >= 1023) {
+        if (this.registers.sp >= MEMORY_SIZE - 1) {
             throw new Error('栈底部越界');
         }
         this.registers.sp++;

@@ -4,6 +4,7 @@
     import {HighlightStyle, syntaxHighlighting} from '@codemirror/language';
     import {Prec} from '@codemirror/state';
     import {tags} from '@lezer/highlight';
+    import {onDestroy} from 'svelte';
     import {globalStatus} from '../store.svelte';
     import {Compiler, CompileError} from '../Compiler';
     import {toyAsm} from '../toyAsmLanguage';
@@ -17,9 +18,10 @@
     // Custom highlight for light mode - numbers in green
     const lightNumberHighlight = Prec.highest(syntaxHighlighting(HighlightStyle.define([
         {tag: tags.number, color: '#0533eb'},
-        {tag: tags.labelName, color: '#303030'},
+        {tag: tags.labelName, color: '#202020'},
         {tag: tags.keyword, color: '#d060d0'},
         {tag: tags.variableName, color: '#40b030'},
+        {tag: tags.comment, color: '#909090'},
     ])));
 
     let {switchTab, isDarkMode}: {
@@ -38,6 +40,11 @@
             : [ayuLight, lightNumberHighlight]
     );
     let fileInput: HTMLInputElement;
+
+    // Cleanup editor reference on destroy
+    onDestroy(() => {
+        editorView = null;
+    });
 
     const loadSourceCode = () => {
         // Trigger file input click
@@ -83,8 +90,7 @@
     };
 
     function compileCode() {
-        const compiler = new Compiler();
-        const result = compiler.compile(globalStatus.sourceCode);
+        const result = new Compiler().compile(globalStatus.sourceCode);
 
         if (!result.success) {
             // Compilation error - show in modal
@@ -95,7 +101,7 @@
         }
 
         // Load the compiled operations
-        globalStatus.loadCompiledCode(result.operations, result.labels);
+        globalStatus.loadCompiledCode(result.operations);
 
         // Switch to execution panel
         switchTab('execution');

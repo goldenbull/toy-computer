@@ -1,7 +1,7 @@
 <script lang="ts">
-    import {ExecStatus} from '../ComputerStatus.svelte.ts';
+    import {ExecStatus, MEMORY_SIZE} from '../ComputerStatus.svelte.ts';
     import {globalStatus, globalExecutor, setOutputScrollCallback} from '../store.svelte';
-    import {onMount} from 'svelte';
+    import {onMount, onDestroy} from 'svelte';
 
     let {isDarkMode}: {
         isDarkMode: boolean
@@ -20,6 +20,11 @@
                 });
             }
         });
+    });
+
+    // Cleanup scroll callback on destroy
+    onDestroy(() => {
+        setOutputScrollCallback(null);
     });
 
     // Auto-scroll operations table to current IP
@@ -217,24 +222,16 @@
                         </thead>
                         <tbody>
                         {#each globalStatus.operations as op}
-                            {@const opString = op.toString()}
                             <tr data-addr={op.addr}
                                 class={op.addr === globalStatus.registers.ip ? (isDarkMode ? 'bg-amber-700' : 'bg-amber-200') : ''}>
                                 <td class="border px-1 py-1 text-right {isDarkMode ? 'border-gray-600' : 'border-gray-300'}">{op.addr}</td>
                                 <td class="border px-1 py-1 {isDarkMode ? 'border-gray-600' : 'border-gray-300'}">
                                     {#each op.labels as label}
-                                        <p class="font-semibold {isDarkMode ? 'text-blue-400' : 'text-blue-600'}">{label}
-                                            :</p>
+                                        <p class="font-semibold {isDarkMode ? 'text-blue-400' : 'text-blue-600'}">{label}:</p>
                                     {/each}
-                                    <p class="px-4">{opString}</p>
+                                    <p class="px-4">{op.displayStr}</p>
                                 </td>
-                                <td class="border px-1 py-1 text-center {isDarkMode ? 'border-gray-600' : 'border-gray-300'}">
-                                    {#if op.target && globalStatus.labels[op.target] !== undefined}
-                                        {globalStatus.labels[op.target] - op.addr > 0 ? '+' : ''}{globalStatus.labels[op.target] - op.addr}
-                                    {:else}
-                                        {""}
-                                    {/if}
-                                </td>
+                                <td class="border px-1 py-1 text-center {isDarkMode ? 'border-gray-600' : 'border-gray-300'}">{op.offsetStr}</td>
                             </tr>
                         {/each}
                         </tbody>
@@ -396,7 +393,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {#each Array(1024 / 16) as _, row}
+                            {#each Array(MEMORY_SIZE / 16) as _, row}
                                 <tr>
                                     <td class="border px-1 py-1 text-center font-semibold {isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-gray-100'}">{row * 16}</td>
                                     {#each Array(16) as _, col}

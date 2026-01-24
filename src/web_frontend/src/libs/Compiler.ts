@@ -1,7 +1,7 @@
 import {CharStream, CommonTokenStream, ErrorListener, RecognitionException, type Recognizer} from 'antlr4';
 import toy_asmLexer from './grammar/toy_asmLexer';
 import toy_asmParser from './grammar/toy_asmParser';
-import {VisitorImpl} from './VisitorImpl';
+import {VisitorImpl, type ParsedOp} from './VisitorImpl';
 import {Operation} from './Operation';
 
 // if parse error
@@ -21,18 +21,16 @@ export class CompileError {
     }
 }
 
-// if parse success
 interface ParsedLineInfo {
     lineNum: number;
-    src: string; // source code
+    src: string;
     label: string | null;
-    op: Partial<Operation> | null;
+    op: ParsedOp | null;
 }
 
 export interface CompileResult {
     success: boolean;
     operations: Operation[];
-    labels: Record<string, number>;
     firstError: CompileError | null;
 }
 
@@ -92,7 +90,7 @@ export class Compiler {
         }
 
         if (firstError != null) {
-            return {success: false, operations: [], labels: {}, firstError};
+            return {success: false, operations: [], firstError};
         }
 
         // Stage 2: Build operations and collect labels
@@ -134,44 +132,47 @@ export class Compiler {
                 }
                 pendingLabels = [];
 
-                const operation = new Operation({
-                                                    addr,
-                                                    type: op.type,
-                                                    labels: opLabels,
-                                                    p1: op.p1 || null,
-                                                    p2: op.p2 || null,
-                                                    action: op.action || null,
-                                                    target: op.target || null,
-                                                    cnt: op.cnt || null
-                                                });
+                const operation = new Operation(
+                    addr,
+                    op.type!,
+                    opLabels,
+                    op.p1,
+                    op.p2,
+                    op.action,
+                    op.target
+                );
                 operations.push(operation);
                 opInfos.push({op: operation, line: lineNum});
             }
         }
 
         if (firstError != null) {
-            return {success: false, operations: [], labels: {}, firstError};
+            return {success: false, operations: [], firstError};
         }
 
         // Check for dangling labels (labels without following instruction)
         if (pendingLabels.length > 0) {
             const pending = pendingLabels[0];
             firstError = new CompileError(rawLines[pending.line], pending.line, 0, `标签 '${pending.name}' 后面没有指令`);
-            return {success: false, operations: [], labels: {}, firstError};
+            return {success: false, operations: [], firstError};
         }
 
-        // Stage 3: Validate label references
+        // Stage 3: Validate and resolve label references
         for (const opInfo of opInfos) {
             const op = opInfo.op;
-            if (op.target !== null && !(op.target in labels)) {
-                firstError = new CompileError(rawLines[opInfo.line], opInfo.line, 0, `没有定义标签: '${op.target}'`);
+            if (op.target !== null) {
+                if (!(op.target in labels)) {
+                    firstError = new CompileError(rawLines[opInfo.line], opInfo.line, 0, `没有定义标签: '${op.target}'`);
+                    break;
+                }
+                op.resolveTarget(labels[op.target]);
             }
         }
 
         if (firstError != null) {
-            return {success: false, operations: [], labels: {}, firstError};
+            return {success: false, operations: [], firstError};
         }
 
-        return {success: true, operations, labels, firstError};
+        return {success: true, operations, firstError};
     }
 }
