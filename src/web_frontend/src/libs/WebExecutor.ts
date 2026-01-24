@@ -293,11 +293,20 @@ export class WebExecutor {
     //     this.status.registers.ip++;
     // }
 
+    private static readonly MAX_OUTPUT_CHARS = 2200000;
+    private static readonly TRIM_OUTPUT_CHARS = 200000;
+
     /**
      * Append text to output
      */
     private appendOutput(text: string) {
         this.status.output += text;
+
+        // Limit output size: when exceeding MAX_OUTPUT_CHARS, remove earliest TRIM_OUTPUT_CHARS
+        if (this.status.output.length > WebExecutor.MAX_OUTPUT_CHARS) {
+            this.status.output = this.status.output.slice(WebExecutor.TRIM_OUTPUT_CHARS);
+        }
+
         if (this.onOutputChange) {
             this.onOutputChange();
         }
@@ -393,6 +402,7 @@ export class WebExecutor {
             this.status.execStatus = ExecStatus.Paused;
         }
     }
+
 
     /**
      * Provide input value and continue execution
