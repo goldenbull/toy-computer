@@ -321,7 +321,7 @@ export class WebExecutor {
             this.status.execStatus = ExecStatus.Halted;
             // check if all operations executed, gracefully stop
             if (ip !== this.status.operations.length) {
-                this.appendOutput(`\n运行时出错: IP越界 (${ip})\n`);
+                this.appendOutput(`\n!!!!!! 运行时出错: IP越界 (${ip}) !!!!!!\n`);
             }
             return false;
         }
@@ -331,9 +331,9 @@ export class WebExecutor {
         try {
             this.executeOperation(operation);
             return true;
-        } catch (e: any) {
+        } catch (e) {
             this.status.execStatus = ExecStatus.Halted;
-            this.appendOutput(`\n运行时出错：${e.message}\n`);
+            this.appendOutput(`\n!!!!!! 运行时出错：${e.message} !!!!!!\n`);
             return false;
         }
     }
