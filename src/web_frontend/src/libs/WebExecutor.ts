@@ -209,6 +209,7 @@ export class WebExecutor {
         this.status.registers.ip = op.targetAddr!;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     private execRet(op: Operation) {
         this.status.registers.ip = this.status.popStack();
     }
@@ -274,12 +275,14 @@ export class WebExecutor {
         this.status.registers.ip++;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     private execBreak(op: Operation) {
         // Pause switches to paused state
         this.status.execStatus = ExecStatus.Paused;
         this.status.registers.ip++;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     private execHalt(op: Operation) {
         this.status.execStatus = ExecStatus.Halted;
         // Don't increment IP on halt
@@ -331,7 +334,8 @@ export class WebExecutor {
         try {
             this.executeOperation(operation);
             return true;
-        } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (e: any) {
             this.status.execStatus = ExecStatus.Halted;
             this.appendOutput(`\n!!!!!! 运行时出错：${e.message} !!!!!!\n`);
             return false;
