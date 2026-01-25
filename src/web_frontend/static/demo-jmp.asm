@@ -21,7 +21,7 @@ _loop:
 
     ; 判断是否已经加到N了
     cmp cx, [bp]
-    jg _finish
+    jge _finish
     jmp _loop
 
 _finish:
