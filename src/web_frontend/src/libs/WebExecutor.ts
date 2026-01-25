@@ -417,6 +417,7 @@ export class WebExecutor {
         }
 
         const numValue = parseInt(trimmedValue, 10);
+        checkOverflow(numValue);
         if (isNaN(numValue)) {
             throw new Error('输入错误，必须输入一个整数');
         }

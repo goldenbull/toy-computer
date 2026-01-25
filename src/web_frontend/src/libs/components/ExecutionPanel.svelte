@@ -155,10 +155,17 @@
 
     .reg-value {
         min-width: 4rem;
-        max-width: 6rem;
+        max-width: 5rem;
         text-align: right;
         overflow-x: auto;
         white-space: nowrap;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+    }
+
+    /* Webkit (Chrome, Safari) */
+    .reg-value::-webkit-scrollbar {
+        display: none;
     }
 
     .mem-cell {
@@ -166,6 +173,13 @@
         max-width: 5rem;
         overflow-x: auto;
         white-space: nowrap;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+    }
+
+    /* Webkit (Chrome, Safari) */
+    .mem-cell::-webkit-scrollbar {
+        display: none;
     }
 
     .mem-cell-dot-bp {
