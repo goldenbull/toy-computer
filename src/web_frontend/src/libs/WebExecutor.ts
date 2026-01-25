@@ -5,13 +5,12 @@ import {Operand, OperandType} from './Operand';
 // JavaScript's Number.MAX_SAFE_INTEGER = 2^53 - 1
 const MAX_SAFE_INTEGER = 9007199254740991;
 const MIN_SAFE_INTEGER = -9007199254740991;
-
 function checkOverflow(value: number): number {
     if (value > MAX_SAFE_INTEGER) {
-        throw new Error(`整数溢出: ${value} > ${MAX_SAFE_INTEGER}`);
+        throw new Error(`整数溢出: ${value} > 2^53 − 1`);
     }
     if (value < MIN_SAFE_INTEGER) {
-        throw new Error(`整数溢出: ${value} < ${MIN_SAFE_INTEGER}`);
+        throw new Error(`整数溢出: ${value} < -(2^53 − 1)`);
     }
     return value;
 }
@@ -224,9 +223,10 @@ export class WebExecutor {
                 : MemType.Data;
 
             this.status.pushStack(value, memType);
-        } else if (op.action === 'pushf') {
-            this.status.pushStack(this.status.registers.flg);
         }
+        // else if (op.action === 'pushf') {
+        //     this.status.pushStack(this.status.registers.flg);
+        // }
 
         this.status.registers.ip++;
     }
@@ -236,9 +236,10 @@ export class WebExecutor {
 
         if (op.action === 'pop' && op.p1) {
             this.setOperandValue(op.p1, value);
-        } else if (op.action === 'popf') {
-            this.status.registers.flg = Math.sign(value);
         }
+        // else if (op.action === 'popf') {
+        //     this.status.registers.flg = Math.sign(value);
+        // }
 
         this.status.registers.ip++;
     }

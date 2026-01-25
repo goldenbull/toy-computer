@@ -117,13 +117,11 @@ ret
 push
     : 'push' num
     | 'push' reg
-    | 'pushf'
     ;
 
 pop
     : 'pop'
     | 'pop' reg
-    | 'popf'
     ;
 
 input

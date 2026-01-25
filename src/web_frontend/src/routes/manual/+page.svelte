@@ -39,8 +39,8 @@
                 {id: "op-jmp", title: "jmp je jne jg jge jl jle"},
                 {id: "op-call", title: "call"},
                 {id: "op-ret", title: "ret"},
-                {id: "op-push", title: "push pushf"},
-                {id: "op-pop", title: "pop popf"},
+                {id: "op-push", title: "push"},
+                {id: "op-pop", title: "pop"},
                 {id: "op-input", title: "input"},
                 {id: "op-print", title: "print println"},
                 {id: "op-rand", title: "rand"},
@@ -562,7 +562,7 @@
                 </section>
 
                 <section id="op-push" class="mt-8 mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">push / pushf</h3>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">push</h3>
                     <p class="mb-4">将值压入栈</p>
                     <table class="manual-table">
                         <thead>
@@ -594,17 +594,12 @@
                             <td>将内存 [r1+N] 的值压入栈</td>
                             <td>push [bp+3]</td>
                         </tr>
-                        <tr>
-                            <td>pushf</td>
-                            <td>将 flg 寄存器的值压入栈</td>
-                            <td>pushf</td>
-                        </tr>
                         </tbody>
                     </table>
                 </section>
 
                 <section id="op-pop" class="mt-8 mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">pop / popf</h3>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">pop</h3>
                     <p class="mb-4">从栈中弹出值</p>
                     <table class="manual-table">
                         <thead>
@@ -630,11 +625,6 @@
                             <td>pop [r1+N]</td>
                             <td>从栈中弹出值，存入内存 [r1+N]</td>
                             <td>pop [bp-2]</td>
-                        </tr>
-                        <tr>
-                            <td>popf</td>
-                            <td>从栈中弹出值，存入 flg 寄存器</td>
-                            <td>popf</td>
                         </tr>
                         </tbody>
                     </table>

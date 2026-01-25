@@ -105,19 +105,19 @@ export class VisitorImpl extends toy_asmVisitor<any> {
     };
 
     visitPush = (ctx: PushContext): ParsedOp => {
-        const action = ctx.getChild(0)!.getText().toLowerCase();
-        if (action === 'pushf') {
-            return {type: 'push', action: 'pushf'};
-        }
+        // const action = ctx.getChild(0)!.getText().toLowerCase();
+        // if (action === 'pushf') {
+        //     return {type: 'push', action: 'pushf'};
+        // }
         const p1 = this.visit(ctx.getChild(1)) as Operand;
         return {type: 'push', action: 'push', p1};
     };
 
     visitPop = (ctx: PopContext): ParsedOp => {
-        const action = ctx.getChild(0)!.getText().toLowerCase();
-        if (action === 'popf') {
-            return {type: 'pop', action: 'popf'};
-        }
+        // const action = ctx.getChild(0)!.getText().toLowerCase();
+        // if (action === 'popf') {
+        //     return {type: 'pop', action: 'popf'};
+        // }
         if (ctx.getChildCount() === 1) {
             return {type: 'pop', action: 'pop'};
         }

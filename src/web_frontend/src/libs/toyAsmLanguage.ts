@@ -4,7 +4,7 @@ import { StreamLanguage, LanguageSupport } from "@codemirror/language";
 const instructions = new Set([
     "mov", "add", "sub", "mul", "div", "cmp",
     "jmp", "je", "jne", "jg", "jge", "jl", "jle",
-    "call", "ret", "push", "pop", "pushf", "popf",
+    "call", "ret", "push", "pop",
     "input", "print", "println", "rand",
     "break", "halt"
 ]);
