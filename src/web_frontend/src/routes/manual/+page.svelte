@@ -41,11 +41,11 @@
                 {id: "op-ret", title: "ret"},
                 {id: "op-push", title: "push"},
                 {id: "op-pop", title: "pop"},
-                {id: "op-input", title: "input"},
-                {id: "op-print", title: "print println"},
-                {id: "op-rand", title: "rand"},
-                {id: "op-break", title: "break"},
-                {id: "op-halt", title: "halt"},
+                {id: "op-input", title: "伪指令 input"},
+                {id: "op-print", title: "伪指令 print println"},
+                {id: "op-rand", title: "伪指令 rand"},
+                {id: "op-break", title: "伪指令 break"},
+                {id: "op-halt", title: "伪指令 halt"},
             ]
         },
         {
@@ -611,6 +611,11 @@
                         </thead>
                         <tbody>
                         <tr>
+                            <td>pop</td>
+                            <td>从栈中弹出值，直接丢弃，等价于 add sp, 1</td>
+                            <td>pop</td>
+                        </tr>
+                        <tr>
                             <td>pop r1</td>
                             <td>
                                 <p>从栈中弹出值，存入寄存器 r1，即依次完成两个操作</p>
@@ -621,17 +626,12 @@
                             </td>
                             <td>pop ax</td>
                         </tr>
-                        <tr>
-                            <td>pop [r1+N]</td>
-                            <td>从栈中弹出值，存入内存 [r1+N]</td>
-                            <td>pop [bp-2]</td>
-                        </tr>
                         </tbody>
                     </table>
                 </section>
 
                 <section id="op-input" class="mt-8 mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">input</h3>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">伪指令 input</h3>
                     <p>输入操作，用户输入一个整数，存入指定位置。</p>
                     <p class="mb-4"> 从这条指令开始，后续的几条指令都是“伪指令”，实际的汇编语言中没有这些指令，而是要通过复杂的函数才能实现相应功能。
                         但出于教学目的，我们使用一条指令实现这些功能，以方便使用。
@@ -660,7 +660,7 @@
                 </section>
 
                 <section id="op-print" class="mt-8 mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">print / println</h3>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">伪指令 print / println</h3>
                     <p class="mb-4">
                         输出操作，将值输出到界面上。为了使用方便，有两个版本，print不会自动换行，而println会在输出的末尾自动换行</p>
                     <table class="manual-table">
@@ -709,7 +709,7 @@
                 </section>
 
                 <section id="op-rand" class="mt-8 mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">rand</h3>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">伪指令 rand</h3>
                     <p class="mb-4">生成随机数（0-999），存入指定位置</p>
                     <table class="manual-table">
                         <thead>
@@ -735,7 +735,7 @@
                 </section>
 
                 <section id="op-break" class="mt-8 mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">break</h3>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">伪指令 break</h3>
                     <p class="mb-4">中断执行，切换到暂停状态，主要用于调试程序</p>
                     <p class="mb-4">各种操作系统都会提供类似的功能，中断当前进程，将控制权交回给操作系统</p>
                     <table class="manual-table">
@@ -755,7 +755,7 @@
                 </section>
 
                 <section id="op-halt" class="mt-8 mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">halt</h3>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">伪指令 halt</h3>
                     <p class="mb-4">停机指令，终止程序执行</p>
                     <table class="manual-table">
                         <thead>
@@ -831,7 +831,14 @@
                     <li><a href="demo-pi.asm" target="_blank" rel="noopener noreferrer"
                            class="text-green-700 hover:underline">
                         一个显示真实威力的例子：计算圆周率小数点后100位。</a>
-                        先使用AI生成python代码，进行原型开发和测试，然后再使用AI将python代码翻译为汇编代码。这个过程形象的说明了这几条简单的汇编语句是所有高级语言的基础，展示了“简单”所蕴含的巨大能力，也展示了AI技术的巨大潜力。
+                        <ul class="list-inside">
+                            <li> <p>使用 arcsin(x) 的泰勒展开计算圆周率：</p>
+                                  <img src="pi-formula.png" alt=""/>
+                            </li>
+                            <li> 先使用AI生成python代码，进行原型开发和测试</li>
+                            <li> 然后再使用AI将python代码翻译为汇编代码</li>
+                            <li> 既展示了这几条简单的汇编语句所蕴含的巨大能力，也展示了AI技术的巨大潜力</li>
+                        </ul>
                     </li>
                 </ul>
             </section>

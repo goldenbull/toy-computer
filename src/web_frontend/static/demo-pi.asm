@@ -1,9 +1,13 @@
-; BigFloat implementation in Toy Assembly
-; Translated from Python floatlib.py
-; see https://github.com/goldenbull/toy-computer/blob/main/src/tests/int_to_float/floatlib.py
+; 使用整数计算实现浮点数计算的示例
+; 圆周率的公式使用 arcsin(x) 的泰勒展开进行计算
+; 先使用python写出算法原型
+; https://github.com/goldenbull/toy-computer/blob/main/src/tests/int_to_float/floatlib.py
+; 然后再将python代码的逻辑翻译成对应的汇编代码
+; 以上两步操作都在AI辅助下完成
+; 展示两个目的
+;   1. 简单的几条指令所蕴含的巨大能力，从中体会“计算”和“规则”的力量
+;   2. 展示AI的巨大潜力
 ;
-; Created with the help of Claude Code
-; A good example demonstrating the power of both toycomputer and AI
 ;
 ; Global configuration (stored in memory starting at address 0):
 ;   [bx+0] = DIGITS_PER_ELEMENT = 7  (where bx=0)
