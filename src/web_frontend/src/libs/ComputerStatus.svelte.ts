@@ -46,11 +46,11 @@ export class ComputerStatus {
     }
 
     initRandVal() {
-        return Math.floor(Math.random() * 20000 - 10000);
+        return Math.floor(Math.random() * 2000000 - 1000000);
     }
 
     initRandomMemory() {
-        let mem = new Array(MEMORY_SIZE);
+        const mem = new Array(MEMORY_SIZE);
         for (let i = 0; i < mem.length; i++) {
             mem[i] = this.initRandVal();
         }
