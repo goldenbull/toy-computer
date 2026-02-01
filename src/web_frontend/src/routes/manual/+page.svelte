@@ -37,10 +37,10 @@
                 {id: "op-div", title: "div"},
                 {id: "op-cmp", title: "cmp"},
                 {id: "op-jmp", title: "jmp je jne jg jge jl jle"},
-                {id: "op-call", title: "call"},
-                {id: "op-ret", title: "ret"},
                 {id: "op-push", title: "push"},
                 {id: "op-pop", title: "pop"},
+                {id: "op-call", title: "call"},
+                {id: "op-ret", title: "ret"},
                 {id: "op-input", title: "伪指令 input"},
                 {id: "op-print", title: "伪指令 print println"},
                 {id: "op-rand", title: "伪指令 rand"},
@@ -502,65 +502,6 @@
                     </table>
                 </section>
 
-                <section id="op-call" class="mt-8 mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">call</h3>
-                    <p class="mb-4">函数调用，跳转到指定标签，并将返回地址（即当前ip寄存器+1）压入栈</p>
-                    <table class="manual-table">
-                        <thead>
-                        <tr>
-                            <td>格式</td>
-                            <td>说明</td>
-                            <td>示例</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>call label</td>
-                            <td>
-                                <p>将下一条指令的地址压入栈，然后跳转到 label，即依次完成三个操作</p>
-                                <ol class="list-decimal list-inside">
-                                    <li> ip + 1 --> [sp]</li>
-                                    <li> sp - 1 --> sp</li>
-                                    <li> address of label --> ip</li>
-                                </ol>
-                            </td>
-                            <td>
-                                <p><span class="text-blue-500">_f1</span>: push bp</p>
-                                <p> mov bp, sp</p>
-                                <p> ...</p>
-                                <p> call <span class="text-blue-500">_f1</span></p>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </section>
-
-                <section id="op-ret" class="mt-8 mb-12 ml-4">
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">ret</h3>
-                    <p class="mb-4">函数返回，从栈中弹出返回地址并跳转</p>
-                    <table class="manual-table">
-                        <thead>
-                        <tr>
-                            <td>格式</td>
-                            <td>说明</td>
-                            <td>示例</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>ret</td>
-                            <td>从栈中弹出返回地址，跳转回调用处，即依次完成两个操作
-                                <ol class="list-decimal list-inside">
-                                    <li> sp + 1 --> sp</li>
-                                    <li> [sp] --> ip</li>
-                                </ol>
-                            </td>
-                            <td>ret</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </section>
-
                 <section id="op-push" class="mt-8 mb-12 ml-4">
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">push</h3>
                     <p class="mb-4">将值压入栈</p>
@@ -625,6 +566,65 @@
                                 </ol>
                             </td>
                             <td>pop ax</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-call" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">call</h3>
+                    <p class="mb-4">函数调用，跳转到指定标签，并将返回地址（即当前ip寄存器+1）压入栈</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>call label</td>
+                            <td>
+                                <p>将下一条指令的地址压入栈，然后跳转到 label，即依次完成三个操作</p>
+                                <ol class="list-decimal list-inside">
+                                    <li> ip + 1 --> [sp]</li>
+                                    <li> sp - 1 --> sp</li>
+                                    <li> address of label --> ip</li>
+                                </ol>
+                            </td>
+                            <td>
+                                <p><span class="text-blue-500">_f1</span>: push bp</p>
+                                <p> mov bp, sp</p>
+                                <p> ...</p>
+                                <p> call <span class="text-blue-500">_f1</span></p>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="op-ret" class="mt-8 mb-12 ml-4">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">ret</h3>
+                    <p class="mb-4">函数返回，从栈中弹出返回地址并跳转</p>
+                    <table class="manual-table">
+                        <thead>
+                        <tr>
+                            <td>格式</td>
+                            <td>说明</td>
+                            <td>示例</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>ret</td>
+                            <td>从栈中弹出返回地址，跳转回调用处，即依次完成两个操作
+                                <ol class="list-decimal list-inside">
+                                    <li> sp + 1 --> sp</li>
+                                    <li> [sp] --> ip</li>
+                                </ol>
+                            </td>
+                            <td>ret</td>
                         </tr>
                         </tbody>
                     </table>
@@ -805,42 +805,42 @@
             </section>
 
             <section id="demos" class="mb-12">
-                <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">代码示例</h2>
-                <ul class="list-disc list-inside space-y-3 mb-4">
-                    <li><a href="demo-basic.asm" target="_blank" rel="noopener noreferrer"
-                           class="text-green-700 hover:underline"> 基本运算和输入输出 </a>
-                    </li>
-                    <li><a href="demo-jmp.asm" target="_blank" rel="noopener noreferrer"
-                           class="text-green-700 hover:underline"> 判断，跳转，循环 </a>
-                    </li>
-                    <li><a href="demo-call.asm" target="_blank" rel="noopener noreferrer"
-                           class="text-green-700 hover:underline"> 函数调用 </a>
-                    </li>
-                    <li><a href="demo-prime.asm" target="_blank" rel="noopener noreferrer"
-                           class="text-green-700 hover:underline"> 找质数 </a>
-                    </li>
-                    <li><a href="demo-fib.asm" target="_blank" rel="noopener noreferrer"
-                           class="text-green-700 hover:underline"> 斐波那契数列 </a>
-                    </li>
-                    <li><a href="demo-bsort.asm" target="_blank" rel="noopener noreferrer"
-                           class="text-green-700 hover:underline"> 冒泡排序 </a>
-                    </li>
-                    <li><a href="demo-qsort.asm" target="_blank" rel="noopener noreferrer"
-                           class="text-green-700 hover:underline"> 快速排序 </a>
-                    </li>
-                    <li><a href="demo-pi.asm" target="_blank" rel="noopener noreferrer"
-                           class="text-green-700 hover:underline">
-                        一个显示真实威力的例子：计算圆周率小数点后100位。</a>
-                        <ul class="list-inside">
-                            <li> <p>使用 arcsin(x) 的泰勒展开计算圆周率：</p>
-                                  <img src="pi-formula.png" alt=""/>
-                            </li>
-                            <li> 先使用AI生成python代码，进行原型开发和测试</li>
-                            <li> 然后再使用AI将python代码翻译为汇编代码</li>
-                            <li> 既展示了这几条简单的汇编语句所蕴含的巨大能力，也展示了AI技术的巨大潜力</li>
-                        </ul>
-                    </li>
-                </ul>
+                <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">代码示例（hidden）</h2>
+<!--                <ul class="list-disc list-inside space-y-3 mb-4">-->
+<!--                    <li><a href="demo-basic.asm" target="_blank" rel="noopener noreferrer"-->
+<!--                           class="text-green-700 hover:underline"> 基本运算和输入输出 </a>-->
+<!--                    </li>-->
+<!--                    <li><a href="demo-jmp.asm" target="_blank" rel="noopener noreferrer"-->
+<!--                           class="text-green-700 hover:underline"> 判断，跳转，循环 </a>-->
+<!--                    </li>-->
+<!--                    <li><a href="demo-call.asm" target="_blank" rel="noopener noreferrer"-->
+<!--                           class="text-green-700 hover:underline"> 函数调用 </a>-->
+<!--                    </li>-->
+<!--                    <li><a href="demo-prime.asm" target="_blank" rel="noopener noreferrer"-->
+<!--                           class="text-green-700 hover:underline"> 找质数 </a>-->
+<!--                    </li>-->
+<!--                    <li><a href="demo-fib.asm" target="_blank" rel="noopener noreferrer"-->
+<!--                           class="text-green-700 hover:underline"> 斐波那契数列 </a>-->
+<!--                    </li>-->
+<!--                    <li><a href="demo-bsort.asm" target="_blank" rel="noopener noreferrer"-->
+<!--                           class="text-green-700 hover:underline"> 冒泡排序 </a>-->
+<!--                    </li>-->
+<!--                    <li><a href="demo-qsort.asm" target="_blank" rel="noopener noreferrer"-->
+<!--                           class="text-green-700 hover:underline"> 快速排序 </a>-->
+<!--                    </li>-->
+<!--                    <li><a href="demo-pi.asm" target="_blank" rel="noopener noreferrer"-->
+<!--                           class="text-green-700 hover:underline">-->
+<!--                        一个显示真实威力的例子：计算圆周率小数点后100位。</a>-->
+<!--                        <ul class="list-inside">-->
+<!--                            <li> <p>使用 arcsin(x) 的泰勒展开计算圆周率：</p>-->
+<!--                                  <img src="pi-formula.png" alt=""/>-->
+<!--                            </li>-->
+<!--                            <li> 先使用AI生成python代码，进行原型开发和测试</li>-->
+<!--                            <li> 然后再使用AI将python代码翻译为汇编代码</li>-->
+<!--                            <li> 既展示了这几条简单的汇编语句所蕴含的巨大能力，也展示了AI技术的巨大潜力</li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                </ul>-->
             </section>
 
         </main>

@@ -154,8 +154,8 @@
     }
 
     .reg-value {
-        min-width: 4rem;
-        max-width: 5rem;
+        min-width: 6rem;
+        max-width: 8rem;
         text-align: right;
         overflow-x: auto;
         white-space: nowrap;
