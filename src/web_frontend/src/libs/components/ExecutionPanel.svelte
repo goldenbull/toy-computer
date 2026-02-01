@@ -438,11 +438,10 @@
         </div>
 
         <!-- Output (flexible height) -->
-        <div class="flex-1 border rounded p-2 flex flex-col {isDarkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-white'}">
-            <h3 class="font-bold mb-2 text-sm {isDarkMode ? 'text-gray-200' : ''}">Output</h3>
+        <div class="flex-1 border rounded flex flex-col {isDarkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-white'}">
             <textarea
                     bind:this={outputTextarea}
-                    class="grow w-full p-2 font-mono text-xs resize-none focus:outline-none border rounded
+                    class="grow w-full p-1 font-mono text-xs resize-none focus:outline-none border rounded
                            {isDarkMode ? 'bg-gray-900 text-gray-200 border-gray-600' : 'border-gray-200'}"
                     bind:value={globalStatus.output}
                     placeholder="Execution output appears here..."
