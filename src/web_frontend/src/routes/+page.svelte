@@ -24,7 +24,7 @@
     });
 </script>
 
-<div class="min-h-screen flex flex-col">
+<div class="h-screen flex flex-col">
     <header class="bg-blue-600 text-white px-4 py-2 shadow-md">
         <div class="flex items-center">
             <!-- Logo and title -->
@@ -87,11 +87,11 @@
         </div>
     </header>
 
-    <main class="container-fluid p-1 grow">
+    <main class="container-fluid p-1 grow min-h-0">
         <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full">
 
             <!-- Tab Content -->
-            <div class="p-1 grow h-[calc(100vh-80px)]">
+            <div class="p-1 grow min-h-0">
                 <!-- Editor Tab -->
                 {#if activeTab === 'editor'}
                     <SourceCodeEditor switchTab={switchTab} {isDarkMode}/>

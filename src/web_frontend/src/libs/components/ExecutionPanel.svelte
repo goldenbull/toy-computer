@@ -207,7 +207,7 @@
 <!-- Main Layout: Two columns -->
 <div class="flex gap-2 h-full {isDarkMode ? 'bg-gray-900' : ''} rounded">
     <!-- Left Column: Operations -->
-    <div class="flex flex-col gap-2 w-1/4">
+    <div class="flex flex-col gap-2 w-1/4 min-h-0">
         <!-- Operations (flexible height with scroll) -->
         <div bind:this={operationsContainer}
              class="flex-1 overflow-auto p-2 rounded {isDarkMode ? 'bg-gray-800' : 'bg-white'}">
@@ -328,7 +328,7 @@
     </div>
 
     <!-- Right Column -->
-    <div class="flex flex-col gap-2 w-full">
+    <div class="flex flex-col gap-2 w-full min-h-0">
         <!-- Top: Registers and Memory -->
         <div class="flex gap-2 h-1/2">
             {#if globalStatus.execStatus === ExecStatus.Running}
