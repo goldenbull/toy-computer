@@ -438,7 +438,7 @@
         </div>
 
         <!-- Output (flexible height) -->
-        <div class="flex-1 border rounded flex flex-col {isDarkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-white'}">
+        <div class="flex-1 border rounded me-1 mb-1 flex flex-col {isDarkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-white'}">
             <textarea
                     bind:this={outputTextarea}
                     class="grow w-full p-1 font-mono text-xs resize-none focus:outline-none border rounded
