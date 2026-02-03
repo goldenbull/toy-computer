@@ -7,7 +7,7 @@
     import {onDestroy} from 'svelte';
     import {globalStatus} from '../store.svelte';
     import {Compiler, CompileError} from '../Compiler';
-    import {toyAsm} from '../toyAsmLanguage';
+    import {toyAsm} from '../toyAsmForCodemirror.ts';
     import {coolGlow, ayuLight} from 'thememirror';
 
     // Custom highlight for dark mode - numbers in yellow

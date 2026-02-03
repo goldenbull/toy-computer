@@ -70,12 +70,16 @@ add
     : 'add' reg Comma num
     | 'add' reg Comma reg
     | 'add' reg Comma mem
+    | 'add' mem Comma num
+    | 'add' mem Comma reg
     ;
 
 sub
     : 'sub' reg Comma num
     | 'sub' reg Comma reg
     | 'sub' reg Comma mem
+    | 'sub' mem Comma num
+    | 'sub' mem Comma reg
     ;
 
 mul
@@ -94,7 +98,9 @@ cmp
     : 'cmp' reg Comma num
     | 'cmp' reg Comma reg
     | 'cmp' reg Comma mem
-    ;
+    | 'cmp' mem Comma num
+    | 'cmp' mem Comma reg
+   ;
 
 jump
     : 'jmp' Label
@@ -117,11 +123,13 @@ ret
 push
     : 'push' num
     | 'push' reg
+    | 'push' mem
     ;
 
 pop
     : 'pop'
     | 'pop' reg
+    | 'pop' mem
     ;
 
 input

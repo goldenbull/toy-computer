@@ -238,9 +238,7 @@ _norm_check_negative:
     mov [bx], cx
 
 _norm_carry_next:
-    mov ax, [bp+0]
-    sub ax, 1
-    mov [bp+0], ax
+    sub [bp+0], 1
     jmp _norm_carry_loop
 
 _norm_carry_done:
@@ -289,9 +287,7 @@ _norm_shift_right:
     mov cx, [dx]     ; values[i-1]
     mov [bx], cx     ; values[i] = values[i-1]
 
-    mov ax, [bp+0]
-    sub ax, 1
-    mov [bp+0], ax
+    sub [bp+0], 1
     jmp _norm_shift_right
 
 _norm_shift_right_done:
@@ -310,9 +306,7 @@ _norm_shift_right_done:
     ; exponent += 1
     mov bx, [bp+4]
     add bx, 1        ; &exponent
-    mov ax, [bx]
-    add ax, 1
-    mov [bx], ax
+    add [bx], 1
 
 _norm_check_sign:
     ; --------------------------------------------------------
@@ -351,9 +345,7 @@ _norm_negate_loop:
     sub dx, cx
     mov [bx], dx
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _norm_negate_loop
 
 _norm_negate_done:
@@ -395,9 +387,7 @@ _norm_check_nonzero:
     cmp cx, 0
     jne _norm_do_shift_left  ; Found non-zero, do shift
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _norm_check_nonzero
 
 _norm_do_shift_left:
@@ -425,9 +415,7 @@ _norm_shift_left_loop:
     mov cx, [dx]
     mov [bx], cx
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _norm_shift_left_loop
 
 _norm_shift_left_loop_done:
@@ -444,9 +432,7 @@ _norm_shift_left_loop_done:
     ; exponent -= 1
     mov bx, [bp+4]
     add bx, 1        ; &exponent
-    mov ax, [bx]
-    sub ax, 1
-    mov [bx], ax
+    sub [bx], 1
 
     ; Continue checking
     jmp _norm_shift_left_check
@@ -553,9 +539,7 @@ _add_same_exp_same_sign_loop:
     add bx, ax       ; &result.values[i]
     mov [bx], cx
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _add_same_exp_same_sign_loop
 
 _add_same_exp_diff_sign:
@@ -591,9 +575,7 @@ _add_same_exp_diff_sign_loop:
     add bx, ax       ; &result.values[i]
     mov [bx], cx
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _add_same_exp_diff_sign_loop
 
 ; --------------------------------------------------------
@@ -635,9 +617,7 @@ _add_a_larger_copy_loop:
     add bx, ax
     mov [bx], cx     ; result.values[i] = a.values[i]
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _add_a_larger_copy_loop
 
 _add_a_larger_add_shifted:
@@ -699,9 +679,7 @@ _add_a_larger_shift_sub:
     mov [cx], ax
 
 _add_a_larger_shift_next:
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _add_a_larger_shift_loop
 
 ; --------------------------------------------------------
@@ -743,9 +721,7 @@ _add_b_larger_copy_loop:
     add bx, ax
     mov [bx], cx     ; result.values[i] = b.values[i]
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _add_b_larger_copy_loop
 
 _add_b_larger_add_shifted:
@@ -809,9 +785,7 @@ _add_b_larger_shift_sub:
     mov [cx], ax
 
 _add_b_larger_shift_next:
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _add_b_larger_shift_loop
 
 ; --------------------------------------------------------
@@ -1009,16 +983,12 @@ _mul_inner_loop:
     mov [cx], dx
 
     ; j++
-    mov ax, [bp-1]
-    add ax, 1
-    mov [bp-1], ax
+    add [bp-1], 1
     jmp _mul_inner_loop
 
 _mul_inner_done:
     ; i++
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _mul_outer_loop
 
 _mul_carry_phase:
@@ -1066,9 +1036,7 @@ _mul_carry_loop:
     mov [dx], cx
 
 _mul_carry_next:
-    mov ax, [bp+0]
-    sub ax, 1
-    mov [bp+0], ax
+    sub [bp+0], 1
     jmp _mul_carry_loop
 
 _mul_copy_result:
@@ -1097,9 +1065,7 @@ _mul_copy_loop:
     add bx, ax       ; &result.values[i]
     mov [bx], cx
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _mul_copy_loop
 
 _mul_set_sign:
@@ -1208,9 +1174,7 @@ _dump_skip_comma:
     print [bx]
 
     ; i++
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _dump_values_loop
 
 _dump_values_done:
@@ -1354,9 +1318,7 @@ _div_loop:
     mov [bp-1], dx   ; remainder = dx
 
     ; i++
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _div_loop
 
 _div_normalize:
@@ -1434,9 +1396,7 @@ _copy_loop:
     add bx, ax       ; &dest.values[i]
     mov [bx], cx     ; dest.values[i] = src.values[i]
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _copy_loop
 
 _copy_done:
@@ -1512,9 +1472,7 @@ _trunc_zero_loop:
     mov cx, 0
     mov [bx], cx
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _trunc_zero_loop
 
 _trunc_not_fractional:
@@ -1543,9 +1501,7 @@ _trunc_zero_frac_loop:
     mov cx, 0
     mov [bx], cx
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _trunc_zero_frac_loop
 
 _trunc_normalize:
@@ -1708,9 +1664,7 @@ _cmp_check_a_zero:
     jmp _cmp_a_zero_done
 
 _cmp_a_zero_next:
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _cmp_check_a_zero
 
 _cmp_a_zero_done:
@@ -1742,9 +1696,7 @@ _cmp_check_b_zero:
     jmp _cmp_b_zero_done
 
 _cmp_b_zero_next:
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _cmp_check_b_zero
 
 _cmp_b_zero_done:
@@ -1895,9 +1847,7 @@ _cmp_a_val_greater:
     jmp _cmp_done
 
 _cmp_values_next:
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _cmp_values_loop
 
 _cmp_equal:
@@ -2012,9 +1962,7 @@ _print_check_zero:
     mov cx, 1        ; found nonzero
 
 _print_check_zero_next:
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _print_check_zero
 
 _print_check_zero_done:
@@ -2080,9 +2028,7 @@ _print_int_loop:
     call _print_padded
     add sp, 2
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _print_int_loop
 
 _print_decimal:
@@ -2110,9 +2056,7 @@ _print_frac_loop:
     call _print_padded
     add sp, 2
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _print_frac_loop
 
 _print_fractional:
@@ -2132,15 +2076,12 @@ _print_fractional:
     mov [bp+0], cx   ; number of zero groups
 
 _print_leading_zeros:
-    mov ax, [bp+0]
-    cmp ax, 0
+    cmp [bp+0], 0
     jle _print_frac_values
 
     print "0000000"
 
-    mov ax, [bp+0]
-    sub ax, 1
-    mov [bp+0], ax
+    sub [bp+0], 1
     jmp _print_leading_zeros
 
 _print_frac_values:
@@ -2165,9 +2106,7 @@ _print_frac_values_loop:
     call _print_padded
     add sp, 2
 
-    mov ax, [bp+0]
-    add ax, 1
-    mov [bp+0], ax
+    add [bp+0], 1
     jmp _print_frac_values_loop
 
 _print_done:
@@ -2282,9 +2221,7 @@ _epsilon_loop:
     add sp, 3
 
     mov cx, 252
-    mov ax, [cx]
-    add ax, 1
-    mov [cx], ax
+    add [cx], 1
     jmp _epsilon_loop
 
 _epsilon_done:
@@ -2422,9 +2359,7 @@ _pi_loop:
     ; Print progress every iteration
     ; ----------------------------------------
     mov cx, 252
-    mov ax, [cx]
-    add ax, 1
-    mov [cx], ax     ; iteration++
+    add [cx], 1      ; iteration++
 
     ; Print iteration number and pi
     print "Iteration "

@@ -14,7 +14,7 @@ const registers = new Set([
 ]);
 
 // Stream parser for toy assembly
-export const toyAsmLanguage = StreamLanguage.define({
+export const toyAsmForCodemirror = StreamLanguage.define({
     name: "toyasm",
 
     token(stream) {
@@ -96,4 +96,4 @@ export const toyAsmLanguage = StreamLanguage.define({
 });
 
 // Export wrapped in LanguageSupport for use with CodeMirror's lang prop
-export const toyAsm = new LanguageSupport(toyAsmLanguage);
+export const toyAsm = new LanguageSupport(toyAsmForCodemirror);

@@ -114,16 +114,16 @@ export class WebExecutor {
     }
 
     private execAdd(op: Operation) {
-        const v1 = this.status.registers[op.p1!.reg as keyof typeof this.status.registers];
+        const v1 = this.getOperandValue(op.p1!) as number;
         const v2 = this.getOperandValue(op.p2!) as number;
-        this.status.registers[op.p1!.reg as keyof typeof this.status.registers] = checkOverflow(v1 + v2);
+        this.setOperandValue(op.p1!, checkOverflow(v1 + v2));
         this.status.registers.ip++;
     }
 
     private execSub(op: Operation) {
-        const v1 = this.status.registers[op.p1!.reg as keyof typeof this.status.registers];
+        const v1 = this.getOperandValue(op.p1!) as number;
         const v2 = this.getOperandValue(op.p2!) as number;
-        this.status.registers[op.p1!.reg as keyof typeof this.status.registers] = checkOverflow(v1 - v2);
+        this.setOperandValue(op.p1!, checkOverflow(v1 - v2));
         this.status.registers.ip++;
     }
 
@@ -150,7 +150,7 @@ export class WebExecutor {
     }
 
     private execCmp(op: Operation) {
-        const v1 = this.status.registers[op.p1!.reg as keyof typeof this.status.registers];
+        const v1 = this.getOperandValue(op.p1!) as number;
         const v2 = this.getOperandValue(op.p2!) as number;
 
         if (v1 > v2) {
