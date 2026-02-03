@@ -11,9 +11,9 @@
             const headerHeight = 72; // Height of sticky header
             const offsetTop = element.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
             window.scrollTo({
-                top: offsetTop,
-                behavior: 'smooth'
-            });
+                                top: offsetTop,
+                                behavior: 'smooth'
+                            });
         }
     };
 
@@ -193,13 +193,16 @@
 
             <section id="instructions" class="mb-12">
                 <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">指令说明</h2>
-                <p class="mb-4">以下会用到的符号</p>
+                <p class="mb-4">符号说明</p>
                 <ul class="list-disc list-inside space-y-3">
-                    <li> r1, r2: 表示寄存器</li>
+                    <li> r1, r2: 表示通用寄存器，即 ax bx cx dx sp bp</li>
                     <li> N: 表示一个整数</li>
-                    <li> [r1 + N]:
-                        表示内存中的一个位置，用寄存器的值加上偏移量N作为内存单元的编号，例如ax=10，那么[ax+5]就指向内存中第16个单元（0-base，第一个内存单元的地址是0）。
-                        N可以是负数。N为0时可以简写为[r1]
+                    <li> [r + D]:
+                        表示内存中的一个位置，用寄存器的值加上偏移量D作为内存单元的编号，例如ax=10，那么[ax+5]就指向内存中第16个单元（0-base，第一个内存单元的地址是0）。
+                        D可以是负数。D为0时可以简写为[r]，如 [ax+0] 可以写作 [ax]
+                    </li>
+                    <li>当有两个操作数时，第一个是目标操作数，第二个是源操作数，例如 <code>add ax, bx</code>
+                        表示对ax进行操作，ax的值可能会改变，但一定不会改变bx的值
                     </li>
                 </ul>
 
@@ -227,18 +230,18 @@
                                 <p>mov bp, sp</p></td>
                         </tr>
                         <tr>
-                            <td> mov r1, [r2+N]</td>
-                            <td> 将内存 [r2+N] 的值存入寄存器 r1 中，内存本身保持不变</td>
+                            <td> mov r1, [r2+D]</td>
+                            <td> 将内存 [r2+D] 的值存入寄存器 r1 中，内存本身保持不变</td>
                             <td><p>mov ax, [bx]</p>
                                 <p>mov ax, [bp+4]</p></td>
                         </tr>
                         <tr>
-                            <td> mov [r1+N1], N2</td>
+                            <td> mov [r1+D], N</td>
                             <td> 给内存单元赋值</td>
                             <td> mov [bp-2], 100</td>
                         </tr>
                         <tr>
-                            <td> mov [r1+N], r2</td>
+                            <td> mov [r1+D], r2</td>
                             <td> 将寄存器 r2 的值写入内存</td>
                             <td> mov [bp+3], ax</td>
                         </tr>
@@ -260,7 +263,7 @@
                         <tbody>
                         <tr>
                             <td> add r1, N</td>
-                            <td> 将寄存器 r1 中的值和 N 相加，结果依然存入 r1 中，记做 r1 + N --> r1</td>
+                            <td> 将寄存器 r1 中的值和 N 相加，结果依然存入 r1 中，即 r1 + N --> r1</td>
                             <td> add ax, 1</td>
                         </tr>
                         <tr>
@@ -270,10 +273,20 @@
                                 <p>add sp, cx</p></td>
                         </tr>
                         <tr>
-                            <td> add r1, [r2+N]</td>
-                            <td> 将寄存器 r1 的值和内存 [r2+N] 的值相加，结果存入寄存器 r1 中，r1 + [r2+N] --> r1</td>
+                            <td> add r1, [r2+D]</td>
+                            <td> 将寄存器 r1 的值和内存 [r2+D] 的值相加，结果存入寄存器 r1 中，即 r1 + [r2+D] --> r1</td>
                             <td><p>add ax, [bx]</p>
                                 <p>add ax, [bp+4]</p></td>
+                        </tr>
+                        <tr>
+                            <td> add [r1+D], N</td>
+                            <td> 将内存中的值和N相加，结果存入内存中</td>
+                            <td> add [bp+2], 100</td>
+                        </tr>
+                        <tr>
+                            <td> add [r1+D], r2</td>
+                            <td> 将内存中的值和r2相加，结果存入内存中</td>
+                            <td> add [bp+4], ax</td>
                         </tr>
                         </tbody>
                     </table>
@@ -303,10 +316,20 @@
                                 <p>sub sp, cx</p></td>
                         </tr>
                         <tr>
-                            <td> sub r1, [r2+N]</td>
-                            <td> r1 - [r2+N] --> r1</td>
+                            <td> sub r1, [r2+D]</td>
+                            <td> r1 - [r2+D] --> r1</td>
                             <td><p>sub ax, [bx]</p>
                                 <p>sub ax, [bp+4]</p></td>
+                        </tr>
+                        <tr>
+                            <td> sub [r1+D], N</td>
+                            <td> 将内存中的值和N相加，结果存入内存中</td>
+                            <td> sub [bp+2], 1</td>
+                        </tr>
+                        <tr>
+                            <td> sub [r1+D], r2</td>
+                            <td> 将内存中的值和r2相加，结果存入内存中</td>
+                            <td> sub [bp+2], ax</td>
                         </tr>
                         </tbody>
                     </table>
@@ -330,13 +353,13 @@
                             <td>mul 10</td>
                         </tr>
                         <tr>
-                            <td>mul r1</td>
-                            <td>ax * r1 --> ax</td>
+                            <td>mul r2</td>
+                            <td>ax * r2 --> ax</td>
                             <td>mul bx</td>
                         </tr>
                         <tr>
-                            <td>mul [r1+N]</td>
-                            <td>ax * [r1+N] --> ax</td>
+                            <td>mul [r2+D]</td>
+                            <td>ax * [r2+D] --> ax</td>
                             <td>mul [bp+3]</td>
                         </tr>
                         </tbody>
@@ -368,13 +391,13 @@
                                 <p>div -7</p></td>
                         </tr>
                         <tr>
-                            <td>div r1</td>
-                            <td>ax / r1，同上</td>
+                            <td>div r2</td>
+                            <td>ax / r2，同上</td>
                             <td>div cx</td>
                         </tr>
                         <tr>
-                            <td>div [r1+N]</td>
-                            <td>ax / [r1+N]，同上</td>
+                            <td>div [r2+D]</td>
+                            <td>ax / [r2+D]，同上</td>
                             <td>div [bp+3]</td>
                         </tr>
                         </tbody>
@@ -409,9 +432,19 @@
                             <td>cmp ax, bx</td>
                         </tr>
                         <tr>
-                            <td>cmp r1, [r2+N]</td>
-                            <td>比较 r1 和 [r2+N]，结果存入 flg</td>
+                            <td>cmp r1, [r2+D]</td>
+                            <td>比较 r1 和 [r2+D]，结果存入 flg</td>
                             <td>cmp cx, [bp+3]</td>
+                        </tr>
+                        <tr>
+                            <td>cmp [r1+D], N</td>
+                            <td>比较内存中的数和N，结果存入 flg</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>cmp [r1+D], r2</td>
+                            <td>比较内存中的数和寄存器r2，结果存入 flg</td>
+                            <td></td>
                         </tr>
                         </tbody>
                     </table>
@@ -526,13 +559,13 @@
                             <td>push 100</td>
                         </tr>
                         <tr>
-                            <td>push r1</td>
-                            <td>将寄存器 r1 的值压入栈</td>
+                            <td>push r2</td>
+                            <td>将寄存器 r2 的值压入栈</td>
                             <td>push ax</td>
                         </tr>
                         <tr>
-                            <td>push [r1+N]</td>
-                            <td>将内存 [r1+N] 的值压入栈</td>
+                            <td>push [r2+D]</td>
+                            <td>将内存 [r2+D] 的值压入栈</td>
                             <td>push [bp+3]</td>
                         </tr>
                         </tbody>
@@ -558,14 +591,23 @@
                         </tr>
                         <tr>
                             <td>pop r1</td>
-                            <td>
-                                <p>从栈中弹出值，存入寄存器 r1，即依次完成两个操作</p>
+                            <td><p>从栈中弹出值，存入寄存器 r1，即依次完成两个操作</p>
                                 <ol class="list-decimal list-inside">
                                     <li> sp + 1 --> sp</li>
                                     <li> [sp] --> r1</li>
                                 </ol>
                             </td>
                             <td>pop ax</td>
+                        </tr>
+                        <tr>
+                            <td>pop [r1+D]</td>
+                            <td><p>从栈中弹出值，存入内存，即依次完成两个操作</p>
+                                <ol class="list-decimal list-inside">
+                                    <li> sp + 1 --> sp</li>
+                                    <li> [sp] --> [r1+D]</li>
+                                </ol>
+                            </td>
+                            <td>pop [bp+3]</td>
                         </tr>
                         </tbody>
                     </table>
@@ -651,8 +693,8 @@
                             <td>input ax</td>
                         </tr>
                         <tr>
-                            <td>input [r1+N]</td>
-                            <td>从用户获取输入，存入内存 [r1+N]</td>
+                            <td>input [r1+D]</td>
+                            <td>从用户获取输入，存入内存 [r1+D]</td>
                             <td>input [bp-2]</td>
                         </tr>
                         </tbody>
@@ -683,8 +725,8 @@
                             <td>print ax</td>
                         </tr>
                         <tr>
-                            <td>print [r1+N]</td>
-                            <td>输出内存 [r1+N] 的值（不换行）</td>
+                            <td>print [r1+D]</td>
+                            <td>输出内存 [r1+D] 的值（不换行）</td>
                             <td>print [bp+3]</td>
                         </tr>
                         <tr>
@@ -698,7 +740,7 @@
                             <td>println</td>
                         </tr>
                         <tr>
-                            <td>println N / r1 / [r1+N] / "字符串"</td>
+                            <td>println N / r1 / [r1+D] / "字符串"</td>
                             <td>输出后自动换行</td>
                             <td><p>println ax</p>
                                 <p>println "Hello World!"</p>
@@ -726,8 +768,8 @@
                             <td>rand ax</td>
                         </tr>
                         <tr>
-                            <td>rand [r1+N]</td>
-                            <td>生成随机数，存入内存 [r1+N]</td>
+                            <td>rand [r1+D]</td>
+                            <td>生成随机数，存入内存 [r1+D]</td>
                             <td>rand [bp-2]</td>
                         </tr>
                         </tbody>
@@ -806,41 +848,41 @@
 
             <section id="demos" class="mb-12">
                 <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">代码示例（hidden）</h2>
-<!--                <ul class="list-disc list-inside space-y-3 mb-4">-->
-<!--                    <li><a href="demo-basic.asm" target="_blank" rel="noopener noreferrer"-->
-<!--                           class="text-green-700 hover:underline"> 基本运算和输入输出 </a>-->
-<!--                    </li>-->
-<!--                    <li><a href="demo-jmp.asm" target="_blank" rel="noopener noreferrer"-->
-<!--                           class="text-green-700 hover:underline"> 判断，跳转，循环 </a>-->
-<!--                    </li>-->
-<!--                    <li><a href="demo-call.asm" target="_blank" rel="noopener noreferrer"-->
-<!--                           class="text-green-700 hover:underline"> 函数调用 </a>-->
-<!--                    </li>-->
-<!--                    <li><a href="demo-prime.asm" target="_blank" rel="noopener noreferrer"-->
-<!--                           class="text-green-700 hover:underline"> 找质数 </a>-->
-<!--                    </li>-->
-<!--                    <li><a href="demo-fib.asm" target="_blank" rel="noopener noreferrer"-->
-<!--                           class="text-green-700 hover:underline"> 斐波那契数列 </a>-->
-<!--                    </li>-->
-<!--                    <li><a href="demo-bsort.asm" target="_blank" rel="noopener noreferrer"-->
-<!--                           class="text-green-700 hover:underline"> 冒泡排序 </a>-->
-<!--                    </li>-->
-<!--                    <li><a href="demo-qsort.asm" target="_blank" rel="noopener noreferrer"-->
-<!--                           class="text-green-700 hover:underline"> 快速排序 </a>-->
-<!--                    </li>-->
-<!--                    <li><a href="demo-pi.asm" target="_blank" rel="noopener noreferrer"-->
-<!--                           class="text-green-700 hover:underline">-->
-<!--                        一个显示真实威力的例子：计算圆周率小数点后100位。</a>-->
-<!--                        <ul class="list-inside">-->
-<!--                            <li> <p>使用 arcsin(x) 的泰勒展开计算圆周率：</p>-->
-<!--                                  <img src="pi-formula.png" alt=""/>-->
-<!--                            </li>-->
-<!--                            <li> 先使用AI生成python代码，进行原型开发和测试</li>-->
-<!--                            <li> 然后再使用AI将python代码翻译为汇编代码</li>-->
-<!--                            <li> 既展示了这几条简单的汇编语句所蕴含的巨大能力，也展示了AI技术的巨大潜力</li>-->
-<!--                        </ul>-->
-<!--                    </li>-->
-<!--                </ul>-->
+                <ul class="list-disc list-inside space-y-3 mb-4">
+                    <li><a href="demo-basic.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 基本运算和输入输出 </a>
+                    </li>
+                    <li><a href="demo-jmp.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 判断，跳转，循环 </a>
+                    </li>
+                    <li><a href="demo-call.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 函数调用 </a>
+                    </li>
+                    <li><a href="demo-prime.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 找质数 </a>
+                    </li>
+                    <li><a href="demo-fib.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 斐波那契数列 </a>
+                    </li>
+                    <li><a href="demo-bsort.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 冒泡排序 </a>
+                    </li>
+                    <li><a href="demo-qsort.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline"> 快速排序 </a>
+                    </li>
+                    <li><a href="demo-pi.asm" target="_blank" rel="noopener noreferrer"
+                           class="text-green-700 hover:underline">
+                        一个显示真实威力的例子：计算圆周率小数点后100位。</a>
+                        <ul class="list-inside">
+                            <li><p>使用 arcsin(x) 的泰勒展开计算圆周率：</p>
+                                <img src="pi-formula.png" alt=""/>
+                            </li>
+                            <li> 先使用AI生成python代码，进行原型开发和测试</li>
+                            <li> 然后再使用AI将python代码翻译为汇编代码</li>
+                            <li> 既展示了这几条简单的汇编语句所蕴含的巨大能力，也展示了AI技术的巨大潜力</li>
+                        </ul>
+                    </li>
+                </ul>
             </section>
 
         </main>
