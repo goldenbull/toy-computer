@@ -1,4 +1,4 @@
-﻿; input two numbers, save them in memory [0] and [1]
+; input two numbers, save them in memory [0] and [1]
 mov bp, 0
 println "input x"
 input [bp]

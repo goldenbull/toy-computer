@@ -1,0 +1,27 @@
+{
+        debug
+}
+
+https://toycomputer.net {
+        tls /etc/ssl/toycomputer/toycomputer.net.pem /etc/ssl/toycomputer/toycomputer.net.key
+
+        # site1
+        redir /clever-blocks /clever-blocks/
+        handle_path /clever-blocks/* {
+                reverse_proxy 127.0.0.1:8000
+        }
+
+        # site2
+        redir /sudoku /sudoku/
+        handle_path /sudoku/* {
+                root * /var/www/html/sudoku/web
+                file_server
+        }
+
+        # default
+        handle {
+                root * /var/www/toycomputer/build
+                file_server
+        }
+}
+

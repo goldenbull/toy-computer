@@ -1,4 +1,4 @@
-﻿_main:
+_main:
     mov ax, 0
     mov [bp], ax        ; n保存在[bp]中，从0开始
 _main_loop1:
