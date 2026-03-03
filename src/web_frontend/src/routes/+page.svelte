@@ -34,7 +34,7 @@
             </h1>
 
             <!-- Tab Navigation -->
-            <div class="flex ml-6">
+            <div class="flex ml-6 items-center">
                 <button
                         class={`px-4 py-2 text-lg font-medium rounded-t transition-colors ${activeTab === 'editor' ? 'bg-white text-blue-600' : 'text-blue-100 hover:text-white hover:bg-blue-500'}`}
                         onclick={() => switchTab('editor')}
@@ -47,6 +47,12 @@
                 >
                     模拟器
                 </button>
+            </div>
+
+            <div class="ml-auto">
+                <a href="http://www.beian.gov.cn" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1 hover:text-blue-200 transition-colors">
+                    <span class="text-sm text-blue-300">京ICP备14006224号-2</span>
+                </a>
             </div>
 
             <!-- Right side: theme toggle and links -->

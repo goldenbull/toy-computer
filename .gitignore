@@ -219,3 +219,5 @@ dist/
 
 .gemini/
 gha-creds-*.json
+
+.claude/
