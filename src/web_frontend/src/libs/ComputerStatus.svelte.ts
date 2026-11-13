@@ -86,7 +86,7 @@ export class ComputerStatus {
      */
     setMemValue(addr: number, value: number, type: MemType = MemType.Data) {
         if (addr < 0 || addr >= this.memory.length) {
-            throw new Error(`内存越界: ${addr}`);
+            throw new Error(`内存地址 ${addr} 越界。有效范围为 0～1023；请检查基址寄存器和偏移量。`);
         }
         this.memory[addr] = value;
 
@@ -109,7 +109,7 @@ export class ComputerStatus {
      */
     pushStack(value: number, type: MemType = MemType.Data) {
         if (this.registers.sp < 0) {
-            throw new Error('栈顶部越界');
+            throw new Error('栈空间不足：sp 已小于 0。请检查 push/call 是否过多，或递归是否缺少结束条件。');
         }
         this.setMemValue(this.registers.sp, value, type);
         this.registers.sp--;
@@ -120,7 +120,7 @@ export class ComputerStatus {
      */
     popStack(): number {
         if (this.registers.sp >= MEMORY_SIZE - 1) {
-            throw new Error('栈底部越界');
+            throw new Error('栈为空，无法弹出数据或返回。请检查 push/pop、call/ret 是否配对，以及 sp 是否正确。');
         }
         this.registers.sp++;
         delete this.memoryTypes[this.registers.sp];

@@ -1,38 +1,52 @@
-# sv
+# Toy Computer 浏览器前端
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Svelte 5 + CodeMirror 6 + ANTLR。编译、CPU 和内存模拟均在浏览器中执行，不依赖 Python API。
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
+## 开发与验证
 
 ```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+npm ci
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
+npm test
+npm run check
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+生产静态文件输出至 `build/`，Caddy 配置见同目录 `Caddyfile`。`/manual` 映射到生成的 `manual.html`；更新配置后需在服务器验证并重新加载 Caddy。
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## 编辑和错误提示
+
+- 停止输入约 350ms 后自动检查，行号旁及源码中显示错误标记；悬停查看原因，点击下方错误列表定位。
+- 编辑检查和编译使用同一个 Compiler：收集各行语法错误、重复／未定义／悬空标签及超出安全范围的整数；有错误时不生成可执行的部分程序。
+- 每行保留首个语法错误，避免解析器错误恢复产生大量重复提示。先修正当前错误后，可继续看到该行其他问题。
+- 自动补全指令、寄存器和当前文件的标签，可按回车接受建议；自动闭合引号和括号。
+- 编译错误显示行列、原始代码、中文原因与指令用法；运行错误显示指令地址、源码行和具体原因。
+- 动态错误（例如寄存器作为除数时值为零）仍在运行时报告。
+
+## 教学入口
+
+默认隐藏手册的“代码示例”章节及其目录入口、首页和手册页的项目 GitHub 链接。指令语法表中的小例子保留。
+
+- 普通入口：`https://toycomputer.net/`
+- 教学入口：`https://toycomputer.net/?teaching=1`
+- 教学手册：`https://toycomputer.net/manual?teaching=1`
+
+仅精确的 `teaching=1` 启用显示，其他值及省略参数均隐藏。首页与手册间导航保留此参数，不写入 localStorage。示例下载链接使用部署基础路径。
+
+这是界面显示开关，不是鉴权；静态 `.asm` 文件和公开仓库仍能通过直接地址访问。
+
+## 本次代码审查记录
+
+仓库 Caddyfile 已按提供的线上配置同步证书路径、各子站点和 ASM 文本响应头，并去掉 default 块中重复的 `try_files`。线上原本已有 `.html` 路由回退，手册路由问题只存在于此前的仓库配置中。
+
+已修复：诊断只返回第一处错误、解析原因丢失、合法标签与 JavaScript 对象原型属性冲突、超大整数字面量静默失真、缩进标签高亮、读入空文件无效、手册示例相对路径。
+
+保留的历史代码与后续事项：
+
+- `src/internal`、`src/console`、`src/web_backend` 是旧 Python 实现，生成的语法及指令集与当前 TypeScript 版本不同，不能作为浏览器版本的行为基准。
+- 旧 `webserver.py` 静态文件处理直接拼接请求路径，未验证解析后的路径是否位于构建目录内。当前 Caddy 静态部署不使用它；若恢复后端部署，需要先限制文件路径范围。
+- 旧控制台的内存 input 分支调用不存在的 `Operand.addr`，实际方法是 `mem_addr`；此次未修改停用的 Python 执行路径。
+- 前端 localStorage 自动保存忽略空字符串，清空后刷新可能恢复旧内容；独立于本次诊断和显示开关，后续应统一处理空内容及存储异常。
+- 现有字符串解释使用连续替换，包含反斜杠的转义组合存在二次解释风险；后续应改为单次扫描并补充执行测试。
+
+自动验证包含编译器、补全及运行错误的回归测试、Svelte 类型检查和生产构建。当前环境未安装 Caddy，配置尚未通过 `caddy validate`；没有可连接的浏览器，尚未完成真实浏览器中的键盘、悬停、主题和 URL 切换验收；本次不发布到线上。

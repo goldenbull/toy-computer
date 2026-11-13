@@ -1,3 +1,5 @@
+import type {CompletionContext} from '@codemirror/autocomplete';
+import {instructionHelp} from './instructionHelp';
 import { StreamLanguage, LanguageSupport } from "@codemirror/language";
 
 // Token types for toy assembly language
@@ -19,7 +21,7 @@ export const toyAsmForCodemirror = StreamLanguage.define({
 
     token(stream) {
         // Skip whitespace but track if we were at line start before whitespace
-        const atLineStart = stream.sol();
+        const atLineStart = /^\s*$/.test(stream.string.slice(0, stream.pos));
         if (stream.eatSpace()) {
             return null;
         }
@@ -96,4 +98,25 @@ export const toyAsmForCodemirror = StreamLanguage.define({
 });
 
 // Export wrapped in LanguageSupport for use with CodeMirror's lang prop
-export const toyAsm = new LanguageSupport(toyAsmForCodemirror);
+export function completeAssembly(context: CompletionContext) {
+    const line = context.state.doc.lineAt(context.pos);
+    const prefix = line.text.slice(0, context.pos - line.from);
+    // Do not complete in strings or comments, including escaped quotation marks.
+    if (/^(?:[^";；]|"(?:[^"\\]|\\.)*")*[;；]/.test(prefix) ||
+        /"(?:[^"\\]|\\.)*$/.test(prefix.replace(/"(?:[^"\\]|\\.)*"/g, ''))) return null;
+    const word = context.matchBefore(/[a-z_][a-z0-9_]*/i);
+    if (!word && !context.explicit) return null;
+    const before = prefix.slice(0, word ? word.from - line.from : prefix.length);
+    const instructionPosition = /^\s*(?:[a-z_][a-z0-9_]*\s*[:：]\s*)?$/i.test(before);
+    const labels = [...context.state.doc.toString().matchAll(/^\s*([a-z_][a-z0-9_]*)\s*[:：]/gim)].map(match => match[1]);
+    const options = instructionPosition
+        ? Object.entries(instructionHelp).map(([label, info]) => ({label, type: 'keyword', info}))
+        : /\b(?:j(?:mp|e|ne|g|ge|l|le)|call)\s+$/i.test(before)
+            ? [...new Set(labels)].map(label => ({label, type: 'constant'}))
+            : ['ax', 'bx', 'cx', 'dx', 'bp', 'sp'].map(label => ({label, type: 'variable'}));
+    return {from: word?.from ?? context.pos, options, validFor: /^[a-z_][a-z0-9_]*$/i};
+}
+
+export const toyAsm = new LanguageSupport(toyAsmForCodemirror, [
+    toyAsmForCodemirror.data.of({autocomplete: completeAssembly})
+]);

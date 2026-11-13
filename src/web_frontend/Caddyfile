@@ -3,7 +3,7 @@
 }
 
 https://toycomputer.net {
-        tls /etc/ssl/toycomputer/toycomputer.net.pem /etc/ssl/toycomputer/toycomputer.net.key
+        tls /etc/ssl/toycomputer.net/fullchain.pem /etc/ssl/toycomputer.net/privkey.pem
 
         # site1
         redir /clever-blocks /clever-blocks/
@@ -14,14 +14,26 @@ https://toycomputer.net {
         # site2
         redir /sudoku /sudoku/
         handle_path /sudoku/* {
-                root * /var/www/html/sudoku/web
+                root * /var/www/sudoku/web
+                file_server
+        }
+
+        # site3
+        redir /quant-ai /quant-ai/
+        handle_path /quant-ai/* {
+                root * /var/www/lecture
+                try_files {path} /index.html
                 file_server
         }
 
         # default
         handle {
                 root * /var/www/toycomputer/build
+                try_files {path} {path}.html /index.html
                 file_server
+
+                @asm path *.asm
+                header @asm Content-Type "text/plain; charset=utf-8"
         }
 }
 

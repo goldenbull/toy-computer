@@ -1,5 +1,7 @@
 <script lang="ts">
+    import {page} from '$app/state';
     import {buildPath} from '../../libs/utils/url';
+    const showTeaching = $derived(page.url.searchParams.get('teaching') === '1');
 
     let activeSection = $state('syntax-rules');
 
@@ -82,7 +84,7 @@
 <div class="min-h-screen bg-gray-50">
     <!-- Header -->
     <header class="bg-blue-600 text-white p-4 shadow-md sticky top-0 z-10">
-        <a href={buildPath('')}
+        <a href={buildPath('') + (showTeaching ? '?teaching=1' : '')}
            class="absolute left-2 top-1/2 -translate-y-1/2 flex items-center gap-2 hover:text-blue-200 transition-colors px-3 py-2 rounded-lg">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -97,15 +99,17 @@
                     <span>Toy Computer Manual</span>
                 </h1>
                 <div class="flex gap-4">
-                    <a href="https://github.com/goldenbull/toy-computer" target="_blank" rel="noopener noreferrer"
-                       class="flex items-center gap-2 hover:text-blue-200 transition-colors">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd"
-                                  d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                                  clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="text-sm font-medium">GitHub</span>
-                    </a>
+                    {#if showTeaching}
+                        <a href="https://github.com/goldenbull/toy-computer" target="_blank" rel="noopener noreferrer"
+                           class="flex items-center gap-2 hover:text-blue-200 transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill-rule="evenodd"
+                                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                                      clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-sm font-medium">GitHub</span>
+                        </a>
+                    {/if}
                 </div>
             </div>
         </div>
@@ -116,7 +120,7 @@
         <aside class="w-64 bg-white shadow-lg h-[calc(100vh-72px)] sticky top-18 overflow-y-auto">
             <nav class="p-4">
                 <ul class="space-y-1">
-                    {#each navigationTree as item}
+                    {#each navigationTree.filter(item => showTeaching || item.id !== 'demos') as item}
                         <li>
                             <button onclick={() => scrollToSection(item.id)}
                                     class={`w-full text-left px-3 py-2 rounded ${item.isParent ? 'font-semibold' : ''} ${activeSection === item.id ? 'bg-blue-100 text-blue-700 font-medium' : item.isParent ? 'text-gray-800 hover:bg-gray-100' : 'text-gray-700 hover:bg-gray-100'}`}>
@@ -846,31 +850,32 @@
 
             </section>
 
+            {#if showTeaching}
             <section id="demos" class="mb-12">
-                <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">代码示例（hidden）</h2>
+                <h2 class="text-3xl font-bold mb-4 border-b-2 border-blue-600 text-gray-800">代码示例</h2>
                 <ul class="list-disc list-inside space-y-3 mb-4">
-                    <li><a href="demo-basic.asm" target="_blank" rel="noopener noreferrer"
+                    <li><a href={buildPath('demo-basic.asm')} target="_blank" rel="noopener noreferrer"
                            class="text-green-700 hover:underline"> 基本运算和输入输出 </a>
                     </li>
-                    <li><a href="demo-jmp.asm" target="_blank" rel="noopener noreferrer"
+                    <li><a href={buildPath('demo-jmp.asm')} target="_blank" rel="noopener noreferrer"
                            class="text-green-700 hover:underline"> 判断，跳转，循环 </a>
                     </li>
-                    <li><a href="demo-call.asm" target="_blank" rel="noopener noreferrer"
+                    <li><a href={buildPath('demo-call.asm')} target="_blank" rel="noopener noreferrer"
                            class="text-green-700 hover:underline"> 函数调用 </a>
                     </li>
-                    <li><a href="demo-prime.asm" target="_blank" rel="noopener noreferrer"
+                    <li><a href={buildPath('demo-prime.asm')} target="_blank" rel="noopener noreferrer"
                            class="text-green-700 hover:underline"> 找质数 </a>
                     </li>
-                    <li><a href="demo-fib.asm" target="_blank" rel="noopener noreferrer"
+                    <li><a href={buildPath('demo-fib.asm')} target="_blank" rel="noopener noreferrer"
                            class="text-green-700 hover:underline"> 斐波那契数列 </a>
                     </li>
-                    <li><a href="demo-bsort.asm" target="_blank" rel="noopener noreferrer"
+                    <li><a href={buildPath('demo-bsort.asm')} target="_blank" rel="noopener noreferrer"
                            class="text-green-700 hover:underline"> 冒泡排序 </a>
                     </li>
-                    <li><a href="demo-qsort.asm" target="_blank" rel="noopener noreferrer"
+                    <li><a href={buildPath('demo-qsort.asm')} target="_blank" rel="noopener noreferrer"
                            class="text-green-700 hover:underline"> 快速排序 </a>
                     </li>
-                    <li><a href="demo-pi.asm" target="_blank" rel="noopener noreferrer"
+                    <li><a href={buildPath('demo-pi.asm')} target="_blank" rel="noopener noreferrer"
                            class="text-green-700 hover:underline">
                         一个显示真实威力的例子：计算圆周率小数点后100位。</a>
                         <ul class="list-inside">
@@ -884,6 +889,8 @@
                     </li>
                 </ul>
             </section>
+
+            {/if}
 
         </main>
     </div>

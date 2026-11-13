@@ -138,7 +138,7 @@ export class WebExecutor {
         const v1 = this.status.registers.ax;
         const v2 = this.getOperandValue(op.p1!) as number;
 
-        if (v2 === 0) throw new Error('除0错误');
+        if (v2 === 0) throw new Error(`除数不能为 0。当前 ax = ${v1}，除数 ${op.p1} = 0；请先检查除数再执行 div。`);
 
         // Truncate toward zero (C-style division)
         const quotient = Math.trunc(v1 / v2);
@@ -308,6 +308,15 @@ export class WebExecutor {
         }
     }
 
+    private reportRuntimeError(error: unknown) {
+        const ip = this.status.registers.ip;
+        const operation = this.status.operations[ip];
+        const location = operation?.sourceLine == null ? '' : `，源码第 ${operation.sourceLine + 1} 行`;
+        const reason = error instanceof Error ? error.message : String(error);
+        this.status.execStatus = ExecStatus.Halted;
+        this.appendOutput(`\n运行时错误（指令地址 ${ip}${location}）\n${operation?.sourceText || operation?.displayStr || ''}\n原因：${reason}\n程序已停止，请修改后重新编译。\n`);
+    }
+
     /**
      * Execute one instruction step
      */
@@ -337,8 +346,7 @@ export class WebExecutor {
             return true;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (e: any) {
-            this.status.execStatus = ExecStatus.Halted;
-            this.appendOutput(`\n!!!!!! 运行时出错：${e.message} !!!!!!\n`);
+            this.reportRuntimeError(e);
             return false;
         }
     }
@@ -455,8 +463,7 @@ export class WebExecutor {
             }
         } catch (e) {
             // Memory address error or other execution error - halt execution
-            this.status.execStatus = ExecStatus.Halted;
-            this.appendOutput(`\n${e}\n`);
+            this.reportRuntimeError(e);
             throw e;
         }
     }

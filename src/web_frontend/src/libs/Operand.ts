@@ -35,7 +35,7 @@ export class Operand {
             case OperandType.Mem:
                 const addr = this.memAddr(registers);
                 if (addr < 0 || addr >= memory.length) {
-                    throw new Error(`内存越界: ${addr}`);
+                    throw new Error(`内存地址 ${addr} 越界。有效范围为 0～1023；请检查基址寄存器和偏移量。`);
                 }
                 return memory[addr];
             case OperandType.Imm:

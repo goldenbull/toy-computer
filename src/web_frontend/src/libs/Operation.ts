@@ -2,6 +2,8 @@ import {Operand} from './Operand';
 
 export class Operation {
     // Pre-computed strings for rendering performance
+    sourceLine: number | null = null;
+    sourceText = '';
     displayStr: string;
     offsetStr: string = '';
 
